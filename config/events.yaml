@@ -15,7 +15,7 @@ family_kind:                           # [DOC] fixed mapping; a trailing * match
   enforcement_or_court: geo
   legislation: geo
   ext_world_news: geo
-  # tessera package (finfm_v2): every SEC 8-K item-type family is a company filing = finance; Wikinews is world news = geo
+  # tessera package (oryxis_v2): every SEC 8-K item-type family is a company filing = finance; Wikinews is world news = geo
   management_change: finance
   earnings: finance
   governance_votes: finance

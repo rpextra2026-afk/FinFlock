@@ -9,14 +9,14 @@ import numpy as np
 import pytest
 import scipy.linalg as sla
 
-from finfm.mfg.path import (
+from oryxis.mfg.path import (
     anchor_outside_belief,
     anchored_path,
     expected_path,
     predicted_increments,
     price_path,
 )
-from finfm.mfg.precompute import (
+from oryxis.mfg.precompute import (
     FundType,
     GameError,
     amihud_liquidity,
@@ -27,10 +27,10 @@ from finfm.mfg.precompute import (
     projected_precision,
     rebalancing_matrix,
 )
-from finfm.mfg.push import conditional_prices, end_point, static_push_regressors
-from finfm.mfg.speed import EventKnobs, event_knobs, stable_root
-from finfm.mfg.validate import exact_prices
-from finfm.mfg.volume import covariance_shift, event_volume, fund_trades
+from oryxis.mfg.push import conditional_prices, end_point, static_push_regressors
+from oryxis.mfg.speed import EventKnobs, event_knobs, stable_root
+from oryxis.mfg.validate import exact_prices
+from oryxis.mfg.volume import covariance_shift, event_volume, fund_trades
 
 BETA_DAILY = 0.9996
 
@@ -438,7 +438,7 @@ def test_covariance_shift_is_psd_and_zero_for_a_constant_increment():
 
 
 def test_strength_normalisation_sets_the_median_sensitivity_to_liquidity_ratio(cfg):
-    from finfm.mfg.precompute import FundInput, build_month_game, normalise_liquidity
+    from oryxis.mfg.precompute import FundInput, build_month_game, normalise_liquidity
 
     rng = np.random.default_rng(21)
     n = 12

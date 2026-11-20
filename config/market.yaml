@@ -1,4 +1,4 @@
-# Market data, adjustments and universe rules (spec Part 3.2-3.3, finfm-data-requirements.md).
+# Market data, adjustments and universe rules (spec Part 3.2-3.3, oryxis-data-requirements.md).
 history_start: 2012-01-01              # [DOC] 252-day warm-up before the first events
 vendor: csv                            # PriceSource key: csv | yfinance | crsp_csv (vendor terms are a VERIFY item)
 second_vendor: null                    # cross-check source on a hashed share of securities

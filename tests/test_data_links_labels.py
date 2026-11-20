@@ -6,14 +6,14 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from finfm.data.labels import (
+from oryxis.data.labels import (
     build_labels,
     event_window_mask,
     fit_residual_model,
     garman_klass,
     label_one,
 )
-from finfm.data.links import (
+from oryxis.data.links import (
     correlation_links,
     industry_links,
     owner_links,

@@ -6,12 +6,12 @@ import types
 
 import pytest
 
-from finfm.common.config import load_config
-from finfm.compute.engine import GenParams, GenRequest, MockEngine
-from finfm.compute.factory import build_engine, resolve_model_path
-from finfm.compute.parallel import DataParallelEngine, describe
-from finfm.compute.vllm_engine import VLLMEngine, structured_kwargs
-from finfm.testing.engines import child_process_factory, mock_factory
+from oryxis.common.config import load_config
+from oryxis.compute.engine import GenParams, GenRequest, MockEngine
+from oryxis.compute.factory import build_engine, resolve_model_path
+from oryxis.compute.parallel import DataParallelEngine, describe
+from oryxis.compute.vllm_engine import VLLMEngine, structured_kwargs
+from oryxis.testing.engines import child_process_factory, mock_factory
 from tests.conftest import CONFIG_DIR
 
 PARAMS = GenParams(temperature=0.7, top_p=0.9, top_k=64, max_tokens=50, seed=3)
@@ -168,7 +168,7 @@ def test_model_paths_prefer_local_weights_and_the_mock_engine_is_selectable(cfg,
 
 
 def test_a_prompt_that_cannot_fit_is_returned_empty_and_does_not_stop_the_rest_of_the_batch():
-    from finfm.compute.vllm_engine import PROMPT_TOO_LONG
+    from oryxis.compute.vllm_engine import PROMPT_TOO_LONG
 
     cfg = load_config(CONFIG_DIR).with_overrides({"engine.max_model_len": 60})
     factory = lambda **kw: FakeLLM(**kw)  # noqa: E731

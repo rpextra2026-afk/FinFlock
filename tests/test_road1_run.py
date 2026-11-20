@@ -6,12 +6,12 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from finfm.common.resources import ResourceLog
-from finfm.common.timing import TradingCalendar
-from finfm.framework.events import EventReading
-from finfm.road1.rreport import r_summary, r_table
-from finfm.stage import road1_real as rr
-from finfm.stage.road1_run import NotEnoughGraphs, fit_and_score
+from oryxis.common.resources import ResourceLog
+from oryxis.common.timing import TradingCalendar
+from oryxis.framework.events import EventReading
+from oryxis.road1.rreport import r_summary, r_table
+from oryxis.stage import road1_real as rr
+from oryxis.stage.road1_run import NotEnoughGraphs, fit_and_score
 from tests.test_road1_memory import D, GROUPS, graph
 
 SMALL = {"road1.optimiser": {"lr": 0.05, "max_steps": 12, "patience": 5, "batch_events": 8, "eval_every": 3},
@@ -64,7 +64,7 @@ def test_fewer_labelled_graphs_than_needed_stops_cleanly(setup):
 
 def test_r_is_zero_without_edges_and_grows_with_coupling(setup):
     cfg, _, dev, _, _, _ = setup
-    from finfm.road1.arms import GraphModel
+    from oryxis.road1.arms import GraphModel
 
     model = GraphModel(9, D)
     isolated = graph(900, 1, 4, np.random.default_rng(3))

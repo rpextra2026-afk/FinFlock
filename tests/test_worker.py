@@ -5,7 +5,7 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from finfm.common.schema import (
+from oryxis.common.schema import (
     ATTEMPTS,
     BUNDLE_SUFFIX,
     REASON,
@@ -16,8 +16,8 @@ from finfm.common.schema import (
     ShardOutcome,
     Status,
 )
-from finfm.compute.bundle import make_job_id, read_consolidated, scan_bundles
-from finfm.compute.worker import StopFlag, run_shard
+from oryxis.compute.bundle import make_job_id, read_consolidated, scan_bundles
+from oryxis.compute.worker import StopFlag, run_shard
 from tests.conftest import Crash, FakeClock, make_processor, make_units
 
 JOB = make_job_id("reader", "tessera", "llm2")
@@ -279,7 +279,7 @@ def test_the_run_summary_and_heartbeat_reach_the_bundle(cfg, tmp_path, capsys):
 
 
 def test_a_single_run_job_is_one_shard_and_has_no_cutoff(cfg, tmp_path):
-    from finfm.compute.shard import plan_shards, is_single_run
+    from oryxis.compute.shard import plan_shards, is_single_run
 
     cfg1 = cfg.with_overrides({"kaggle.single_run_jobs": ["reader__dbX__llm2"]})
     units = make_units(5000).assign(est_seconds=60.0)  # far more work than one session
@@ -290,7 +290,7 @@ def test_a_single_run_job_is_one_shard_and_has_no_cutoff(cfg, tmp_path):
 
 
 def test_a_failing_final_write_is_retried_and_then_falls_back_so_the_result_is_never_lost(cfg, tmp_path, monkeypatch):
-    import finfm.compute.bundle as bundle_module
+    import oryxis.compute.bundle as bundle_module
 
     cfg = cfg.with_overrides({**FAST, "kaggle.final_write_wait_seconds": 0, "kaggle.checkpoint_minutes": 100000})
     real = bundle_module.BundleWriter.checkpoint

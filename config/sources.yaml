@@ -17,8 +17,8 @@ prices:
   symbol_replacements:
     .: '-'
 output:
-  dataset_folder: dataset/finfm-market
-  dataset_slug: finfm-market
+  dataset_folder: dataset/oryxis-market
+  dataset_slug: oryxis-market
   store_folder: store
 guardian:
   url: ''
@@ -40,7 +40,7 @@ guardian:
   - headline
   - firstPublicationDate
   env_key: GUARDIAN_KEY
-  out_folder: dataset/finfm-news-guardian
+  out_folder: dataset/oryxis-news-guardian
 hf:
   repo: ''
   env_token: HF_TOKEN
@@ -53,7 +53,7 @@ hf:
     - benzinga_6000stocks
     nyt_headlines:
     - nyt_headlines_2010_2021
-  out_folder: dataset/finfm-news-hf
+  out_folder: dataset/oryxis-news-hf
 names:
   sec_url: ''
   env_contact: SEC_CONTACT
@@ -148,10 +148,10 @@ stocktwits:
   hash_multiplier: 11400714819323198485
   symbol_replacements:
     '-': .
-  out_folder: dataset/finfm-news-hf/stocktwits
+  out_folder: dataset/oryxis-news-hf/stocktwits
   work_folder: store/raw/stocktwits
 tessera_package: dataset/tessera
 rivals:
-  dataset_slug: finfm-rivals
-  dataset_hint: 'finfm-rivals (attach this one dataset alone: it holds the unit tables,
+  dataset_slug: oryxis-rivals
+  dataset_hint: 'oryxis-rivals (attach this one dataset alone: it holds the unit tables,
     prices, factors and company links of all three buckets)'

@@ -5,8 +5,8 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from finfm.common.timing import TradingCalendar, to_utc
-from finfm.common.windows import (
+from oryxis.common.timing import TradingCalendar, to_utc
+from oryxis.common.windows import (
     DEV,
     EMBARGO,
     IN_CUTOFF,

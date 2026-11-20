@@ -6,8 +6,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from finfm.common.timing import TradingCalendar
-from finfm.data.f13 import (
+from oryxis.common.timing import TradingCalendar
+from oryxis.data.f13 import (
     choose_unit_factor,
     holdings_weights,
     latest_filing_per_manager,
@@ -18,7 +18,7 @@ from finfm.data.f13 import (
     similarity,
     uncovered_share,
 )
-from finfm.data.managers import (
+from oryxis.data.managers import (
     classify_managers,
     exclude_low_cover,
     passive_flags,

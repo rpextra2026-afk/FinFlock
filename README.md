@@ -1,17 +1,17 @@
-# finfm
+# oryxis
 
-finfm combines financial news, a typed economic sheaf, investor personas, and a mean-field trading game to construct cost-aware portfolios. the sheaf models how a news shock moves through asset relationships, while the persona branch models investor beliefs and trading pressure. the final framework combines both forecasts and applies portfolio constraints and transaction costs.
+oryxis combines financial news, a typed economic sheaf, investor personas, and a mean-field trading game to construct cost-aware portfolios. the sheaf models how a news shock moves through asset relationships, while the persona branch models investor beliefs and trading pressure. the final framework combines both forecasts and applies portfolio constraints and transaction costs.
 
 ## architecture
 
-![finfm architecture](assets/architecture.png)
+![oryxis architecture](assets/architecture.png)
 
 ## repository structure
 
 the experiment entry points are grouped by dataset, model, and stage. each stage calls the shared implementation, so the scientific code stays consistent across runs.
 
 ```text
-finfm/
+oryxis/
 ├── databucket1/
 │   ├── olmo/       ── sheaf/, personas/, final_framework/
 │   ├── gemma/      ── sheaf/, personas/, final_framework/
@@ -24,7 +24,7 @@ finfm/
 │   ├── olmo/       ── sheaf/, personas/, final_framework/
 │   ├── gemma/      ── sheaf/, personas/, final_framework/
 │   └── llama/      ── sheaf/, personas/, final_framework/
-├── finfm/          # shared scientific implementation
+├── oryxis/          # shared scientific implementation
 ├── reader2/        # news reader, validation, and shard scheduling
 ├── pilot/          # reader prompts and supporting inference code
 ├── config/         # experiment settings and small lookup tables
@@ -54,7 +54,7 @@ gemma uses the quantized checkpoint with its full-precision fallback configured 
 | `tessera` | `tessera` | point-in-time financial news package |
 | `databucket3` | `db3` | financial and general news with social posts |
 
-tessera's actual dataset files are included in [`dataset/tessera/`](dataset/tessera/), alongside a standalone loader and file checksums. the other datasets and model weights are supplied separately, and personal dataset-hosting links are omitted. the experiment loaders and preprocessing code are in `finfm/data/` and `finfm/stage/`. experiment windows are in `config/windows.yaml` and `config/clean.yaml`.
+tessera's actual dataset files are included in [`dataset/tessera/`](dataset/tessera/), alongside a standalone loader and file checksums. the other datasets and model weights are supplied separately, and personal dataset-hosting links are omitted. the experiment loaders and preprocessing code are in `oryxis/data/` and `oryxis/stage/`. experiment windows are in `config/windows.yaml` and `config/clean.yaml`.
 
 the nine dataset/model combinations are supported entry points. the four additional final-build configurations use their dataset's existing time windows and paths; their presence does not assert that those experiments were completed. tessera's gemma and llama readers retain the configured hash-based subset selection in `reader2/settings.py`.
 
@@ -72,13 +72,13 @@ for model inference on a compatible CUDA GPU:
 python -m pip install -e '.[gpu]'
 ```
 
-stage model weights locally using `FINFM_WEIGHTS_ROOT`, or supply any required access credential through the process environment. credentials belong outside source files. GPU memory requirements and parallelism are set in `config/engine.yaml`; full experiment runs are computationally intensive.
+stage model weights locally using `ORYXIS_WEIGHTS_ROOT`, or supply any required access credential through the process environment. credentials belong outside source files. GPU memory requirements and parallelism are set in `config/engine.yaml`; full experiment runs are computationally intensive.
 
 ## local inputs
 
 `--root` points to a local working tree with `dataset/`, `store/`, and generated `outputs/` folders. paths for each final build are declared in `config/clean.yaml`. provide the reader tape, staged units, asset links, market prices, and factor table for that run. the persona branch also needs investor skeletons, biography inputs, and reader bundles; the merged framework reads the matching persona bundles.
 
-the news reader accepts `--input-root` containing a prepared reader pack: `RUN_PLAN.json`, per-dataset `data/<dataset>/units.parquet`, alias tables, and matching local model inputs. its schema and integrity checks are implemented in `reader2/plan.py` and `reader2/session.py`. persona inputs are resolved by `finfm/stage/run_stage.py` and `finfm/stage/persona_stage.py`.
+the news reader accepts `--input-root` containing a prepared reader pack: `RUN_PLAN.json`, per-dataset `data/<dataset>/units.parquet`, alias tables, and matching local model inputs. its schema and integrity checks are implemented in `reader2/plan.py` and `reader2/session.py`. persona inputs are resolved by `oryxis/stage/run_stage.py` and `oryxis/stage/persona_stage.py`.
 
 generate tapes, manifests, fitted parameters, and freeze records from this source and configuration before running later stages. configuration identifiers and hashes must match throughout the pipeline. existing freeze records from a different configuration cannot be reused.
 
@@ -121,13 +121,13 @@ replace `tessera` and `olmo` in these commands with the desired directory names.
 
 | component | source |
 | --- | --- |
-| news prompts, inference, and validation | `reader2/`, `pilot/`, `finfm/reader/` |
-| cleaning and point-in-time controls | `finfm/clean/`, `finfm/common/timing.py` |
-| economic graph and sheaf fitting | `finfm/road1/`, `finfm/build/` |
-| investor panels and persona answers | `finfm/personas/`, `finfm/stage/persona_build.py` |
-| mean-field game | `finfm/mfg/` |
-| forecast combination and final framework | `finfm/framework/` |
-| costs, constraints, and portfolio execution | `finfm/portfolio/` |
+| news prompts, inference, and validation | `reader2/`, `pilot/`, `oryxis/reader/` |
+| cleaning and point-in-time controls | `oryxis/clean/`, `oryxis/common/timing.py` |
+| economic graph and sheaf fitting | `oryxis/road1/`, `oryxis/build/` |
+| investor panels and persona answers | `oryxis/personas/`, `oryxis/stage/persona_build.py` |
+| mean-field game | `oryxis/mfg/` |
+| forecast combination and final framework | `oryxis/framework/` |
+| costs, constraints, and portfolio execution | `oryxis/portfolio/` |
 
 ## validation
 

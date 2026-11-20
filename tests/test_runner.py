@@ -9,8 +9,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from finfm.common.config import load_config
-from finfm.common.schema import (
+from oryxis.common.config import load_config
+from oryxis.common.schema import (
     AVAILABLE_DATE,
     FAMILY,
     KIND,
@@ -22,21 +22,21 @@ from finfm.common.schema import (
     ShardOutcome,
     Status,
 )
-from finfm.compute import payloads as pl
-from finfm.compute.bundle import make_job_id, read_consolidated, scan_bundles
-from finfm.compute.engine import MockEngine
-from finfm.compute.jobs import planned_for_shard
-from finfm.compute.runner import run_shard_from_folder
-from finfm.compute.shard import Shard
-from finfm.compute.staging import read_manifest, stage_shard
-from finfm.personas.bios import template_bio
-from finfm.personas.feed import NewsItem
-from finfm.personas.mock import persona_responder
-from finfm.personas.run import EventPayload, PersonaState, unit_id
-from finfm.reader.mock import reader_responder
-from finfm.rivals.mass.modalities import ModalityStore
-from finfm.testing.pipeline import persona_skeletons
-from finfm.testing.synthetic import build_world, synthetic_config
+from oryxis.compute import payloads as pl
+from oryxis.compute.bundle import make_job_id, read_consolidated, scan_bundles
+from oryxis.compute.engine import MockEngine
+from oryxis.compute.jobs import planned_for_shard
+from oryxis.compute.runner import run_shard_from_folder
+from oryxis.compute.shard import Shard
+from oryxis.compute.staging import read_manifest, stage_shard
+from oryxis.personas.bios import template_bio
+from oryxis.personas.feed import NewsItem
+from oryxis.personas.mock import persona_responder
+from oryxis.personas.run import EventPayload, PersonaState, unit_id
+from oryxis.reader.mock import reader_responder
+from oryxis.rivals.mass.modalities import ModalityStore
+from oryxis.testing.pipeline import persona_skeletons
+from oryxis.testing.synthetic import build_world, synthetic_config
 from tests.conftest import CONFIG_DIR, FakeClock
 
 OVERRIDES = {"kaggle.checkpoint_minutes": 0, "runtime.batch_units": 16, "runtime.canary_units": 100000,
@@ -70,7 +70,7 @@ def run(world, folder, out, inputs=(), clock=None, overrides=None):
     engine = MockEngine()
     engine.register("reader", reader_responder)
     engine.register("persona", persona_responder)
-    from finfm.reader.prompt import WhitespaceTokenizer
+    from oryxis.reader.prompt import WhitespaceTokenizer
     return run_shard_from_folder(folder, out, CONFIG_DIR, input_dirs=list(inputs), engine=engine, tokenizer=WhitespaceTokenizer(),
                                  clock=clock or FakeClock(), overrides={**OVERRIDES, **(overrides or {}), **_world_overrides(world)})
 
@@ -173,8 +173,8 @@ def test_a_persona_shard_runs_through_the_runner_and_matches_direct_processing(w
     assert result.outcome is ShardOutcome.COMPLETE
     rows = read_consolidated(scan_bundles([tmp_path / "out"], job_id).valid)
     assert len(rows) == len(units) and rows["saw_focal"].any()
-    from finfm.personas.run import PersonaProcessor
-    from finfm.reader.prompt import WhitespaceTokenizer
+    from oryxis.personas.run import PersonaProcessor
+    from oryxis.reader.prompt import WhitespaceTokenizer
     engine = MockEngine()
     engine.register("persona", persona_responder)
     direct = PersonaProcessor(cfg, engine, {s.persona_id: s for s in skeletons}, bios, payloads, states, WhitespaceTokenizer())(units)
@@ -210,11 +210,11 @@ def test_mass_world_round_trips_and_runs_as_a_job(world, tmp_path):
 
     class Scripted(MockEngine):
         def generate(self, requests, params):
-            from finfm.compute.engine import GenResult
+            from oryxis.compute.engine import GenResult
             return [GenResult(r.unit_id, (json.dumps({"Outline": "x", "Details": {"StockPoolSelector": "RandomStockSelector"}})
                                           if r.task == "mass_style" else json.dumps({"Stock": ["S0"]}),), 5, 5) for r in requests]
 
-    from finfm.reader.prompt import WhitespaceTokenizer
+    from oryxis.reader.prompt import WhitespaceTokenizer
     result = run_shard_from_folder(folder, tmp_path / "out", CONFIG_DIR, engine=Scripted(), tokenizer=WhitespaceTokenizer(),
                                    clock=FakeClock(), overrides={**OVERRIDES, **_world_overrides(world)})
     rows = read_consolidated(scan_bundles([tmp_path / "out"], job_id).valid)
@@ -223,7 +223,7 @@ def test_mass_world_round_trips_and_runs_as_a_job(world, tmp_path):
 
 def test_a_trial_limit_runs_only_the_first_units_and_a_full_run_continues_from_them(world, tmp_path):
     folder, job_id = stage_reader(world, tmp_path / "stage")
-    from finfm.reader.prompt import WhitespaceTokenizer
+    from oryxis.reader.prompt import WhitespaceTokenizer
     engine = MockEngine()
     engine.register("reader", reader_responder)
     kw = dict(engine=engine, tokenizer=WhitespaceTokenizer(), clock=FakeClock(), overrides={**OVERRIDES, **_world_overrides(world)})

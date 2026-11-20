@@ -1,8 +1,8 @@
 """Pilot-only vLLM options and continuation scoring; production engine remains untouched."""
 from __future__ import annotations
 import importlib
-from finfm.compute.vllm_engine import VLLMEngine, STRUCTURED_CANDIDATES
-from finfm.reader.cause_scores import continuation_tokens, sum_label_logprobs
+from oryxis.compute.vllm_engine import VLLMEngine, STRUCTURED_CANDIDATES
+from oryxis.reader.cause_scores import continuation_tokens, sum_label_logprobs
 
 
 class ScoringVLLM(VLLMEngine):

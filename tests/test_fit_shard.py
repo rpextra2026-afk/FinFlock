@@ -12,10 +12,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from finfm.common import ckpt
-from finfm.common.resources import ResourceLog
-from finfm.road1 import fit as fit_module
-from finfm.stage.road1_run import fit_and_score
+from oryxis.common import ckpt
+from oryxis.common.resources import ResourceLog
+from oryxis.road1 import fit as fit_module
+from oryxis.stage.road1_run import fit_and_score
 from scripts import cpu_session as cs
 from tests.test_road1_run import setup  # noqa: F401  (fixture)
 
@@ -131,8 +131,8 @@ def test_all_shards_attached_is_reported_and_a_conflicting_piece_is_refused(tmp_
 
 CHILD_SHARD = """
 import os, pickle
-d = os.environ['FINFM_CKPT_DIR']; os.makedirs(d, exist_ok=True)
-print('shard env seen by the child:', os.environ.get('FINFM_FIT_SHARD'), flush=True)
+d = os.environ['ORYXIS_CKPT_DIR']; os.makedirs(d, exist_ok=True)
+print('shard env seen by the child:', os.environ.get('ORYXIS_FIT_SHARD'), flush=True)
 pickle.dump({'i': 1}, open(f'{d}/cvjob-p.pkl', 'wb'))
 """
 
@@ -145,7 +145,7 @@ def _args(tmp, label, **extra):
 
 def test_a_finished_shard_run_passes_its_shard_to_the_child_and_still_writes_the_bundle(tmp_path, capsys, monkeypatch):
     (tmp_path / "in").mkdir()
-    monkeypatch.setenv("FINFM_FIT_SHARD", "9/9")  # a stale value from outside must not leak into a run without --shard
+    monkeypatch.setenv("ORYXIS_FIT_SHARD", "9/9")  # a stale value from outside must not leak into a run without --shard
     status = cs.run_session(_args(tmp_path, "r-sheaf-s1of5", shard="1/5"), [sys.executable, "-c", CHILD_SHARD])
     out = capsys.readouterr().out
     assert status == cs.EXIT_FINISHED
@@ -156,7 +156,7 @@ def test_a_finished_shard_run_passes_its_shard_to_the_child_and_still_writes_the
 
 def test_a_run_without_shard_does_not_inherit_a_stale_shard(tmp_path, capsys, monkeypatch):
     (tmp_path / "in").mkdir()
-    monkeypatch.setenv("FINFM_FIT_SHARD", "9/9")
+    monkeypatch.setenv("ORYXIS_FIT_SHARD", "9/9")
     cs.run_session(_args(tmp_path, "r-sheaf"), [sys.executable, "-c", CHILD_SHARD])
     assert "shard env seen by the child: None" in capsys.readouterr().out
 

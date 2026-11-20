@@ -9,17 +9,17 @@ import pandas as pd
 import pytest
 import torch
 
-from finfm.common.config import load_config
-from finfm.framework import final_metrics as FM
-from finfm.framework import freeze as FZ
-from finfm.framework import road1_pooled as RP
-from finfm.framework import world_lane as WL
-from finfm.framework.delist_trace import hit_table, trace
-from finfm.framework.events import EventReading
-from finfm.real.devfit_io import dev_fit_problems
-from finfm.real.framework_cell import confidence_rule
-from finfm.reader.salvage import config_for_mode, mode_settings
-from finfm.road1.arms import SheafModel
+from oryxis.common.config import load_config
+from oryxis.framework import final_metrics as FM
+from oryxis.framework import freeze as FZ
+from oryxis.framework import road1_pooled as RP
+from oryxis.framework import world_lane as WL
+from oryxis.framework.delist_trace import hit_table, trace
+from oryxis.framework.events import EventReading
+from oryxis.real.devfit_io import dev_fit_problems
+from oryxis.real.framework_cell import confidence_rule
+from oryxis.reader.salvage import config_for_mode, mode_settings
+from oryxis.road1.arms import SheafModel
 from tests.conftest import CONFIG_DIR
 from tests.test_build_world import RUN, THEMES, synthetic
 
@@ -65,7 +65,7 @@ def links_frame():
 
 
 def test_pooled_predictor_pins_keep_label_unit_dials_and_free_nodes_are_predicted(cfg):
-    from finfm.build.run import build_config
+    from oryxis.build.run import build_config
 
     pooled = build_config(cfg)
     torch.manual_seed(0)
@@ -91,7 +91,7 @@ def test_pooled_predictor_pins_keep_label_unit_dials_and_free_nodes_are_predicte
 
 def test_all_zero_group_vector_does_not_silence_the_pooled_sheaf(cfg):
     """The pooled sheaf has one group; an 'other' / no_cause reading (all-zero cause vector) still gets the pooled rule."""
-    from finfm.build.run import build_config
+    from oryxis.build.run import build_config
 
     pooled = build_config(cfg)
     torch.manual_seed(1)
@@ -134,8 +134,8 @@ def test_world_lane_shift_is_higher_on_news_days_and_the_switch_turns_it_off(cfg
 # ---- the delisting trace ----------------------------------------------------------------------------------------------------------
 
 def test_delisting_trace_finds_the_names_and_their_price_rows(cfg):
-    from finfm.portfolio.execute import run_backtest
-    from finfm.portfolio.market import Market
+    from oryxis.portfolio.execute import run_backtest
+    from oryxis.portfolio.market import Market
 
     days = pd.bdate_range("2021-01-04", periods=40)
     close = pd.DataFrame({"GOOD": 100.0 + np.arange(40) * 0.1, "DEAD": 50.0 + np.arange(40) * 0.0}, index=days)
@@ -212,7 +212,7 @@ def test_freeze_refuses_a_changed_hash_and_pins_the_dev_fit():
 # ---- rivals through the same optimiser -------------------------------------------------------------------------------------------------
 
 def test_rival_scores_become_one_day_forecasts_with_a_slope_fitted_before_the_test_window():
-    from finfm.framework import rival_adapter as RA
+    from oryxis.framework import rival_adapter as RA
 
     days = pd.bdate_range("2021-01-04", periods=120)
     rng = np.random.default_rng(0)
@@ -286,7 +286,7 @@ def test_freeze_records_the_headline_set_and_refuses_a_change_of_it(cfg):
 # ---- the sealed-window stage ---------------------------------------------------------------------------------------------------------------------------
 
 def test_sealed_stage_takes_its_lock_once_and_only_for_the_tessera_tapes(cfg, tmp_path):
-    from finfm.framework import sealed as SL
+    from oryxis.framework import sealed as SL
 
     spec = SL.sealed_settings(cfg, "tessera-llm2")
     assert spec["start"] and spec["end"] and spec["results_dir"] == "framework-sealed"
@@ -314,7 +314,7 @@ def make_pairs(n_events=60, per=40, scale=0.0, seed=0):
 
 
 def test_calibration_scale_is_shrink_only_and_the_shift_matches_the_means(cfg):
-    from finfm.framework import calibration as CAL
+    from oryxis.framework import calibration as CAL
 
     a, b = CAL.fit_scale_shift(np.array([0.0, 1.0, 2.0, 3.0]), np.array([0.0, 2.0, 4.0, 6.0]), 1.0)
     assert a == 1.0 and abs(b - (3.0 - 1.5)) < 1e-12   # slope 2 is clipped to 1; shift = mean(y) - a mean(x)
@@ -323,7 +323,7 @@ def test_calibration_scale_is_shrink_only_and_the_shift_matches_the_means(cfg):
 
 
 def test_calibration_is_used_when_it_helps_in_every_time_block_and_the_blocks_are_reported(cfg):
-    from finfm.framework import calibration as CAL
+    from oryxis.framework import calibration as CAL
 
     record = CAL.fit_volu_calibration(make_pairs(scale=0.0), cfg)
     assert record["used"] is True and len(record["blocks"]) == int(cfg.get("framework.calibration.folds"))
@@ -333,7 +333,7 @@ def test_calibration_is_used_when_it_helps_in_every_time_block_and_the_blocks_ar
 
 
 def test_calibration_stays_raw_when_it_does_not_beat_the_raw_dial_in_every_block(cfg):
-    from finfm.framework import calibration as CAL
+    from oryxis.framework import calibration as CAL
 
     pairs = make_pairs(scale=0.0)
     pairs["y"] = pairs["x"]   # the raw dial is exact: no calibration can beat it
@@ -343,7 +343,7 @@ def test_calibration_stays_raw_when_it_does_not_beat_the_raw_dial_in_every_block
 
 
 def test_calibration_hash_changes_with_the_values():
-    from finfm.framework import calibration as CAL
+    from oryxis.framework import calibration as CAL
 
     assert CAL.calibration_sha256({"scale": 0.1, "shift": 0.2}) != CAL.calibration_sha256({"scale": 0.1, "shift": 0.3})
     assert CAL.calibration_sha256({"a": 1, "b": 2}) == CAL.calibration_sha256({"b": 2, "a": 1})
@@ -363,8 +363,8 @@ def test_figure_data_tables_have_one_row_per_day_and_the_position_quantiles(cfg)
 
 
 def test_sheaf_maps_table_has_the_fitted_delta_and_the_singular_values_of_i_plus_delta():
-    from finfm.framework import sheaf_internals as SI
-    from finfm.road1.arms import SheafModel
+    from oryxis.framework import sheaf_internals as SI
+    from oryxis.road1.arms import SheafModel
 
     model = SheafModel(2, 1, 3, [True, False])
     with torch.no_grad():

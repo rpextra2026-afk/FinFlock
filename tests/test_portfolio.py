@@ -7,17 +7,17 @@ import pandas as pd
 import pytest
 from scipy.optimize import minimize
 
-from finfm.portfolio.constraints import project, project_long_only, project_long_short
-from finfm.portfolio.costs import (
+from oryxis.portfolio.constraints import project, project_long_only, project_long_short
+from oryxis.portfolio.costs import (
     fixed_cost,
     lambda_base,
     lognormal_cost_multiplier,
     one_way_cost_fraction,
     sqrt_impact_cost,
 )
-from finfm.portfolio.execute import net_returns, run_backtest, scale_to_risk_target, turnover, vol_match
-from finfm.portfolio.market import CausalityError, Market, MarketView
-from finfm.portfolio.optimiser import (
+from oryxis.portfolio.execute import net_returns, run_backtest, scale_to_risk_target, turnover, vol_match
+from oryxis.portfolio.market import CausalityError, Market, MarketView
+from oryxis.portfolio.optimiser import (
     FirstStep,
     HorizonInputs,
     apply_band,
@@ -373,7 +373,7 @@ def test_vol_matching_hits_the_target_volatility():
 
 
 def _rows(n=600, seed=11, trust_feature=True):
-    from finfm.fit.return_weights import MergeRows
+    from oryxis.fit.return_weights import MergeRows
 
     rng = np.random.default_rng(seed)
     road1 = rng.normal(0, 1.0, n)
@@ -386,7 +386,7 @@ def _rows(n=600, seed=11, trust_feature=True):
 
 
 def test_trust_is_one_without_a_fit_and_stays_inside_its_range():
-    from finfm.portfolio.combine import lead_correct, trust_value
+    from oryxis.portfolio.combine import lead_correct, trust_value
 
     z = np.array([[3.0, -3.0], [0.0, 0.0]])
     assert np.allclose(trust_value(z, np.zeros(3), (0.0, 2.0)), 1.0)  # theta = 0 is the plain sum
@@ -396,9 +396,9 @@ def test_trust_is_one_without_a_fit_and_stays_inside_its_range():
 
 
 def test_trust_fit_shrinks_toward_one_with_a_big_ridge_and_the_plain_sum_is_always_in_the_race(cfg):
-    from finfm.common.timing import TradingCalendar
-    from finfm.fit.return_weights import fit_bucket, fit_merge
-    from finfm.portfolio.combine import choose_by_loss
+    from oryxis.common.timing import TradingCalendar
+    from oryxis.fit.return_weights import fit_bucket, fit_merge
+    from oryxis.portfolio.combine import choose_by_loss
 
     cal = TradingCalendar("XNYS", "2020-01-01", "2023-12-31")
     rows = _rows()
@@ -413,8 +413,8 @@ def test_trust_fit_shrinks_toward_one_with_a_big_ridge_and_the_plain_sum_is_alwa
 
 
 def test_a_real_trust_feature_is_kept_and_a_useless_one_is_not(cfg):
-    from finfm.common.timing import TradingCalendar
-    from finfm.fit.return_weights import fit_bucket
+    from oryxis.common.timing import TradingCalendar
+    from oryxis.fit.return_weights import fit_bucket
 
     cal = TradingCalendar("XNYS", "2020-01-01", "2023-12-31")
     _, kept, _ = fit_bucket(_rows(), ["f0", "f1"], cal, cfg)
@@ -424,8 +424,8 @@ def test_a_real_trust_feature_is_kept_and_a_useless_one_is_not(cfg):
 
 
 def test_too_few_rows_fall_back_to_the_plain_sum(cfg):
-    from finfm.common.timing import TradingCalendar
-    from finfm.fit.return_weights import MergeRows, fit_merge
+    from oryxis.common.timing import TradingCalendar
+    from oryxis.fit.return_weights import MergeRows, fit_merge
 
     cal = TradingCalendar("XNYS", "2020-01-01", "2023-12-31")
     tiny = MergeRows(*(np.ones(5) for _ in range(4)), np.ones((5, 2)), pd.Series(pd.bdate_range("2021-01-04", periods=5)))
@@ -434,8 +434,8 @@ def test_too_few_rows_fall_back_to_the_plain_sum(cfg):
 
 
 def test_correction_slope_is_cross_fitted_so_a_rows_own_label_never_sets_its_slope(cfg):
-    from finfm.common.timing import TradingCalendar
-    from finfm.fit.return_weights import cross_fitted_correction
+    from oryxis.common.timing import TradingCalendar
+    from oryxis.fit.return_weights import cross_fitted_correction
 
     cal = TradingCalendar("XNYS", "2020-01-01", "2023-12-31")
     rows = _rows()
@@ -447,7 +447,7 @@ def test_correction_slope_is_cross_fitted_so_a_rows_own_label_never_sets_its_slo
 
 
 def test_disagreement_is_relative_to_signal_size_and_the_three_brakes_behave():
-    from finfm.portfolio.combine import abstain_mask, cautious_min, disagreement, pooled_variance, soft_threshold
+    from oryxis.portfolio.combine import abstain_mask, cautious_min, disagreement, pooled_variance, soft_threshold
 
     f1, f2 = np.array([1.0, 10.0, 1.0, -1.0]), np.array([0.5, 9.5, 1.0, 1.0])
     gap = disagreement(f1, f2, 1e-8)
@@ -464,7 +464,7 @@ def test_the_merge_modules_use_no_labels():
     import ast
     from pathlib import Path
 
-    root = Path(__file__).resolve().parents[1] / "finfm"
+    root = Path(__file__).resolve().parents[1] / "oryxis"
     for name in ("portfolio/combine.py", "fit/return_weights.py", "framework/run.py", "reader/state_features.py", "data/market.py"):
         tree = ast.parse((root / name).read_text())
         modules = [n.module or "" for n in ast.walk(tree) if isinstance(n, ast.ImportFrom)] + [a.name for n in ast.walk(tree) if isinstance(n, ast.Import) for a in n.names]

@@ -12,7 +12,7 @@ sheaf:
   drop_zero_pins: true                       # a pin with no size is not pinned
   ret_dial: signed                           # signed: the pin's size_pct times its weight; the other two dials use the absolute size
 paths:
-  market_dir: dataset/finfm-market           # px_daily, corp_action, links
+  market_dir: dataset/oryxis-market           # px_daily, corp_action, links
   factors_file: store/raw/french/ff_factors_daily.parquet
 metrics:
   seed: 20261112

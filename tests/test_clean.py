@@ -8,9 +8,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from finfm.clean import placeholders, steps
-from finfm.common.config import load_config
-from finfm.common.timing import TradingCalendar
+from oryxis.clean import placeholders, steps
+from oryxis.common.config import load_config
+from oryxis.common.timing import TradingCalendar
 
 from tests.conftest import CONFIG_DIR
 

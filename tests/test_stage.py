@@ -8,13 +8,13 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from finfm.common.config import load_config
-from finfm.common.timing import TradingCalendar
-from finfm.compute.session import RunSpec, SessionError
-from finfm.data.names import build_aliases, drop_generic_aliases, shortened
-from finfm.stage.reader_build import build_items, build_reader_units, cap_candidates
-from finfm.stage.reader_stage import sources_needed
-from finfm.stage.run_stage import find_market_dir, make_stager
+from oryxis.common.config import load_config
+from oryxis.common.timing import TradingCalendar
+from oryxis.compute.session import RunSpec, SessionError
+from oryxis.data.names import build_aliases, drop_generic_aliases, shortened
+from oryxis.stage.reader_build import build_items, build_reader_units, cap_candidates
+from oryxis.stage.reader_stage import sources_needed
+from oryxis.stage.run_stage import find_market_dir, make_stager
 from tests.conftest import CONFIG_DIR
 
 CFG = load_config(CONFIG_DIR)
@@ -26,7 +26,7 @@ SMALL = CFG.with_overrides({"sample.tiers.S.db1.reader_events": 50, "sample.tier
 @pytest.fixture(autouse=True)
 def no_fixed_shard_plans(tmp_path, monkeypatch):
     """These tests stage small synthetic tables under real run ids: the real rival shard plans (made for the real tables) must not apply."""
-    import finfm.compute.shard as shard_module
+    import oryxis.compute.shard as shard_module
     monkeypatch.setattr(shard_module, "PLAN_DIR", tmp_path / "no_plans")
 
 def corpus(rows):
@@ -90,8 +90,8 @@ def test_market_dataset_must_be_attached_and_only_readers_can_self_stage(tmp_pat
 
 
 def test_prebuilt_units_in_the_market_dataset_are_cut_into_shards_without_any_download(tmp_path):
-    from finfm.compute.session import pick_shard
-    from finfm.stage.reader_stage import save_prestaged, stage_job
+    from oryxis.compute.session import pick_shard
+    from oryxis.stage.reader_stage import save_prestaged, stage_job
 
     units = pd.DataFrame({"unit_id": [f"ev:{i}" for i in range(7)], "kind": "finance", "family": "ext_company_news", "available_date": "2018-03-01",
                           "title": "t", "text": "x", "pins_json": "[]", "available_utc": "2018-03-01 15:00:00+00:00", "est_seconds": 0.5})
@@ -107,8 +107,8 @@ def test_prebuilt_units_in_the_market_dataset_are_cut_into_shards_without_any_do
 
 
 def test_finripple_units_get_graph_text_from_known_links_and_are_cut_to_the_token_budget(tmp_path):
-    from finfm.reader.prompt import WhitespaceTokenizer
-    from finfm.stage.rival_stage import finripple_units, stage_finripple_units
+    from oryxis.reader.prompt import WhitespaceTokenizer
+    from oryxis.stage.rival_stage import finripple_units, stage_finripple_units
 
     links = pd.DataFrame({"src_node": ["AAPL", "AAPL"], "dst_node": ["MSFT", "ORCL"], "link_type": "industry",
                           "available_from": pd.Timestamp("2018-01-01"), "valid_to": pd.NaT, "weight": [1.0, 0.5], "source": "sic",

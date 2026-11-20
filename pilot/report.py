@@ -6,7 +6,7 @@ import math
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from finfm.reader.output_v2 import LINK_TYPES
+from oryxis.reader.output_v2 import LINK_TYPES
 
 
 def rate(k, n):

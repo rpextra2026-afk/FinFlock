@@ -858,32 +858,32 @@
     {
       "path": "social_reddit/items.parquet/part-00000.parquet",
       "rows": 50000,
-      "bytes": 6536296,
-      "sha256": "b4083bf15ec8595e14acfd41b4bfa970d4be3edcf47df2559e3fe0e0191a0dc0"
+      "bytes": 6536286,
+      "sha256": "67da716c5274c0b433fb4bccf7ac308e57640c7c0c064e88050eb343532ccdf8"
     },
     {
       "path": "social_reddit/items.parquet/part-00001.parquet",
       "rows": 50000,
-      "bytes": 6388006,
-      "sha256": "ae9343746fa03459bf5003b3d5eacaeecdcb9fa70603b300715c96c2bafd565b"
+      "bytes": 6387996,
+      "sha256": "c0ade7daea5dd8c0c46f60b88d02acb3674f013e75cc119b3828a7c129153864"
     },
     {
       "path": "social_reddit/items.parquet/part-00002.parquet",
       "rows": 50000,
-      "bytes": 6434151,
-      "sha256": "c5417c0afa42b66f8695619ed3d11711178e1ee05089097db5d8c261dc9d04c1"
+      "bytes": 6434141,
+      "sha256": "7fcfca91661614082e7fb79e16b48a71a0621e3eeb31f8e8de728d43429cab8e"
     },
     {
       "path": "social_reddit/items.parquet/part-00003.parquet",
       "rows": 50000,
-      "bytes": 6500936,
-      "sha256": "a7d38e29336f72674f1eb59ee321f8d29a229fdc5f292f4bbb3d0b8717a1a28c"
+      "bytes": 6500926,
+      "sha256": "71eaf849965deb5ef5285d038c22076d556ff7d4d711bcabaf03e9fcaa0ec2a1"
     },
     {
       "path": "social_reddit/items.parquet/part-00004.parquet",
       "rows": 31111,
-      "bytes": 4152300,
-      "sha256": "b6caec1d50d0ba1542319d841cce3f408234419f77f99154ed5cf42bca6296ba"
+      "bytes": 4152292,
+      "sha256": "3830c4692e61a9812f6b30f1ff12f3c22ea8aa3111d31bae1546b9617996e8a3"
     },
     {
       "path": "social_reddit/pins.parquet/part-00000.parquet",

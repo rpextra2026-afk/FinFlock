@@ -8,7 +8,7 @@ enforce_eager: false                   # set true only if CUDA-graph capture fai
 max_num_seqs: 64                       # [MEASURE]
 attention_backend_env: null            # [VERIFY] environment variable name and value for the Turing attention backend
 local_weights_root: /kaggle/input      # weights are staged as private datasets (sessions may have no internet)
-weights_root_env: FINFM_WEIGHTS_ROOT   # if set, this folder (links made by the session script) is used instead of local_weights_root
+weights_root_env: ORYXIS_WEIGHTS_ROOT   # if set, this folder (links made by the session script) is used instead of local_weights_root
 system_role_supported: null            # null = try, then merge the system prompt into the user turn if the template refuses
 models:
   llm1:                                # Gemma: production path is the quantised checkpoint, one replica per GPU

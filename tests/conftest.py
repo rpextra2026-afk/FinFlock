@@ -9,8 +9,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from finfm.common.config import Config, load_config
-from finfm.common.schema import PARSE_OK, STATUS, UNIT_ID, Status
+from oryxis.common.config import Config, load_config
+from oryxis.common.schema import PARSE_OK, STATUS, UNIT_ID, Status
 
 CONFIG_DIR = Path(__file__).resolve().parents[1] / "config"
 HASH_HEX_CHARS = 8

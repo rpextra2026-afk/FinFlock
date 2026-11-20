@@ -39,19 +39,19 @@ min_confidence: 0.0
 rolling_window_sessions: 252
 min_return_coverage: 0.8           # a stock needs this share of non-missing returns in the covariance window
 return_weight_days: 5                  # days 1..this of the cumulative components enter the dev regression for (w_a, w_b)
-pooled:                                # the pooled-sheaf road 1 (finfm/framework/road1_pooled.py)
+pooled:                                # the pooled-sheaf road 1 (oryxis/framework/road1_pooled.py)
   sheaf_pin_scale: 100.0               # the build feeds pins to the sheaf as size_pct x weight (percent); framework dials are fractions, so they are multiplied by this before the graph
   label_ret_to_fraction: 0.01          # the sheaf's return label (abnormal return) and its pins are in percent; the framework works in fractions, so free-node returns are multiplied by this
   label_ret_scale_min: 0.2             # the fitted scale of the return label must be at least this (percent units); a smaller scale means the labels are fractions and the run stops
   pin_map_min_rows: 200                # dev pins needed to fit the pinned-node vol and volume maps; fewer: the map is zero
   pin_map_ridge: 1.0e-8                # tiny ridge of those two one-variable maps
-world_lane:                            # the every-day market-level volatility lane (finfm/build/world.py) entering the covariance and the cost step
+world_lane:                            # the every-day market-level volatility lane (oryxis/build/world.py) entering the covariance and the cost step
   enabled: true                        # ONE switch: false = no market-level shift anywhere
   targets: [vol, volu]                 # vol shifts the covariance and the cost multiplier; volu shifts the cost multiplier only
   clip_log_vol: 0.5                    # the market-level log-volatility shift is clipped to +-this
   clip_log_volu: 0.5
   version: every_day                   # every_day | burst_only (build.world versions); the headline uses every day
-final:                                 # the framework stage on the cleaned tapes (finfm/framework/final_run.py)
+final:                                 # the framework stage on the cleaned tapes (oryxis/framework/final_run.py)
   headline_set: long_short               # THE headline: market-neutral (long-short, portfolio.constraints.long_short), reported first and recorded in FREEZE_FRAMEWORK.json
   second_set: headline                   # long-only with the 5% cap (portfolio.constraints.headline): computed and reported in full as the second table; nothing is dropped
   headline_sets: [long_short, headline]  # both sets are run, at the same risk target (portfolio.vol_match), with every table for each
@@ -63,13 +63,13 @@ final:                                 # the framework stage on the cleaned tape
   results_dir: framework-final
   variants_equal_terms: [road1, road2, both, merged]
   rivals_dir: rivals                    # <out>/rivals/<name>.parquet (decision_date, security_id, score) from each rival's scorer; run through the same optimiser, risk target, days and costs
-sealed:                                # the open-once test stage (finfm/framework/sealed.py): same code, the sealed window as the test window
+sealed:                                # the open-once test stage (oryxis/framework/sealed.py): same code, the sealed window as the test window
   runs: [tessera-llm1, tessera-llm2, tessera-llm3]
   start: 2024-01-01
   end: 2025-12-31
   results_dir: framework-sealed
   lock_file: SEALED_OPENED.json
-calibration:                           # the road-2 volume dial, one scale and one shift per tape, fitted on the fit window only (finfm/framework/calibration.py); counted once in the tuning budget
+calibration:                           # the road-2 volume dial, one scale and one shift per tape, fitted on the fit window only (oryxis/framework/calibration.py); counted once in the tuning budget
   enabled: true                        # the off switch: false = the raw dial (the ablation reports raw against calibrated)
   folds: 5                             # contiguous time blocks of the fit-window events
   embargo_days: 10                     # events this close (calendar days) to a validation block are left out of the fit that is tested on it

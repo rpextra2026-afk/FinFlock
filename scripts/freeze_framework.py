@@ -16,8 +16,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from finfm.common.config import load_config  # noqa: E402
-from finfm.framework import freeze as FZ  # noqa: E402
+from oryxis.common.config import load_config  # noqa: E402
+from oryxis.framework import freeze as FZ  # noqa: E402
 
 
 def main(argv=None) -> int:

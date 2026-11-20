@@ -6,24 +6,24 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from finfm.common.timing import TradingCalendar
-from finfm.common.windows import bucket_windows
-from finfm.data.buckets.adapters import (
+from oryxis.common.timing import TradingCalendar
+from oryxis.common.windows import bucket_windows
+from oryxis.data.buckets.adapters import (
     drop_cross_set_duplicates,
     era_of,
     items_to_events,
     normalise_source,
     normalised_title_hash,
 )
-from finfm.data.buckets.contract import (
+from oryxis.data.buckets.contract import (
     check_columns,
     finalize_events,
     load_contract,
     read_text,
 )
-from finfm.data.buckets.events import assign_day0, cluster_ids, hash_bucket, kind_of, time_known
-from finfm.data.buckets.pins import event_pins_json, pin_name_only_items
-from finfm.data.buckets.sampling import (
+from oryxis.data.buckets.events import assign_day0, cluster_ids, hash_bucket, kind_of, time_known
+from oryxis.data.buckets.pins import event_pins_json, pin_name_only_items
+from oryxis.data.buckets.sampling import (
     build_samples,
     coverage_matrix,
     drop_index_events,
@@ -34,8 +34,8 @@ from finfm.data.buckets.sampling import (
     largest_remainder,
     stratified_sample,
 )
-from finfm.data.schema import SchemaError
-from finfm.reader.masking import MaskerCache
+from oryxis.data.schema import SchemaError
+from oryxis.reader.masking import MaskerCache
 from tests.conftest import CONFIG_DIR
 
 CAL = TradingCalendar("XNYS", "2012-01-01", "2025-12-31")

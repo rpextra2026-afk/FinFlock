@@ -1,4 +1,4 @@
-"""The road-1 arm's out-of-sample score (finfm.real.framework_fit.score_graphs): same table as the graph and matrices get in run_road1.py."""
+"""The road-1 arm's out-of-sample score (oryxis.real.framework_fit.score_graphs): same table as the graph and matrices get in run_road1.py."""
 
 from __future__ import annotations
 
@@ -9,11 +9,11 @@ import pandas as pd
 import pytest
 import torch
 
-from finfm.common.timing import TradingCalendar
-from finfm.real.framework_fit import score_graphs
-from finfm.road1.arms import GraphModel, MatrixModel
-from finfm.road1.fit import dial_scale, select_and_fit, standardise
-from finfm.road1.graph import EventGraph
+from oryxis.common.timing import TradingCalendar
+from oryxis.real.framework_fit import score_graphs
+from oryxis.road1.arms import GraphModel, MatrixModel
+from oryxis.road1.fit import dial_scale, select_and_fit, standardise
+from oryxis.road1.graph import EventGraph
 from tests.test_road1 import random_graph
 
 

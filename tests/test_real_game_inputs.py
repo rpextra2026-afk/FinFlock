@@ -6,12 +6,12 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from finfm.personas.skeletons import Skeleton
-from finfm.portfolio.market import Market
-from finfm.real.framework_fit import panels_of
-from finfm.real.game_inputs import fund_inputs, panels_from_skeletons, sp_cover_table
-from finfm.real.market_load import RealMarket
-from finfm.stage import road1_real as rr
+from oryxis.personas.skeletons import Skeleton
+from oryxis.portfolio.market import Market
+from oryxis.real.framework_fit import panels_of
+from oryxis.real.game_inputs import fund_inputs, panels_from_skeletons, sp_cover_table
+from oryxis.real.market_load import RealMarket
+from oryxis.stage import road1_real as rr
 
 QUARTER = "2021Q2"
 NAMES = [f"S{i}" for i in range(8)]

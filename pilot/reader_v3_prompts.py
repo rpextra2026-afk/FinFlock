@@ -6,13 +6,13 @@ Three ideas on top of the original v2 prompt, each aimed at an observed failure 
                ``direction`` carries the sign and ``value_effect_pct`` is only the size.
 * ``shots``  - the same rules plus six worked examples (made-up articles) that show the awkward cases.
 * ``gate``   - the model first answers ``event_type``; the parser then forces ``other`` and neutral pins when the answer is
-               not ``asset_event`` (see ``finfm.reader.output_v2.apply_gate``).
+               not ``asset_event`` (see ``oryxis.reader.output_v2.apply_gate``).
 """
 from __future__ import annotations
 
 import json
 
-from finfm.reader.output_v2 import LINK_TYPES
+from oryxis.reader.output_v2 import LINK_TYPES
 
 INTRO = ("You are a careful financial news analyst. You read one news item and return one compact JSON object "
          "and nothing else.")

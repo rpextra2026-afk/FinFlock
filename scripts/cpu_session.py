@@ -355,7 +355,7 @@ def build_tables(stage: str, results: Path, bucket: str, llm: str, modes: list[s
                 main = [m for m in main_metrics() if m in metrics.index]
                 tables.append((f"FINAL RUN - MAIN metrics ({bucket}, {llm}) [{mode}]", metrics.loc[main]))
                 tables.append((f"FINAL RUN - APPENDIX metrics ({bucket}, {llm}) [{mode}]", metrics.drop(index=main)))
-                for extra in sorted(path.parent.glob("appendix_*.csv")):  # the appendix tables computed in the same run (finfm/real/appendix.py)
+                for extra in sorted(path.parent.glob("appendix_*.csv")):  # the appendix tables computed in the same run (oryxis/real/appendix.py)
                     tables.append((f"FINAL RUN - APPENDIX - {extra.stem.removeprefix('appendix_').replace('_', ' ')} [{mode}]", pd.read_csv(extra).set_index("metric")))
     elif stage == "ablation":
         for folder in sorted(results.glob(f"ablation-{bucket}-{llm}-*")):
@@ -426,10 +426,10 @@ def run_session(args: argparse.Namespace, child: list[str] | None = None) -> int
     command = child if child is not None else [sys.executable, str(Path(args.runner)), args.stage, "--bucket", args.bucket, "--llm", args.llm, "--modes", args.modes,
                                                "--input-root", str(input_root), "--work", str(work)] + (["--fetch-vxf"] if args.fetch_vxf else []) + (["--no-sheaf"] if args.no_sheaf else []) \
         + (["--notebook", args.notebook] if getattr(args, "notebook", None) else [])
-    env = {**os.environ, "FINFM_CKPT_DIR": str(ckpt_dir), "PYTHONUNBUFFERED": "1"}
-    env.pop("FINFM_FIT_SHARD", None)
+    env = {**os.environ, "ORYXIS_CKPT_DIR": str(ckpt_dir), "PYTHONUNBUFFERED": "1"}
+    env.pop("ORYXIS_FIT_SHARD", None)
     if shard:
-        env["FINFM_FIT_SHARD"] = shard
+        env["ORYXIS_FIT_SHARD"] = shard
     log("STARTING the child: " + " ".join(command))
     proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1, env=env, start_new_session=True)
     follower = Follower(work)

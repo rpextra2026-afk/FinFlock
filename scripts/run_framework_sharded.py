@@ -3,7 +3,7 @@
 
   python scripts/run_framework_sharded.py <run> --root <tree> --out <folder with fitted.pkl, manifest.json, ALL_METRICS_<run>.parquet> [--shards N]
 
-  1. combine + forecast once (scripts/run_framework_final.py --skip-build --stop-after forecast): stored in the checkpoint folder (FINFM_CKPT_DIR, set by cpu_session);
+  1. combine + forecast once (scripts/run_framework_final.py --skip-build --stop-after forecast): stored in the checkpoint folder (ORYXIS_CKPT_DIR, set by cpu_session);
   2. N separate processes, each ``run_framework_final.py --skip-build --task-shard k/N``: every N-th backtest (variant x headline set x delisting rule); each loads the combination and forecasts from
      the checkpoint and stores its backtests there (separate processes, no fork pool);
   3. the unsharded pass: takes every backtest from the checkpoint, runs the one no-world-lane comparison backtest, builds the metrics tables and writes framework-final/FINAL_REPORT.md.

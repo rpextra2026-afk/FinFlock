@@ -88,21 +88,21 @@ def link(source: Path, target: Path) -> None:
 
 
 def build_tree(pack: Path, work: Path) -> Path:
-    root = work / "finfm-exp"
+    root = work / "oryxis-exp"
     if root.exists():
         shutil.rmtree(root)
     shutil.copytree(pack / "code", root)
-    market = root / "dataset" / "finfm-market"
+    market = root / "dataset" / "oryxis-market"
     market.mkdir(parents=True)
     for name in MARKET_COPIED:
         shutil.copyfile(pack / "market" / name, market / name)
     for name in MARKET_LINKED:
         link(pack / "market" / name, market / name)
-    upload = pack / "finfm-upload"
+    upload = pack / "oryxis-upload"
     for name in ("links.parquet", "aliases.parquet"):
         link(upload / name, market / name)
     link(upload / "prestaged", market / "prestaged")
-    link(upload, root / "dataset" / "finfm-upload")
+    link(upload, root / "dataset" / "oryxis-upload")
     shutil.copyfile(pack / "french" / "ff_factors_daily.parquet", market / "factors_daily.parquet")  # same table; run_cpu expects this name
     (root / "store" / "raw").mkdir(parents=True)
     link(pack / "french", root / "store" / "raw" / "french")
@@ -141,9 +141,9 @@ def validate(pack: Path, root: Path, report: dict) -> bool:
     ok = not bad and manifest["bucket"] == BUCKET and LLM in manifest.get("llms", [manifest["llm"]])  # a reader2 pack carries every LLM of its bucket
     sys.path.insert(0, str(root))
     os.chdir(root)
-    from finfm.common.config import load_config
-    from finfm.reader.salvage import config_for_mode, prepare_reader_tape, verify_alignment
-    from finfm.real.tapes import TapeError, is_reader_v2, load_reader_tape, load_tape
+    from oryxis.common.config import load_config
+    from oryxis.reader.salvage import config_for_mode, prepare_reader_tape, verify_alignment
+    from oryxis.real.tapes import TapeError, is_reader_v2, load_reader_tape, load_tape
 
     cfg = load_config(root / "config")
     reader, used = load_reader_tape(cfg, root, BUCKET, LLM)
@@ -154,10 +154,10 @@ def validate(pack: Path, root: Path, report: dict) -> bool:
         if not v2:
             raise
         personas = pd.DataFrame()  # a reader2 pack carries no persona answers: the sheaf stage (part 1) uses none
-    units = pd.read_parquet(root / "dataset" / "finfm-market" / "prestaged" / f"reader-{BUCKET}" / "units.parquet")
+    units = pd.read_parquet(root / "dataset" / "oryxis-market" / "prestaged" / f"reader-{BUCKET}" / "units.parquet")
     pins_json = dict(zip(units["unit_id"], units["pins_json"], strict=True))
     alignment = verify_alignment(reader, pins_json, cfg)
-    events = pd.read_parquet(root / "dataset" / "finfm-market" / "prestaged" / f"personas-{BUCKET}" / "events.parquet")
+    events = pd.read_parquet(root / "dataset" / "oryxis-market" / "prestaged" / f"personas-{BUCKET}" / "events.parquet")
     report["tapes"] = {"reader": "reader2" if v2 else "reader", "reader_rows": len(reader), "reader_bundles": [p.name for p in used], "persona_rows": len(personas),
                        "persona_events_with_answers": int(personas["event_id"].nunique()) if "event_id" in personas else None}
     report["alignment"] = {k: v for k, v in alignment.items() if k != "examples"}
@@ -165,7 +165,7 @@ def validate(pack: Path, root: Path, report: dict) -> bool:
     report["framework_events"] = {"events": len(events), "in_reader_tape": int(in_tape.sum()),
                                   "with_persona_answers": int(events["event_id"].isin(personas["event_id"]).sum()) if "event_id" in personas else None}
     if (BUCKET, LLM) in PARTIAL_BY_DESIGN:  # a half-sample run: every event of the shared half must be on the tape and no other event may be
-        from finfm.data.buckets.events import hash_bucket
+        from oryxis.data.buckets.events import hash_bucket
 
         expected = events["event_id"].map(hash_bucket) < SHARED_HALF_BUCKETS
         report["framework_events"].update({"partial_by_design": True, "expected_shared_half": int(expected.sum()),
@@ -204,7 +204,7 @@ def validate(pack: Path, root: Path, report: dict) -> bool:
 
 
 def validate_inputs(report: dict, ok: bool, cfg, root: Path, pd) -> bool:
-    market = root / "dataset" / "finfm-market"
+    market = root / "dataset" / "oryxis-market"
     px = pd.read_parquet(market / "px_daily.parquet", columns=["security_id"])
     needs = {"f13_managers.parquet": (market / "f13_managers.parquet").exists(),
              "factors_daily.parquet": (market / "factors_daily.parquet").exists(), "links.parquet": (market / "links.parquet").exists(),
@@ -259,7 +259,7 @@ def main(argv=None) -> int:
                     continue
                 out = work / "results" / f"road1-{BUCKET}-{LLM}-{mode}{'-nosheaf' if args.no_sheaf else ''}"
                 codes[f"road1_{mode}"] = run([sys.executable, "scripts/run_road1.py", BUCKET, LLM, str(pack / "tapes" / f"reader-{BUCKET}-{LLM}"), "--reader-mode", mode, "--out", str(out), *(["--no-sheaf"] if args.no_sheaf else [])], root, work / f"road1_{mode}.log")
-                if codes[f"road1_{mode}"] == 0 and not os.environ.get("FINFM_FIT_SHARD"):  # a shard writes no tables: there is nothing to validate
+                if codes[f"road1_{mode}"] == 0 and not os.environ.get("ORYXIS_FIT_SHARD"):  # a shard writes no tables: there is nothing to validate
                     codes[f"validate_{mode}"] = run([sys.executable, "scripts/validate_road1_outputs.py", str(out), "--expect-oracle"], root, work / f"validate_{mode}.log")
     if args.stage == "sheaf":  # part 1 of the framework: only the dial maps and the sheaf; needs no 13F, no VXF, no game inputs
         if not report["validation_passed"]:

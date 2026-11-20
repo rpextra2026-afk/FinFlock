@@ -36,10 +36,10 @@ concurrent_sessions_per_account: 1   # [U]
 accelerator: null                    # [VERIFY] value of `kaggle kernels push --accelerator` that selects 2xT4; null = flag not passed
 config_dir_env: KAGGLE_CONFIG_DIR    # [VERIFY] how the CLI is pointed at one account's credentials folder
 owner: null                          # Kaggle username owning the kernels and datasets of one account (set per account)
-code_dataset_prefix: finfm-code      # private dataset holding finfm/ and config/ (name ends with the git hash)
-shard_dataset_prefix: finfm-shard
-bundle_dataset_prefix: finfm-bundle
-wheels_dataset: finfm-wheels         # optional offline wheels (vllm etc.) if sessions have no internet
+code_dataset_prefix: oryxis-code      # private dataset holding oryxis/ and config/ (name ends with the git hash)
+shard_dataset_prefix: oryxis-shard
+bundle_dataset_prefix: oryxis-bundle
+wheels_dataset: oryxis-wheels         # optional offline wheels (vllm etc.) if sessions have no internet
 kernel_main: kernel_main.py
 enable_internet: false
 poll_seconds: 60

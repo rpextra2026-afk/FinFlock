@@ -8,24 +8,24 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from finfm.common.schema import PARSE_OK, REASON, STATUS, UNIT_ID, Reason, Status
-from finfm.compute.engine import MockEngine
-from finfm.personas.bios import (
+from oryxis.common.schema import PARSE_OK, REASON, STATUS, UNIT_ID, Reason, Status
+from oryxis.compute.engine import MockEngine
+from oryxis.personas.bios import (
     BioProcessor,
     bio_cache_key,
     bio_prompt,
     skeleton_facts,
     template_bio,
 )
-from finfm.personas.careers import load_career_grid, retail_career_sequence
-from finfm.personas.clusters import (
+from oryxis.personas.careers import load_career_grid, retail_career_sequence
+from oryxis.personas.clusters import (
     aggregate_clusters,
     align_labels,
     cluster_managers,
     features,
     fit_feature_space,
 )
-from finfm.personas.feed import (
+from oryxis.personas.feed import (
     NewsItem,
     PersonaProfile,
     access_granted,
@@ -34,8 +34,8 @@ from finfm.personas.feed import (
     reliability_tag,
     understanding,
 )
-from finfm.personas.mock import persona_responder
-from finfm.personas.postprocess import (
+from oryxis.personas.mock import persona_responder
+from oryxis.personas.postprocess import (
     aggregate_draws,
     emotion_variables,
     persona_dispersion,
@@ -43,27 +43,27 @@ from finfm.personas.postprocess import (
     running_lean,
     type_belief,
 )
-from finfm.personas.prompt import (
+from oryxis.personas.prompt import (
     ShownAsset,
     asset_line,
     build_persona_prompt,
     parse_answer,
     select_assets,
 )
-from finfm.personas.run import (
+from oryxis.personas.run import (
     DRAWS_JSON,
     EventPayload,
     PersonaProcessor,
     PersonaState,
     unit_id,
 )
-from finfm.personas.skeletons import (
+from oryxis.personas.skeletons import (
     default_panel,
     institutional_skeletons,
     retail_basket,
     retail_skeletons,
 )
-from finfm.personas.state import (
+from oryxis.personas.state import (
     institution_history,
     portfolio_state,
     retail_history,
@@ -72,7 +72,7 @@ from finfm.personas.state import (
     window_return,
     within_type_percentile,
 )
-from finfm.reader.prompt import WhitespaceTokenizer
+from oryxis.reader.prompt import WhitespaceTokenizer
 from tests.conftest import CONFIG_DIR
 
 SEED = 20261029

@@ -13,7 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from finfm.build.run import run_all  # noqa: E402
+from oryxis.build.run import run_all  # noqa: E402
 
 
 def log(message: str) -> None:

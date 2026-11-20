@@ -6,8 +6,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from finfm.build import metrics as m
-from finfm.common.config import load_config
+from oryxis.build import metrics as m
+from oryxis.common.config import load_config
 
 from tests.conftest import CONFIG_DIR
 

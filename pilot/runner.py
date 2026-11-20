@@ -17,18 +17,18 @@ from datetime import datetime, timezone
 import pandas as pd
 import yaml
 
-from finfm.common.config import Config
-from finfm.common.schema import UNIT_ID, AVAILABLE_DATE, KIND, PINS_JSON, TITLE, TEXT
-from finfm.compute.bundle import read_consolidated, scan_bundles
-from finfm.compute.engine import GenParams, GenRequest
-from finfm.reader.cause_scores import score_distribution
-from finfm.reader.hits_v2 import HitResolver
-from finfm.reader.masking import MaskerCache
-from finfm.reader.output_v2 import LINK_TYPES, FLAG_NAMES, parse_reading_v2, reader_v2_json_schema
-from finfm.reader.prompt import ref_to_node_of
-from finfm.reader.run import ReaderProcessor
-from finfm.reader.salvage import reparse_with_salvage
-from finfm.data.names import drop_generic_aliases
+from oryxis.common.config import Config
+from oryxis.common.schema import UNIT_ID, AVAILABLE_DATE, KIND, PINS_JSON, TITLE, TEXT
+from oryxis.compute.bundle import read_consolidated, scan_bundles
+from oryxis.compute.engine import GenParams, GenRequest
+from oryxis.reader.cause_scores import score_distribution
+from oryxis.reader.hits_v2 import HitResolver
+from oryxis.reader.masking import MaskerCache
+from oryxis.reader.output_v2 import LINK_TYPES, FLAG_NAMES, parse_reading_v2, reader_v2_json_schema
+from oryxis.reader.prompt import ref_to_node_of
+from oryxis.reader.run import ReaderProcessor
+from oryxis.reader.salvage import reparse_with_salvage
+from oryxis.data.names import drop_generic_aliases
 from pilot.report import atomic_text, write_report
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -204,7 +204,7 @@ class MetricsPulse:
 def model_path(cfg, settings, explicit=None):
     if explicit:
         return explicit
-    from finfm.compute.session import find_weights
+    from oryxis.compute.session import find_weights
     key = settings['llm']
     weights_root = Path(os.environ.get(str(cfg.get('engine.weights_root_env')),str(cfg.get('engine.local_weights_root'))))
     found = find_weights(weights_root,cfg.get(f'engine.models.{key}.weights_match')) if weights_root.exists() else None
@@ -257,7 +257,7 @@ def execute(cfg, settings, out, state, deadline, engine_factory=None, explicit_m
         state['table_columns'] = {'units':list(units.columns),'aliases':list(aliases.columns),'snapshots':list(snapshots.columns)}
         old, state['old_tape'] = load_old_tape(ROOT/settings['old_tape'])
         if len(old):
-            from finfm.reader.salvage import verify_alignment
+            from oryxis.reader.salvage import verify_alignment
             state['old_tape_alignment'] = verify_alignment(old,dict(zip(units[UNIT_ID],units[PINS_JSON])),cfg,expected_units=len(units))
             if state['old_tape_alignment']['pin_count_mismatches'] or state['old_tape_alignment']['node_id_mismatches']:
                 raise ValueError('old_tape_unit_table_mismatch')
@@ -465,7 +465,7 @@ def main(argv=None):
     if out.exists() and any(out.iterdir()):
         parser.error('output directory is nonempty; choose --out for a new run')
     out.mkdir(parents=True,exist_ok=True)
-    started=float(os.environ.get('FINFM_PILOT_STARTED',time.monotonic()))
+    started=float(os.environ.get('ORYXIS_PILOT_STARTED',time.monotonic()))
     deadline=started+max_minutes*60-settings['final_write_reserve_seconds']
     state={'started_utc':utc(),'partial':True,'stage':'preflight','cut_steps':[], 'config_hash':cfg.hash,
         'settings_sha256':hashlib.sha256(args.settings.read_bytes()).hexdigest(), 'settings':settings,
@@ -475,9 +475,9 @@ def main(argv=None):
         state['git_hash']=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
         state['git_working_tree_clean']=not bool(subprocess.check_output(['git','status','--porcelain'],cwd=ROOT,text=True).strip())
     except subprocess.SubprocessError:
-        state['git_hash']=os.environ.get('FINFM_PILOT_BUILD_GIT_HASH')
+        state['git_hash']=os.environ.get('ORYXIS_PILOT_BUILD_GIT_HASH')
         state['git_working_tree_clean']=False
-    state['source_archive_sha256']=os.environ.get('FINFM_PILOT_ARCHIVE_SHA256')
+    state['source_archive_sha256']=os.environ.get('ORYXIS_PILOT_ARCHIVE_SHA256')
     for name in ('tape_v2','tape_baseline','cause_scores'):save_frame(out,name,[],cfg)
     try:
         state['gpus']=gpu_preflight(str(settings.get('gpu_model','A30')))

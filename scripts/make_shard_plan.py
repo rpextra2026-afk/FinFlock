@@ -3,7 +3,7 @@
   python3 scripts/make_shard_plan.py reader db1 llm2 --bundles ../outputs --first-shard 4 --n-shards 5
   python3 scripts/make_shard_plan.py reader db3 llm2 --first-shard 0 --n-shards 13      # a fresh run: nothing finished yet
 
-The plan lands in finfm/compute/shard_plans/<job>__<bucket>__<llm>.json and travels inside the notebook's code archive.
+The plan lands in oryxis/compute/shard_plans/<job>__<bucket>__<llm>.json and travels inside the notebook's code archive.
 Shard numbers start at ``--first-shard`` (one number per account). Re-run it only before any account has started the new shards:
 the cut depends on which units count as finished.
 """
@@ -20,10 +20,10 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from finfm.common.schema import STATUS, TERMINAL_STATUSES, UNIT_ID  # noqa: E402
-from finfm.compute.bundle import make_job_id, read_consolidated, scan_bundles, unit_state  # noqa: E402
-from finfm.common.config import load_config  # noqa: E402
-from finfm.compute.shard import PLAN_DIR, units_fingerprint  # noqa: E402
+from oryxis.common.schema import STATUS, TERMINAL_STATUSES, UNIT_ID  # noqa: E402
+from oryxis.compute.bundle import make_job_id, read_consolidated, scan_bundles, unit_state  # noqa: E402
+from oryxis.common.config import load_config  # noqa: E402
+from oryxis.compute.shard import PLAN_DIR, units_fingerprint  # noqa: E402
 
 
 def main(argv=None) -> int:
@@ -32,7 +32,7 @@ def main(argv=None) -> int:
     parser.add_argument("bucket")
     parser.add_argument("llm")
     parser.add_argument("--bundles", default=None, help="folder with the finished bundles of this run (omit for a fresh run)")
-    parser.add_argument("--units", help="prestaged units.parquet (default: dataset/finfm-upload/prestaged/<job>-<bucket>)")
+    parser.add_argument("--units", help="prestaged units.parquet (default: dataset/oryxis-upload/prestaged/<job>-<bucket>)")
     parser.add_argument("--first-shard", type=int, required=True)
     parser.add_argument("--n-shards", type=int, default=None)
     parser.add_argument("--part", nargs=3, type=int, action="append", metavar=("HASH_FROM", "HASH_BELOW", "N_SHARDS"), default=[],
@@ -41,7 +41,7 @@ def main(argv=None) -> int:
                         help="also make one extra shard of the finished units whose answer did not parse (a rerun with the fixed prompt)")
     args = parser.parse_args(argv)
     job_id = make_job_id(args.job, args.bucket, args.llm)
-    units_path = Path(args.units) if args.units else ROOT / "dataset" / "finfm-upload" / "prestaged" / f"{args.job}-{args.bucket}" / "units.parquet"
+    units_path = Path(args.units) if args.units else ROOT / "dataset" / "oryxis-upload" / "prestaged" / f"{args.job}-{args.bucket}" / "units.parquet"
     units = set(pd.read_parquet(units_path)[UNIT_ID].astype(str))
     done: list[str] = []
     if args.bundles:

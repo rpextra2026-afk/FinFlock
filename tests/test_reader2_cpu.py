@@ -3,9 +3,9 @@ import json
 
 import pandas as pd
 
-from finfm.common.config import load_config
-from finfm.reader.salvage import config_for_mode, prepare_reader_tape
-from finfm.real.tapes import is_reader_v2
+from oryxis.common.config import load_config
+from oryxis.reader.salvage import config_for_mode, prepare_reader_tape
+from oryxis.real.tapes import is_reader_v2
 
 
 def test_reader2_tape_is_used_as_stored_and_not_reparsed():
