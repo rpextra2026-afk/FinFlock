@@ -1,0 +1,18 @@
+# Labels: FUTURE outcomes, never visible to signal code (spec 3.8). Read only by fit_* and eval modules.
+windows:                               # [DOC] session offsets from day 0, inclusive
+  d0: [0, 0]
+  d01: [0, 1]
+  d12: [1, 2]
+  d15: [1, 5]
+  d310: [3, 10]
+beta_window_sessions: 252              # [DOC]
+beta_gap_sessions: 10                  # [DOC] the estimation window ends this many sessions before day 0
+min_beta_obs: 120                      # [DEFAULT] fewer usable days give no label
+vol_window: [1, 5]                     # [DOC] days of the event volatility
+dv_window: [0, 5]                      # [DOC] days of the event dollar volume
+baseline_sessions: 60                  # [DOC] baseline ending day -1, excluding event windows
+event_window_exclusion: [0, 10]        # sessions around each event of the same asset kept out of estimation
+car_standardise: sqrt_n                # sqrt_n: CAR / (sigma sqrt(days)); none: CAR / sigma
+factors: [mkt_rf, smb, hml, rmw, cma, mom]
+market_only_factors: [mkt_rf]          # ETF context nodes: residual against the market only
+gk_ln2_term: 0.38629436111989063       # 2 ln 2 - 1 of the Garman-Klass estimator

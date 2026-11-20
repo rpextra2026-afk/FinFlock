@@ -1,0 +1,8 @@
+# Day-0 smoke test (spec 2.7): measures what the budget and the session limits depend on.
+nan_prompts: 200                       # [DOC] prompts in the fp16 overflow gate
+throughput_prompts: 500                # [DOC] real prompts per job type
+min_spearman: 0.95                     # [DEFAULT] quantised vs fp16 agreement, numeric fields
+min_agreement: 0.95                    # [DEFAULT] quantised vs fp16 agreement, categorical fields
+qat_events: 2000                       # [DOC]
+max_nan_share: 0.0                     # any suspect output fails the fp16 gate
+decode_probe_tokens: 1                 # a one-token generation isolates prefill time

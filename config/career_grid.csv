@@ -1,0 +1,13 @@
+career_id,career,literacy,domain
+1,retired teacher,low,general
+2,nurse / healthcare worker,low,health
+3,bartender / service worker,low,general
+4,small-business owner,medium,general
+5,oil-field engineer,medium,energy
+6,software developer who day-trades,medium,technology
+7,defence-contractor employee,medium,defence
+8,bank teller / accountant,medium,banking
+9,CFA charterholder / financial adviser,high,general
+10,energy-sector analyst,high,energy
+11,biotech / healthcare analyst,high,health
+12,technology-sector analyst,high,technology

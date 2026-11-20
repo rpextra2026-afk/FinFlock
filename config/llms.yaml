@@ -1,0 +1,16 @@
+# Owner numbering (experiment configuration). llm2 is the primary LLM (bio writer, P0 mini-tape, headline cell).
+primary: llm2
+models:
+  llm1:
+    name: gemma
+    hf_id: google/gemma-4-12B-it
+    stated_cutoff: 2025-01      # [DOC] model card
+  llm2:
+    name: olmo
+    hf_id: allenai/Olmo-3-7B-Instruct
+    stated_cutoff: 2024-12      # [DOC] model card
+  llm3:
+    name: llama
+    hf_id: meta-llama/Llama-3.1-8B-Instruct
+    stated_cutoff: 2023-12      # [DOC] model card
+rival_llm: llm2                 # [OWNER] rivals run on Olmo only

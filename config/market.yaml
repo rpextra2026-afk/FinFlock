@@ -1,0 +1,21 @@
+# Market data, adjustments and universe rules (spec Part 3.2-3.3, finfm-data-requirements.md).
+history_start: 2012-01-01              # [DOC] 252-day warm-up before the first events
+vendor: csv                            # PriceSource key: csv | yfinance | crsp_csv (vendor terms are a VERIFY item)
+second_vendor: null                    # cross-check source on a hashed share of securities
+second_vendor_share: 0.05              # [DOC]
+volume_is_split_adjusted: true         # [VERIFY] some vendors split-adjust volume retroactively; as-traded is rebuilt
+benchmarks: [SPY]                      # evaluation only
+return_clip: 1.0                       # |daily return| above this is logged as suspect, never clipped silently
+etf:
+  min_listing_sessions: 252            # [DEFAULT]
+  min_median_dv_usd: 5000000.0         # [DEFAULT]
+  dv_window_sessions: 60
+  exclude_name_tokens: [ULTRA, 2X, 3X, BEAR, SHORT, INVERSE]
+liquid_only:
+  min_price: 5.0                       # [DOC] robustness only, no screen by default
+  min_median_dv_usd: 1000000.0
+layers:
+  labels: [small, mid, large]          # terciles of market cap among members at each monthly rebalance
+mismatch_stop_share: 0.10              # [DOC] stop if more than this share of member-days is unmatched or disagrees
+cusip_unmatched_stop_share: 0.10       # [DOC]
+shares_cover_flag: [0.05, 1.20]        # sum of filers' shares / shares outstanding outside this range is flagged

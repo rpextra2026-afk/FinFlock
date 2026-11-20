@@ -1,0 +1,35 @@
+# Optimiser, costs, constraints and scoring (spec 9.2-9.4). Grids are tuned on dev only and frozen.
+gamma_grid: [5.0, 10.0, 25.0]            # [DOC] risk aversion
+cost_scale_grid: [0.5, 1.0, 2.0]         # [DOC] multiplies the optimiser's own cost matrix
+band_grid: [0.0, 0.5, 1.0]               # [DOC] band half-width multiplier (R-8, D21 Prop. 21.2)
+default: {gamma: 10.0, cost_scale: 1.0, band: 1.0}   # used until dev tuning writes freeze/portfolio.json
+horizon_sessions: 10                     # [DOC] T after the first fill
+overnight_share_default: 0.5             # psi, replaced by the dev measurement
+stationary: {tol: 1.0e-8, max_iter: 100000}   # tol is relative to the largest entry of A (the direct Riccati solve is exact to about 1e-10 of that)
+impact:
+  y: 1.0                                 # [DOC] impact constant Y
+  alpha_headline: 0.5                    # [DOC]
+  alpha_grid: [0.3333333333333333, 0.5, 1.0]
+  typical_trade_adv_share: 0.001         # [DEFAULT] Q_bar = 0.1% of ADV
+  adv_window_days: 60
+  vol_window_days: 60
+aum:
+  headline_usd: 100000000.0              # [DEFAULT] assumed; capacity shown at the levels below
+  capacity_levels_usd: [10000000.0, 100000000.0, 1000000000.0]
+constraints:
+  headline: {long_only: true, cap: 0.05, max_gross: 1.0}     # [DEFAULT] cash earns RF
+  long_short: {long_only: false, cap: 0.10, max_gross: 2.0}  # [DEFAULT] dollar-neutral sensitivity
+  projection_max_iter: 200
+  projection_tol: 1.0e-12
+scoring:
+  round_trip_bp_grid: [5.0, 10.0, 20.0]  # [DOC proposed; confirm]
+  round_trip_bp_grid_full: [0.0, 5.0, 10.0, 20.0, 30.0, 40.0]   # the full cost grid of the final table, 0 to 40 bp
+  headline_round_trip_bp: 10.0
+  cost_multipliers: [0.5, 1.0, 2.0, 4.0]
+  bp_to_fraction: 0.0001
+  short_borrow_stress_bp_per_year: 50.0
+vol_match:
+  target_annual_vol: 0.10                # [DOC]
+annualisation_days: 252
+delisting:
+  default_return: -0.30                  # [DEFAULT] shown with and without

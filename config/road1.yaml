@@ -1,0 +1,24 @@
+# Road 1: typed graph, weighted matrix ladder and sheaf (spec Part 8).
+link_types: [industry, rival, corr, owner, country, commodity, etf_member, supplier, customer]
+symmetric_types: [industry, rival, corr, owner]   # others are directed; symmetric types use tied maps
+dial_names: [ret, vol, volu]                      # return, log vol change, log volume change
+neighbours_per_type: 25                           # [DOC] per pinned node and link type
+max_nodes: 400                                    # [DOC] subgraph cap, truncation is logged
+grounding_lambda_grid: [0.01, 0.05, 0.2]          # [DOC] lambda > 0 always (A8)
+grounding_lambda_default: 0.05
+sheaf_penalty_grid: [0.1, 1.0, 10.0]              # [DOC] mu of the L2 penalty on Delta
+ridge_grid: [0.1, 1.0, 10.0]                      # [DOC] ridge of the matrix ladder
+optimiser:
+  lr: 0.01                                        # [DOC] Adam
+  max_steps: 2000                                 # [DOC]
+  patience: 100                                   # [DEFAULT] early stopping on the validation fold
+  batch_events: 64                                # [MEASURE]
+  eval_every: 10
+cv:
+  folds: 4                                        # [DOC] time-blocked
+  embargo_sessions: 5                             # [DOC]
+min_group_prob: 0.0                               # cause groups below this are skipped in the mixture
+dial_scale_floor: 1.0e-12
+bootstrap:
+  draws: 10000                                    # [DOC]
+confidence_level: 0.95

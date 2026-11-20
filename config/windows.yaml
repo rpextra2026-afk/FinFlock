@@ -1,0 +1,21 @@
+# Dev and test windows per databucket (experiment configuration C10: each bucket fits on its own dev years).
+# Dates are then snapped to the trading calendar by code. Splits are by time, never random.
+data_end: 2025-12-31                 # [DOC] no news or prices after this date
+calendar_embargo_trading_days: 5     # [DOC]
+headline_window: post_cutoff         # [OWNER, parked] post_cutoff | test_full
+buckets:
+  db1:
+    dev_start: 2017-01-01
+    dev_end: 2021-12-31
+    test_start: 2022-01-10
+    test_end: 2023-12-31
+  tessera:
+    dev_start: 2015-01-01
+    dev_end: 2023-12-31
+    test_start: 2024-01-09
+    test_end: 2025-12-31
+  db3:
+    dev_start: 2013-04-01
+    dev_end: 2018-12-31
+    test_start: 2019-01-09
+    test_end: 2020-12-31

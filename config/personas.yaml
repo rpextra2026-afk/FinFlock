@@ -1,0 +1,90 @@
+# Persona ladder, source matrices, feeds and prompts (spec Parts 5 and 6).
+types:                                   # [DEFAULT] LLM personas per type; market makers are the non-LLM liquidity L
+  retail: {count: 16}
+  mutual_pension: {count: 12}
+  hedge_fund: {count: 12}
+  bank_dealer: {count: 10}
+skeleton_max_personas: 100               # [DOC] the generator can produce up to this many for the P0 check
+literacy_values: {low: 0.3, medium: 0.6, high: 0.9}   # [DOC] spec 5.1
+domain_match: {match: 1.0, general: 0.8, mismatch: 0.7}
+general_domain: general
+institutional_literacy: high
+depth:                                   # [DOC] spec 5.1: understanding -> text depth
+  headline_only_below: 0.4
+  short_below: 0.7
+  short_tokens: 300
+  long_tokens: 1200
+trust_bins: [0.8, 0.6, 0.4, 0.2]         # [DOC] lower edges of very high / high / medium / low
+trust_labels: [very high, high, medium, low, rumour]
+context_items_max: 4                     # [DOC] spec 5.3
+context_hours: 24
+state_window_sessions: 63                # [DEFAULT] W
+draws: 3                                 # [DOC] n draws per request
+sampling: {temperature: 1.0, top_p: 0.95, top_k: 64, max_tokens: 80}
+answer: {scale_max: 10.0, value_bound: 30.0}   # [DOC] spec 6.9 fear/anger/calm/conviction 0-10, value change +/-30 percent
+pins_shown_max: 6                        # [DOC] refs A1..A6
+reserved_sp_slots: 3                     # [DEFAULT] spec 6.9 rev. final
+reserved_sp_trigger_below: 3             # reserve slots when fewer S&P members than this are pinned
+high_literacy_linked_max: 3              # [DOC] spec 6.6
+well_known_top_share: 0.20               # [DOC] top 20% by market cap are "well-known"
+lean:
+  window_answers: 500                    # [DOC] spec 6.10
+  min_gap_sessions: 5
+index_like:
+  passive_share: 0.5                     # clusters above this passive-adjacent share are index-like
+  mandate: 0.2
+retail:
+  budget_buckets_usd: [5000, 25000, 100000]
+  turnover_grid: [low, medium, high]
+  basket_size: 10
+  domain_share: 0.6                      # share of basket weight in the persona's domain sectors
+  extra_careers: [3, 6, 9, 1]            # careers repeated to reach 16 (spec 6.5)
+  trait_b: 0.0                           # [DEFAULT] sensitivity runs use -0.3 and +0.3
+  mandate: 0.8                           # [DEFAULT] retail has the most room to swing (spec 6.7)
+mandate_room_edges: [0.34, 0.67]         # mandate below / between / above -> little / some / wide room
+history:
+  top_sectors: 2                         # sectors named as added / trimmed in the last-trade sentence
+  min_change: 0.005                      # a sector weight change below this is not mentioned
+  retail_rotations: {low: none, medium: one, high: several}
+source_matrices:                         # [DEFAULT] spec 5.2, assumptions: no free source reveals an information diet
+  retail_low:
+    access: {finance: 0.35, geo: 0.40, social: 1.00}
+    trust: {finance: 0.45, geo: 0.40, social: 0.70}
+    latency_hours: {finance: 2, geo: 2, social: 0}
+  retail_medium:
+    access: {finance: 0.50, geo: 0.50, social: 1.00}
+    trust: {finance: 0.55, geo: 0.45, social: 0.60}
+    latency_hours: {finance: 2, geo: 2, social: 0}
+  retail_high:
+    access: {finance: 0.70, geo: 0.60, social: 1.00}
+    trust: {finance: 0.65, geo: 0.55, social: 0.45}
+    latency_hours: {finance: 1, geo: 1, social: 0}
+  mutual_pension:
+    access: {finance: 0.90, geo: 0.70, social: 0.10}
+    trust: {finance: 0.90, geo: 0.70, social: 0.20}
+    latency_hours: {finance: 12, geo: 12, social: 12}
+  hedge_fund:
+    access: {finance: 1.00, geo: 1.00, social: 0.70}
+    trust: {finance: 0.80, geo: 0.80, social: 0.50}
+    latency_hours: {finance: 0, geo: 0, social: 0.5}
+  bank_dealer:
+    access: {finance: 0.80, geo: 1.00, social: 0.10}
+    trust: {finance: 0.60, geo: 0.90, social: 0.10}
+    latency_hours: {finance: 1, geo: 0, social: 6}
+cluster:
+  n_pcs: 3                               # [DOC] spec 6.4: first principal components of the sector tilt
+  n_init: 10
+  feature_floor: 1.0e-12
+  speed_terciles: [slow, medium, fast]
+  size_terciles: [small, medium, large]
+locale: New York metro                   # narrative colour only, no effect in any formula
+panel:
+  lag_days: 46                           # a quarter's 13F filings are treated as known this many days after the quarter end (filing deadline 45 days)
+  min_managers_per_type: 20              # fewer active filers of a type in a quarter: the type has no institutional personas that quarter
+  asof_label: "{year}Q{quarter}"
+  key_separator: "@"                     # persona id inside a unit: <persona>@<quarter>, so each quarter's skeleton has its own key
+  cap_proxy_window_days: 60              # market-cap proxy = mean dollar volume over this many sessions (no shares-outstanding data)
+  default_uncovered_share: 0.5           # retail's share of each stock; no free source gives shares outstanding here (stated in the paper)
+  context_pool_hours: 24
+  reserve_candidates: 10                 # largest S&P 500 members (by the cap proxy) offered as reserve assets
+  links_per_pin: 3                       # SIC peers offered per pinned company

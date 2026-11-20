@@ -1,0 +1,46 @@
+# Reader settings (spec Part 4). Prompts live in prompts.yaml.
+max_pins: 6                    # [DOC] spec 4.2
+max_text_tokens: 1500          # [DOC] spec 4.2, title + first tokens of the text
+max_tokens: 1000               # [MEASURE] spec 4.1 says 450, but the model pretty-prints the 29-cause JSON and 112 of 256 answers were cut at 450 tokens
+temperature: 0.0               # [DOC] spec 4.1
+top_p: 1.0
+top_k: null
+value_effect_pct_bound: 30     # [DOC] spec 4.3, percent, symmetric
+magnitude_max: 5               # [DOC] spec 4.3
+empty_cause_fallback: other    # an answer whose cause values are all 0 puts all the weight here, flagged (cause_defaulted); it is not a failed parse
+cause_prob_tolerance: 0.02     # [DOC] spec 4.3, sums outside 1 +/- this are flagged then renormalised
+certainty_min: 0.0
+certainty_max: 1.0
+directions: [up, down, mixed, none]
+roles: [source, linked]
+scheduled_values: [scheduled, surprise, unknown]
+none_ref: none                 # [DOC] the reader may name an allowed ref or none
+ref_prefix: A                  # refs are A1 ... An
+masked_company_prefix: COMPANY_   # [DOC] spec 4.2, COMPANY_A, COMPANY_B ...
+non_sp_layer: non_sp           # layer label of context companies
+short_ticker_max_len: 2       # [DOC] spec 3.6/12.2, tickers this short are masked only as cashtags
+dials:
+  features: [causes, magnitude, abs_value_effect, certainty, kind, own_state, market_state, scheduled]   # blocks of the vol/volume design matrix (spec 4.5); own_state, market_state and scheduled are known before the event
+  state:                                 # the stock's own recent state and the market state, both ending on day -1
+    window_sessions: 20                  # trailing sessions of the stock's own vol and dollar volume
+    market_symbol: SPY                   # broad index for the C5 market state; the equal-weighted panel when it is absent
+    market_window_sessions: 20
+    market_bins: 3                       # terciles of the market's trailing vol and dollar volume (gate C5), ranked against earlier history only
+    market_min_history: 60               # sessions of history before a tercile is defined
+  arms: [ridge, lgbm]                    # both arms count in the configuration count; ridge is the floor
+  lgbm:                                  # optional tree arm under the same time-blocked CV and a grid of the same size as the ridge grid
+    enabled: false                       # needs the lightgbm package; off until the owner turns it on
+    grid:
+      - {num_leaves: 4, learning_rate: 0.05, n_estimators: 100, min_child_samples: 50}
+      - {num_leaves: 8, learning_rate: 0.05, n_estimators: 100, min_child_samples: 50}
+      - {num_leaves: 16, learning_rate: 0.05, n_estimators: 100, min_child_samples: 100}
+    seed: 20261029
+  ridge_grid: [0.1, 1.0, 10.0]           # [DOC] spec 4.5, 4-fold time-blocked CV with a 5-day embargo
+  cv_folds: 4
+  embargo_sessions: 5
+  value_scale_pct: 100.0                 # value_effect_pct / 100 = log-value units
+  node_classes: [small, mid, large, etf, borrowed]   # S&P layers, ETF context pooled, context companies borrow the small map
+  borrowed_from: small
+  min_rows_per_class: 30                 # fewer rows -> the class borrows the pooled map
+calibration:
+  ece_bins: 10                           # [DOC] equal-mass bins

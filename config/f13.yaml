@@ -1,0 +1,35 @@
+# SEC Form 13F data sets (spec 3.4). Column and file names are VERIFY items: a wrong guess is a config edit.
+files:
+  submission: SUBMISSION.tsv
+  coverpage: COVERPAGE.tsv
+  infotable: INFOTABLE.tsv
+columns:
+  accession: ACCESSION_NUMBER
+  filing_date: FILING_DATE
+  submission_type: SUBMISSIONTYPE
+  cik: CIK
+  period: PERIODOFREPORT
+  infotable_sk: INFOTABLE_SK
+  issuer: NAMEOFISSUER
+  title_of_class: TITLEOFCLASS
+  cusip: CUSIP
+  figi: FIGI
+  value: VALUE
+  shares: SSHPRNAMT
+  sh_prn: SSHPRNAMTTYPE
+  putcall: PUTCALL
+  discretion: INVESTMENTDISCRETION
+date_format: "%d-%b-%Y"
+original_types: [13F-HR]               # [DOC] original reports only; amendments and notices are logged and skipped
+share_type: SH                         # [DOC] non-SH rows are dropped
+unit_factors: [1, 1000]                # [DOC] VALUE is in dollars or thousands; chosen per row by implied price
+first_reliable_period: 2013-09-30      # [DOC] the 2013 Q2 file is anomalously small: Q3 is the first reliable quarter
+combination_rule: none                 # none | dedupe_identical [VERIFY against the readme before relying on either]
+name_match:
+  threshold: 0.90                      # [DEFAULT] similarity at or above which a name pair is accepted
+  min_filers_per_quarter: 200          # [DOC] stocks need at least this many filers per quarter
+  suffixes: [INC, CORP, CORPORATION, CO, COMPANY, LTD, LIMITED, PLC, LLC, LP, HOLDINGS, HLDGS, GROUP, GRP, CL, CLASS, COM, NEW, THE, DEL, ORD, SHS]
+uncovered_share:
+  floor: 0.0
+  cap: 0.95                            # [DOC] u = clip(1 - held / outstanding, 0, 0.95)
+  flag_range: [0.05, 1.20]             # [DOC] raw held / outstanding outside this range is flagged

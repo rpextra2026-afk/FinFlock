@@ -1,0 +1,38 @@
+# Fixed cause list of the reader (spec 4.3, 29 entries) and the six cause groups of road 1 (spec 8.1).
+causes:
+  - earnings_beat
+  - earnings_miss
+  - guidance_up
+  - guidance_down
+  - mna_target
+  - mna_acquirer
+  - financing_dilutive
+  - debt_distress
+  - bankruptcy
+  - restructuring_layoffs
+  - leadership_change
+  - governance_activism
+  - legal_adverse
+  - legal_favorable
+  - contract_win
+  - product_failure_recall
+  - cyber_incident
+  - tariff_trade_restriction
+  - sanction_new
+  - sanction_relief
+  - monetary_hawkish
+  - monetary_dovish
+  - conflict_escalation
+  - conflict_deescalation
+  - supply_disruption
+  - commodity_supply_shock
+  - macro_data_surprise
+  - natural_disaster
+  - other
+groups:
+  earnings_guidance: [earnings_beat, earnings_miss, guidance_up, guidance_down]
+  corporate_actions: [mna_target, mna_acquirer, financing_dilutive, restructuring_layoffs, leadership_change, governance_activism]
+  legal_distress: [legal_adverse, legal_favorable, debt_distress, bankruptcy, contract_win, product_failure_recall, cyber_incident]
+  trade_sanctions: [tariff_trade_restriction, sanction_new, sanction_relief]
+  monetary_macro: [monetary_hawkish, monetary_dovish, macro_data_surprise]
+  geo_supply_other: [conflict_escalation, conflict_deescalation, supply_disruption, commodity_supply_shock, natural_disaster, other]

@@ -1,0 +1,18 @@
+# Paired comparison of separately run methods (floors, rivals, our framework) on one bucket. Built AFTER the runs, from their stored daily series.
+# [OWNER 2026-11-11] "comparison" never means one joint run: every method may be run on its own, in any order and on any account, as long as the code
+# version, config hash, LLM (llm2), bucket and scoring rules are the same. This builder checks that stamp and says so in the output.
+cost: rt10bp                           # the headline cost of the paired series (portfolio.scoring.headline_round_trip_bp)
+fill: open
+windows: [dev, test_full, in_cutoff, post_cutoff]
+metrics_costs: [gross, rt5bp, rt10bp, rt20bp]
+headline:                              # which series of each scorer is compared (the scorer's own headline variant and set, fixed in cpu.yaml)
+  basic: {file_prefix: pnl_llt, variant: headline_daily_full, set: headline}
+  finripple: {file_prefix: pnl_finripple, variant: top10_mean, set: all}
+  mass: {file_prefix: pnl_mass, variant: paper, set: null}
+summary_files: {basic: summary_llt.csv, finripple: summary_finripple.csv, mass: summary_mass.csv}
+ours:                                  # our framework's daily net series, one file per bucket (columns: fill_date, window, net); optional
+  file_pattern: "ours_{bucket}_daily.parquet"
+  label: framework
+vol_target_annual: 0.10                # series are also shown scaled to this annual volatility (Sharpe is unchanged by scaling; returns are not)
+stamp_keys: [config_hash, code_version, llm, bucket]
+bootstrap_seed_label: comparison

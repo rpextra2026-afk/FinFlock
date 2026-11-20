@@ -1,0 +1,81 @@
+# Glue between tapes and the optimiser (spec 7.5, 9.1, 9.2). Fitted scalars are frozen before the test.
+variant: both                          # road1 | road2 | both | none
+road1_arm: pooled_sheaf                # pooled_sheaf = the final build's sheaf (one rule per link type, pooled across causes). The old cause-split arms (sheaf | wgraph | wmatrix) are switched on by naming them here
+road1_arm_legacy: sheaf                # arm that reader modes WITHOUT clean_tape (the old modes) use, so old runs reproduce their old numbers
+day0_move: raw                         # observed day-0 move read by the game: raw log close-to-close return
+common_phi: null                       # decay of the road-1-only path; null = mean baseline phi of the fund types
+dial_weights: {w_a: 1.0, w_b: 1.0}     # the "current OLS rule" (legacy "both" variant), kept for the merge comparison only; the headline is the merge below
+merge:                                 # Lead, Correct, Brake (spec 9.1): final = road 1 + trust * road 2's correction
+  rule: null                           # null = chosen on dev by out-of-sample loss among `candidates`; or one of plain_sum | half_average | lcb | cautious
+  candidates: [plain_sum, half_average, lcb]   # the plain sum must always be in the race (forecast-combination puzzle)
+  horizons: [[1, 1], [2, 3], [4, 10]]  # trust is fitted separately for day 1, days 2-3, days 4-10
+  trust_features: [multi_pin, inst_share, link_strength, persona_spread]   # at most 4, all known before the event; kept only if a Giacomini-White test on dev supports them
+  trust_range: [0.0, 2.0]              # trust is clipped to this range
+  ridge_grid: [0.1, 1.0, 10.0]         # ridge shrinks the trust model toward trust = 1 (the plain sum); chosen by time-blocked CV
+  slope_ridge: 1.0e-8                  # tiny ridge of the correction slope fitted on road 1's leftover error
+  cv_folds: 4                          # time-blocked cross-fitting and CV
+  embargo_sessions: 5
+  gw_alpha: 0.10                       # a trust feature is kept when its Giacomini-White p-value on dev is below this
+  gw_lag: 5                            # Newey-West lag of the test
+  min_rows: 200                        # fewer dev rows in a horizon bucket -> that bucket keeps trust 1 (plain sum)
+  agreement_levels: 3                  # terciles of the road disagreement in the results table
+brake:                                 # disagreement between road 1 and road 2 (spec 9.1, 9.2); three versions, one pre-registered from dev
+  candidates: [variance_add, cautious_band, abstain]   # compared on dev under the same budget; the choice is pre-registered before test
+  variant: variance_add                # variance_add | cautious_band | abstain | none (placeholder until the dev comparison chooses)
+  disagreement_floor: 1.0e-8           # avoids dividing by a zero signal
+  variance_scale: 1.0                  # multiplier of the pooled forecast variance added on the covariance diagonal
+  band: {mode: soft, kappa: 1.0}       # soft: shrink toward zero by kappa * gap; min: trade the smaller forecast, zero if the signs differ
+  abstain_quantile: 0.9                # abstain above this quantile of the dev disagreement
+  confidence_weight: 0.0               # confidence *= 1 - weight * mean gap; grid {0, 0.5, 1} on dev with the brake choice
+adaptive_trust:                        # dynamic-model-averaging arm; OFF: needs an owner decision (it conflicts with the freeze rule)
+  enabled: false
+  forgetting: 0.98                     # 0.97-0.995 if the owner enables it
+vol_b: {kappa_dispersion: 0.0, kappa_fear: 0.0}   # r_sigma^B = k1 D_persona + k2 |FA|, fitted on dev
+covariance:
+  shrink_to_rolling: 0.5               # lambda_s in {0.5, 0.8}, tuned on dev
+  eigenvalue_floor: 1.0e-8
+overnight_share: null                  # psi; null = portfolio.overnight_share_default until measured on dev
+min_confidence: 0.0
+rolling_window_sessions: 252
+min_return_coverage: 0.8           # a stock needs this share of non-missing returns in the covariance window
+return_weight_days: 5                  # days 1..this of the cumulative components enter the dev regression for (w_a, w_b)
+pooled:                                # the pooled-sheaf road 1 (finfm/framework/road1_pooled.py)
+  sheaf_pin_scale: 100.0               # the build feeds pins to the sheaf as size_pct x weight (percent); framework dials are fractions, so they are multiplied by this before the graph
+  label_ret_to_fraction: 0.01          # the sheaf's return label (abnormal return) and its pins are in percent; the framework works in fractions, so free-node returns are multiplied by this
+  label_ret_scale_min: 0.2             # the fitted scale of the return label must be at least this (percent units); a smaller scale means the labels are fractions and the run stops
+  pin_map_min_rows: 200                # dev pins needed to fit the pinned-node vol and volume maps; fewer: the map is zero
+  pin_map_ridge: 1.0e-8                # tiny ridge of those two one-variable maps
+world_lane:                            # the every-day market-level volatility lane (finfm/build/world.py) entering the covariance and the cost step
+  enabled: true                        # ONE switch: false = no market-level shift anywhere
+  targets: [vol, volu]                 # vol shifts the covariance and the cost multiplier; volu shifts the cost multiplier only
+  clip_log_vol: 0.5                    # the market-level log-volatility shift is clipped to +-this
+  clip_log_volu: 0.5
+  version: every_day                   # every_day | burst_only (build.world versions); the headline uses every day
+final:                                 # the framework stage on the cleaned tapes (finfm/framework/final_run.py)
+  headline_set: long_short               # THE headline: market-neutral (long-short, portfolio.constraints.long_short), reported first and recorded in FREEZE_FRAMEWORK.json
+  second_set: headline                   # long-only with the 5% cap (portfolio.constraints.headline): computed and reported in full as the second table; nothing is dropped
+  headline_sets: [long_short, headline]  # both sets are run, at the same risk target (portfolio.vol_match), with every table for each
+  delisting_rules: [delist_0, delist_default]   # return of a delisted holding: 0, and portfolio.delisting.default_return
+  freeze_file: FREEZE_FRAMEWORK.json
+  events_file: events_test.parquet
+  days_file: days_test.parquet
+  dev_fit_file: dev_fit.pkl
+  results_dir: framework-final
+  variants_equal_terms: [road1, road2, both, merged]
+  rivals_dir: rivals                    # <out>/rivals/<name>.parquet (decision_date, security_id, score) from each rival's scorer; run through the same optimiser, risk target, days and costs
+sealed:                                # the open-once test stage (finfm/framework/sealed.py): same code, the sealed window as the test window
+  runs: [tessera-llm1, tessera-llm2, tessera-llm3]
+  start: 2024-01-01
+  end: 2025-12-31
+  results_dir: framework-sealed
+  lock_file: SEALED_OPENED.json
+calibration:                           # the road-2 volume dial, one scale and one shift per tape, fitted on the fit window only (finfm/framework/calibration.py); counted once in the tuning budget
+  enabled: true                        # the off switch: false = the raw dial (the ablation reports raw against calibrated)
+  folds: 5                             # contiguous time blocks of the fit-window events
+  embargo_days: 10                     # events this close (calendar days) to a validation block are left out of the fit that is tested on it
+  max_scale: 1.0                       # shrink only: the scale is clipped to [0, this]
+  assets_per_event: 60                 # random sample of assets per fit-window event (fixed seed per event)
+  dir: outputs/final-build/calibration # <dir>/volu_calibration_<run>.json, hashed into FREEZE_FRAMEWORK.json
+figure_data:                           # the numbers behind the paper's figures, written to <results>/figure_data/ (no result and no fit depends on them)
+  max_dev_graphs: 1500                 # sheaf ripple sizes use at most this many dev graphs (evenly strided)
+  pairs_per_event: 60                  # dial pairs kept per event

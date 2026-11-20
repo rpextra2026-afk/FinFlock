@@ -1,0 +1,6 @@
+# Values measured on real GPUs override the provisional defaults in the other files.
+# Keys are dotted paths that must already exist.
+# db1 + llm2 on Kaggle 2 x T4 (2026-11-01): reader 6.2 s and personas 1.25 s per planned unit (skipped units included); the values below add
+# about 8% so a shard rarely overruns the 9 h 45 min cutoff. Replace them after the Day-0 smoke test or the next measured run.
+runs.est_seconds_per_unit.reader: 6.7
+runs.est_seconds_per_unit.personas: 1.35

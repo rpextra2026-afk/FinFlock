@@ -1,0 +1,21 @@
+# No-LLM baselines (floors of the comparison ladder). Every score uses only information known at the decision time (after the close of the decision session).
+# Higher score = more bullish. They run through the SAME scorer, windows, fills, costs and metrics as the Basic rival (finfm/eval/score_basic.py).
+mode_basic_set: headline               # the units scored: the Basic rival's headline set (company named in the title), text = the headline
+ids: [N1_lm_tone, N2_finbert_tone, N3_reversal, N4_momentum, N5_placebo]
+lexicon:                               # N1: Loughran-McDonald master dictionary, bundled with the pip package pysentiment2 (version recorded in lineage)
+  package: pysentiment2
+finbert:                               # N2: ProsusAI/finbert on CPU, P(positive) - P(negative); every score cached by the hash of its text
+  model: ProsusAI/finbert
+  max_length: 128                      # tokens (the model limit is 512; headlines are short)
+  batch_size: 32
+  cache_file: finbert_cache.parquet
+reversal_days: 5                       # N3: minus the stock's total return over the last N sessions ending at the decision session
+momentum:                              # N4: total return from t-252 to t-21 sessions (12-1 momentum)
+  start_lag_sessions: 252
+  skip_sessions: 21
+placebo:                               # N5: scores drawn from a normal; the band of net Sharpe over draws is reported for the headline rule
+  draws: 50
+  band: [0.05, 0.95]
+labels:
+  no_llm: "no LLM used"                # replaces the 'in-sample for the LLM' label of the Basic scorer
+lineage: nollm_baseline                # real data, no LLM (the report builder must not mistake it for mock)

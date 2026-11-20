@@ -1,0 +1,83 @@
+# Rival frameworks (spec Part 10). Each rival gets only the dataset and the same LLM, nothing from ours.
+tuning_configurations: 200             # [DOC] same dev tuning budget for every framework
+llt:                                   # Lopez-Lira and Tang, "Can ChatGPT Forecast Stock Price Movements?"
+  osa_similarity_threshold: 0.6        # [DOC] near-identical headlines of one company-day are merged above this
+  min_firms_per_leg: 2                 # [DOC] otherwise only the other leg is entered
+  leg_weight: 0.5                      # each leg sums to this share of the portfolio (gross exposure 1)
+  headline_rebalance: 1.0              # [DOC] 100% daily rebalancing is the published headline
+  partial_rebalance: 0.25              # [DOC] published robustness
+  temperature: 0.0
+  max_tokens: 80
+  answers: {"YES": 1, "NO": -1, "UNKNOWN": 0}   # quoted: unquoted YES / NO are booleans in YAML
+  tuning:
+    rebalance: [1.0, 0.5, 0.25]
+    aggregation: [mean, max_abs]
+    min_firms: [1, 2, 3]
+    liquid_only: [true, false]
+finripple:                             # FinRipple-lite: zero-shot with graph text, no reinforcement learning
+  top_fraction: 0.10                   # [DOC] top 10% long, bottom 10% short, equal weight, daily
+  leg_weight: 0.5
+  kg_tokens: 1200                      # [DOC]
+  stored_lines: 300                    # graph lines kept per event in the prebuilt table (the token budget cuts far earlier)
+  hops: 2
+  temperature: 0.0
+  max_tokens: 1500                     # [MEASURE] 900 cut 26% of the db1 pilot answers; the finished db1 run used 1500. Room = engine.max_model_len - max_tokens = 3620 for a prompt of at most ~1500 news + 1200 graph + 350 instructions
+  score_bound: 10
+  relations: [industry, rival, owner, corr, supplier, customer]
+  tuning:
+    top_fraction: [0.05, 0.10, 0.20]
+    hops: [1, 2]
+    kg_tokens: [600, 1200, 2400]
+    aggregation: [mean, sum]
+mass:                                  # MASS (Guo et al.), adapted to US data and our LLM
+  repository_commit: 68edcaa
+  n_types: 16                          # [DOC] paper main run
+  agents_per_type: 8                   # [DEFAULT] 128 agents
+  pool_size: 100                       # [DEFAULT] the 100 largest S&P 500 members at each rebalance
+  shown_stocks: 20                     # [REPO] main.py --stock_num default 20 (the repository draws them with random.choices, with replacement); the earlier value 30 was the top of the paper's tuning range
+  selected_stocks: 5                   # [REPO] main.py --selected_stock_num default 5
+  top_fraction: 0.20                   # [DOC] paper appendix; the experiment-comparisons note said 15%
+  alpha: 0.5                           # [DOC] signal = alpha mean - (1 - alpha) std
+  temperature: 0.0                     # the repository calls the model at temperature 0 (the spec's 0.7 is not in the code)
+  max_tokens: 600                      # [MEASURE] answers are short JSON (a style answer is ~150 tokens, a decision answer less). Room = engine.max_model_len - max_tokens. Real Olmo-token prompt lengths: max 4,373 over 40 dates in each bucket (median ~3,200), so 1,200 (room 3,920) left 22-28 of 192 prompts empty (prompt_too_long) and 600 (room 4,520) leaves none
+  decision_example: investing_decision_example_shape   # [DEVIATION 2026-11-12, measured] key of mass_prompts.prompts sent as the few-shot example of every decision call. investing_decision_example is the repository's own text; with it Olmo-3-7B copied the example's row labels and codes in 35 of 56 answers (62.5%) on the final proof of concept, and only 21 of 56 passed the strict parser (0.375, units with a table). The shape-only example (answer format, placeholder codes, no data table) gave 56 of 56 valid answers on the same units
+  table_layout: repo                   # [REPO] the data section is str(dict of DataFrames) with pandas' text table and the row index, as basic_agent.py builds it
+  table_display:                       # [DEVIATION, pinned] pandas display options used while that text is made. The repository sets none (pandas default: wide tables lose their middle columns or wrap); here every row and column is shown, on one line per row. precision is pandas' own default
+    display.max_columns: null
+    display.max_rows: null
+    display.width: 10000
+    display.expand_frame_repr: false
+    display.precision: 6
+  use_macro_data: true
+  modalities: [valuation, dividend, growth, quality, news, base_data, cross_industry, risk_factor, price_feature]
+  modality_count: [1, 3]               # each investor type draws this many modalities (repository: randint(1, 3))
+  annealing:
+    init_temp: 40.0                    # [DOC] paper value (the repository default is 0.5)
+    max_iter: 100
+    cooling_rate: 0.95
+    look_back_window: 5
+    interval: 4
+    step_std: 0.25
+    diff_scale: 10.0
+  fitness_column: Signal               # paper: rank IC of the final signal (the repository uses the std column)
+  round_trip_cost: 0.001               # [DOC]
+  rebalance: weekly
+  scaling_agents_per_type: [4, 8, 16]  # pre-registered scaling check, 64 / 128 / 256 agents
+  tuning:
+    alpha: [0.2, 0.5, 0.8]
+    shown_stocks: [20, 30]
+    top_fraction: [0.10, 0.15, 0.20]
+    temperature: [0.0, 0.3, 0.7]
+report:                                # the report every rival notebook builds after its run (scores the tape with the same scorers, windows and cost grid as ours)
+  folder_suffix: report                # output folder / zip name: <run id>-report
+  cost_order: [gross, rt5bp, rt10bp, rt20bp]   # cost columns of the Sharpe chart
+  headline_cost: rt10bp
+  headline_fill: open
+  chart_dpi: 130
+  max_minutes: 120                     # the scoring step stops waiting after this; the tape bundle is already saved, scoring can be repeated on the Mac
+  scorers: {basic: s9_score_basic, finripple: s9_score_finripple, mass: s9_score_mass}
+  finripple_max_tokens_key: rivals.finripple.max_tokens
+shards:                                # [OWNER 2026-11-10] shards numbered 0, 1, 2 ...; one shard = one account = ONE session that runs until its units are done or the 9 h 45 min cutoff (kaggle.session_cutoff_minutes), so counts are the fewest that fit: finripple 17.7 s per unit (measured on db1: 9-10 h for 2,042 units), mass 1.5 s per unit (top of the planned 0.8-1.5 s range, NOT measured: a 300-unit pilot should replace it)
+  basic: {db1: 1, tessera: 1, db3: 1}
+  finripple: {db1: 2, tessera: 1, db3: 1}
+  mass: {db1: 7, tessera: 9, db3: 8}       # [OWNER 2026-11-12] 24 shards = 24 session slots, ALL started at once (13 accounts, two sessions at a time each, quota-limited: two accounts with 11 h run one). Sized for 3.5 s per unit (measured on the real db1 run: 17 units/min with 2,930-token prompts); tessera prompts average 1,430 tokens (db1 and db3 2,325): worst case per session db1 6,674 units = 6.7 h, tessera 8,178 units = 8.2 h, db3 6,480 units = 6.6 h including 0.25 h model load

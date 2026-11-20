@@ -1,0 +1,157 @@
+# Local-input release: remote dataset locators are intentionally unset.
+vendor_name: yfinance
+membership:
+  components_url: ''
+  changes_url: ''
+  source_label: chinobing_github
+prices:
+  start: 2012-01-01
+  end: 2026-01-01
+  extra_tickers:
+  - SPY
+  batch_size: 40
+  retries: 3
+  retry_sleep_seconds: 20
+  pause_seconds: 2
+  min_rows_for_coverage: 20
+  symbol_replacements:
+    .: '-'
+output:
+  dataset_folder: dataset/finfm-market
+  dataset_slug: finfm-market
+  store_folder: store
+guardian:
+  url: ''
+  start: 2017-01-01
+  end: 2024-01-01
+  sections:
+  - business
+  - world
+  - us-news
+  - politics
+  - money
+  page_size: 200
+  pause_seconds: 0.2
+  retries: 4
+  retry_sleep_seconds: 10
+  timeout_seconds: 60
+  fields:
+  - bodyText
+  - headline
+  - firstPublicationDate
+  env_key: GUARDIAN_KEY
+  out_folder: dataset/finfm-news-guardian
+hf:
+  repo: ''
+  env_token: HF_TOKEN
+  subsets:
+    yahoo_finance_felixdrinkall:
+    - yahoo_finance_felixdrinkall
+    reddit_finance_sp500:
+    - reddit_finance_sp500
+    benzinga_6000stocks:
+    - benzinga_6000stocks
+    nyt_headlines:
+    - nyt_headlines_2010_2021
+  out_folder: dataset/finfm-news-hf
+names:
+  sec_url: ''
+  env_contact: SEC_CONTACT
+  strip_suffixes:
+  - '&'
+  - inc
+  - corp
+  - corporation
+  - co
+  - company
+  - ltd
+  - limited
+  - plc
+  - holdings
+  - holding
+  - group
+  - the
+  - llc
+  - lp
+  - sa
+  - nv
+  - ag
+  - trust
+  - class
+  - new
+  min_clean_chars: 4
+  timeout_seconds: 60
+generic_alias:
+  sample_items: 20000
+  max_lowercase_share: 0.15
+  min_count: 20
+  blocked_one_word_names:
+  - News
+  - Southern
+  - Capri
+  full_name_variants:
+    NWS:
+    - News Corporation
+    SO:
+    - Southern Company
+    CPRI:
+    - Capri Holdings
+f13:
+  index_url: ''
+  base_url: ''
+  first_period: 2013-09-30
+  timeout_seconds: 600
+  raw_folder: store/raw/f13
+  min_sp_cover: 0.1
+  out_files:
+  - f13_filings
+  - f13_holdings
+  - f13_managers
+  - f13_cusip_map
+sic:
+  url: ''
+  pause_seconds: 0.15
+  timeout_seconds: 30
+  retries: 3
+factors:
+  five_factor_url: ''
+  momentum_url: ''
+  file: factors_daily.parquet
+  rename:
+    Mkt-RF: mkt_rf
+    SMB: smb
+    HML: hml
+    RMW: rmw
+    CMA: cma
+    RF: rf
+    Mom: mom
+  percent_to_decimal: 0.01
+  timeout_seconds: 120
+stocktwits:
+  base_url: ''
+  prefix: dataset/v1/data/csv
+  symbols_folder: symbols
+  messages_folder: messages
+  workers: 24
+  timeout_seconds: 120
+  retries: 5
+  retry_sleep_seconds: 10
+  probe_head_bytes: 8192
+  probe_tail_bytes: 65536
+  exhaustive: true
+  probe_points: 100
+  probe_bytes: 4096
+  max_run_bytes: 33554432
+  overlap_bytes: 16384
+  chunk_rows: 500000
+  keep_per_year: 40000
+  hash_multiplier: 11400714819323198485
+  symbol_replacements:
+    '-': .
+  out_folder: dataset/finfm-news-hf/stocktwits
+  work_folder: store/raw/stocktwits
+tessera_package: dataset/tessera
+rivals:
+  dataset_slug: finfm-rivals
+  dataset_hint: 'finfm-rivals (attach this one dataset alone: it holds the unit tables,
+    prices, factors and company links of all three buckets)'

@@ -1,0 +1,100 @@
+# Verbatim prompt templates. The config hash covers them, so any edit changes the template hash.
+reader:
+  system: >-
+    You are a careful financial news analyst. You read one news item and return one JSON object and
+    nothing else.
+    Rules: (1) Company names are hidden as COMPANY_A, COMPANY_B...; do not guess real names.
+    (2) Use only the allowed assets listed below, by their ref (A1, A2, ...).
+    (3) Report what the news implies for each asset, not what you remember about later events.
+    (4) If the item carries little information, give low magnitude and low certainty.
+    (5) Output must match the JSON schema exactly.
+    (6) The cause values are probabilities of the news cause and must add up to 1: give most of the
+    weight to the cause that fits best, and if no listed cause fits put 1.0 on other. Never leave all causes at 0.
+    (7) List each allowed asset at most once.
+  user: |-
+    News kind: {kind}   Family: {family}   Published: {published}
+    Allowed assets:
+    {asset_lines}
+    Cause list: {cause_list}
+    Title: {title}
+    Text: {text}
+    Return the JSON.
+persona:
+  system: >-
+    You simulate how one specific market participant reacts emotionally and in valuation to one piece
+    of news. You are not giving advice. Company names are hidden. Use only what this participant has
+    seen and would understand. Weigh each item by the reliability tag it carries. Answer with one JSON
+    object of numbers only and no text.
+  user: |-
+    [FEED — what you have seen]
+    {feed}
+    [ASSETS]
+    {assets}
+    [YOU]
+    {you}
+    [QUESTION]
+    Rate from 0 to 10 how much fear, anger and calm this news makes you feel. For each asset A1..., give the percent change in the asset's full long-run value this news implies for you (between -30 and 30). Give your conviction from 0 to 10.
+    Return {json_format}
+  feed_item: "[{kind}, reliability: {tag}, {hours_ago:.0f}h ago] {title}{excerpt}"
+  career_line: "You work as {career}."
+  mandate_sentence: "Your mandate leaves you {room} room to change course."
+  exposure_sentence: "{sector_pct:.0f}% of your portfolio is in {sector} stocks; {asset_pct:.0f}% is in {ref}."
+  state_sentence: "Over the past three months your portfolio is {direction} {size:.0f}% ({relation} the market, which is {market_direction} {market_size:.0f}%)."
+  history_institution: "Last quarter you added {added} and trimmed {trimmed}."
+  history_institution_none: "Last quarter you made no large changes."
+  history_retail:
+    none: "Last quarter you made no trades."
+    one: "Last quarter you sold one holding and bought one other."
+    several: "Last quarter you rotated several of your holdings."
+  mandate_room: {low: little, medium: some, high: wide}
+  asset_salience:
+    well_known: "a well-known US {sector} company"
+    obscure: "an obscure US {sector} company"
+    etf: "a {kind} fund"
+  json_format: '{{"fear":x,"anger":x,"calm":x,"value_change_pct":{{"A1":x,...}},"conviction":x}}'
+bio:
+  instruction: >-
+    Write a 60 to 90 word second-person description of this investor: their temperament, what has
+    scared them in past market stress, how cautious or loose their house or household is, and how
+    they usually read news. Do not name any company, fund or person. Do not mention any event after
+    {asof_date}. Use only the facts given.
+  max_tokens: 140
+  temperature: 0.0
+  trait_words:
+    positive: has tended to take on more risk after gains
+    negative: has tended to cut risk after losses
+    neutral: has shown no clear change in risk after gains or losses
+  template: >-
+    You are a {size} {kind} investor with {turnover} turnover and about {positions} positions,
+    mostly in {sectors}. {career} {trait}. You read news {literacy}. {mandate}
+  literacy_words: {low: with little financial background, medium: with some financial background, high: with a professional background}
+llt:                                   # verbatim from the paper (arXiv 2304.07619 v6); single user message, no system prompt
+  user: |-
+    Forget all your previous instructions. Pretend you are a financial expert. You are a financial expert with stock recommendation experience. Answer "YES" if good news, "NO" if bad news, or "UNKNOWN" if uncertain in the first line. Then elaborate with one short and concise sentence on the next line. Is this headline good or bad for the stock price of {company_name} in the short term?
+    Headline: {headline}
+finripple:                             # verbatim zero-shot baseline of the paper (arXiv 2505.23826, appendix F.1.1)
+  user: |-
+    Instruction:
+    You are a financial event analyst focused on analyzing the potential impacts of news reports on the market. Based on the given news content and current market structure, evaluate and output the affected companies (TICKER in SP500), the type of impact (positive, negative, or neutral), and a score representing the strength of the impact (ranging from -10 to +10, where -10 indicates a very negative impact and +10 indicates a very positive impact). Provide specific company names and event descriptions for clarity and utility. A market news report, company's knowledge graph information, specific requirements and output format will be provided below.
+
+    Market news report:
+    {news}
+
+    Knowledge Graph (current market structure you can refer to):
+    {kg_text}
+
+    Requirement:
+    "Provide your result, strictly following the output format below, without any additional output."
+
+    Output Format:
+    "Please provide your response in a structured JSON format. The JSON should have a top-level object with a single key 'impact_analysis'. The value of 'impact_analysis' should be an object containing two keys: 'affected_companies': An array of objects: 'name': The company's name (string) 'impact_type': The type of impact, e.g. 'positive' or 'negative' (string) 'impact_score': A numerical score representing the impact (integer) 'analysis': A string containing a brief analysis of the overall impact. Please ensure that the JSON is properly formatted and uses double quotes for strings.
+    Here's an example of how the structure should look:
+    {{
+    'impact_analysis': {{
+    'affected_companies': [
+    {{ 'name': 'Company Name', 'impact_type': 'impact type', 'impact_score': score }},
+    ...
+    ],
+    'analysis': 'Your analysis text here.'
+    }}
+    }}"

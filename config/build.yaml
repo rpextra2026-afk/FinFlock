@@ -1,0 +1,92 @@
+# Final build: sheaf + world lane + metrics on the cleaned tapes (final-build-cleaning-sheaf-shards-spec.md sections 4 to 8).
+# Left out of the config hash (UNHASHED_SECTIONS), like the cpu and clean sections.
+output_dir: outputs/final-build/runs
+cleaned_dir: outputs/final-build/clean
+wall_clock_cutoff_hours: 11.5
+horizon_window: d01                         # label window the sheaf is fitted and scored on
+sheaf:
+  link_types: [industry, corr, owner]        # the links table has these three only
+  symmetric_types: [industry, corr, owner]
+  pooled_group: pooled                       # one cause group: one Delta per link type (cause_split false)
+  cause_split: false                         # true: the six cause groups plus no_cause, as an ablation row
+  drop_zero_pins: true                       # a pin with no size is not pinned
+  ret_dial: signed                           # signed: the pin's size_pct times its weight; the other two dials use the absolute size
+paths:
+  market_dir: dataset/finfm-market           # px_daily, corp_action, links
+  factors_file: store/raw/french/ff_factors_daily.parquet
+metrics:
+  seed: 20261112
+  tape_horizon: d01                          # the sheaf is fitted on the d01 label window only; other windows are not reported
+  bootstrap_draws: 1000
+  slice_bootstrap_draws: 200                 # slices use fewer draws
+  ci_level: 0.95
+  block_days: 5                              # block bootstrap over consecutive days
+  nw_lag: 5                                  # Newey-West lag for the tests
+  huber_delta: 1.0                           # in units of the dial's training standard deviation
+  mape_floor: 0.05                           # |y| below this (in training sd units) is left out of MAPE and sMAPE
+  quantile_bins: 10
+  coarse_bins: 5
+  weight_bins: 10
+  calibration_bins: 10
+  pit_bins: 10
+  min_rows_per_slice: 200
+  min_stocks_per_day: 20                     # a day with fewer scored stocks has no daily IC; days are then pooled in the all-rows view
+  interval_levels: [0.5, 0.8, 0.9, 0.95]
+  pinball_quantiles: [0.05, 0.25, 0.5, 0.75, 0.95]
+  costs_bp: [0, 5, 10, 20]
+  annualisation_days: 252
+  long_short_share: 0.2                      # top and bottom share of each day's signal
+  placebo_shifts: [41, 97]
+  placebo_shuffles: 100
+  regime_quantile: 0.5                       # market regime: high vs low by the fit-window median of the market absolute return
+  burst_quantile: 0.9
+  logit_steps: 25
+  logit_ridge: 0.000001
+  eps: 0.000000000001
+slices:
+  repeat_edges: [1, 2, 4]                    # repeat_count buckets: 1, 2 to 3, 4 and more
+  pinned_edges: [1, 2, 3]                    # number of pinned neighbours: 1, 2, 3 and more
+  size_terciles: 3
+  liquidity_terciles: 3
+  weekdays: [mon, tue, wed, thu, fri, sat, sun]
+  world_day_min_items: 1                     # a world-news day has at least this many world-lane items
+panel:
+  max_days: 0                                # 0: every hold-out session; a positive number caps the panel (smoke runs)
+world:
+  ridge_grid: [0.02, 0.5, 5.0, 50.0, 500.0]  # chosen on the last fit year, strong shrink on purpose
+  volume_window: 20                          # trailing sessions of the volume baseline
+  volume_min_obs: 10
+  lag_range: [-5, 10]                        # lag profile in sessions
+  feature_names: [count, weighted_count, share, intensity]
+  target_scale: 100.0
+  min_days: 60
+diagnostics:
+  graph_sample: 200                          # hold-out graphs used for the Laplacian diagnostics
+  max_laplacian_size: 1500                   # graphs with more than this many stalk coordinates (nodes x dials) are left out of the eigenvalue summary
+  smallest_eigenvalues: 5
+  hops: 3
+runner:
+  graph_cache: graphs.pkl                    # events, labels and graphs of a tape, written once per run folder
+  fit_cache: fitted.pkl
+  rows_cache: scored_rows.parquet
+  panel_cache: panel.parquet
+  resid_graphs: 600                          # dev graphs used for the residual sd of the Gaussian forecast distribution
+  methods: [sheaf, wgraph, wmatrix_r1, wmatrix_r2, wmatrix_r3]
+  main_method: sheaf
+  progress_seconds: 600                      # a progress line at least this often
+ablations:
+  enabled: true
+  link_sets:                                 # sheaf fitted with only these link types kept on the edges
+    owner_only: [owner]
+    industry_only: [industry]
+    corr_only: [corr]
+    industry_corr_no_owner: [industry, corr]
+  input_variants: [no_trust, no_direction_weight]
+  needs_a_new_cleaning: [no_dedupe, no_session_timing, cause_split, direction_finbert, world_themes_embed, cause_repair_embed]   # listed in the manifest as not run here
+smoke:
+  road1:                                     # grid and steps of a mechanics test (run_final_build.py --smoke N)
+    grounding_lambda_grid: [0.05]
+    sheaf_penalty_grid: [1.0]
+    ridge_grid: [1.0]
+    optimiser.max_steps: 40
+    cv.folds: 2

@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "finfm"
+version = "0.1.0"
+description = "Typed financial sheaves, investor personas, and cost-aware portfolio construction"
+requires-python = ">=3.11"
+dependencies = ["numpy", "pandas", "pyarrow", "pyyaml", "scipy", "scikit-learn", "statsmodels", "exchange_calendars", "psutil", "jsonschema"]
+
+[project.optional-dependencies]
+gpu = ["torch", "transformers", "huggingface_hub", "vllm"]
+dev = ["pytest"]
+analysis = ["matplotlib", "lightgbm", "pysentiment2", "yfinance"]
+
+[tool.setuptools.packages.find]
+include = ["finfm*", "reader2*", "pilot*", "scripts*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"

@@ -1,0 +1,45 @@
+# Kaggle session, quota and shard rules.
+# Tags: [OWNER] fixed by the owner; [DOC] fixed by the spec; [DEFAULT] chosen here, change only
+# before the freeze; [MEASURE] provisional until the Day-0 smoke test writes the measured value
+# into config/measured.yaml; [U] unverified.
+accounts: 30                         # [OWNER]
+account_ids: null                    # [OWNER] optional explicit list of account labels; null = generated
+week_quota_hours: 30                 # [OWNER] GPU hours per account per week
+week_reset_weekday: friday           # [OWNER] time of day and timezone [U]
+quota_safety: 0.98                   # [OWNER] 3 sessions of 9.75 h fit in 29.4 h; metering unverified
+session_platform_cap_minutes: 720    # [OWNER] platform cap (12 h)
+session_cutoff_minutes: 585          # [OWNER] hard stop 9 h 45 min; Kaggle keeps no output after an overrun
+shard_work_minutes: 585            # [OWNER] a shard may hold up to 9 h 45 min of projected work (it was 9 h: the cutoff minus load, write and safety). The worker still stops by itself at the cutoff and a rest is resumed from its bundle. The worker still stops by itself at the cutoff and a rest is resumed from its bundle
+session_cutoff_minutes_by_run:       # [OWNER 2026-11-02] a run named here uses this cutoff instead of session_cutoff_minutes (platform cap 720 min): the db3 llm2 shards are planned at about 10.3 h
+  reader-db3-llm2: 660               # 11 h; the worker still keeps its final-write reserve, so it ends by itself about 10.5 h after the model is loaded
+  personas-db3-llm2: 660
+  reader-tessera-llm1: 595               # [OWNER 2026-11-04] tessera runs end exactly 9 h 55 min after the notebook starts: Kaggle cuts a session when the weekly GPU quota runs out
+  reader-tessera-llm2: 595
+  reader-tessera-llm3: 595
+  personas-tessera-llm1: 595
+  personas-tessera-llm2: 595
+  personas-tessera-llm3: 595
+model_load_minutes: 15               # [MEASURE] provisional
+final_write_reserve_minutes: 15      # [MEASURE] provisional
+shard_safety_minutes: 15             # [DEFAULT]
+shard_min_hours: 1                   # [DOC] spec 2.3, a cut shard is never shorter than this
+checkpoint_minutes: 10               # [DOC] spec 2.3
+final_write_attempts: 5               # [OWNER 2026-11-08] the final bundle write is tried this often (a disk hiccup must not lose a finished run), then written to a fallback folder
+final_write_wait_seconds: 30         # pause between those tries
+heartbeat_minutes: 10                # [OWNER 2026-11-04] a status line about everything the worker does every this many minutes
+single_run_jobs:                     # [OWNER 2026-11-08] ONE shard, no session cutoff: the whole unit table runs in one notebook on the owner's own 2 x A30 machine (no Kaggle session cap). Errors are retried inside the run.
+  - personas__db1__llm1
+  - personas__db1__llm3
+  - personas__db3__llm1
+  - personas__db3__llm3
+concurrent_sessions_per_account: 1   # [U]
+accelerator: null                    # [VERIFY] value of `kaggle kernels push --accelerator` that selects 2xT4; null = flag not passed
+config_dir_env: KAGGLE_CONFIG_DIR    # [VERIFY] how the CLI is pointed at one account's credentials folder
+owner: null                          # Kaggle username owning the kernels and datasets of one account (set per account)
+code_dataset_prefix: finfm-code      # private dataset holding finfm/ and config/ (name ends with the git hash)
+shard_dataset_prefix: finfm-shard
+bundle_dataset_prefix: finfm-bundle
+wheels_dataset: finfm-wheels         # optional offline wheels (vllm etc.) if sessions have no internet
+kernel_main: kernel_main.py
+enable_internet: false
+poll_seconds: 60

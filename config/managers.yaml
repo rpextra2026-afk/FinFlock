@@ -1,0 +1,8 @@
+# Manager-type heuristics (spec 3.4). An assumption, stated in the paper; overrides win.
+bank_dealer_keywords: [BANK, BANC, SECURITIES, MORGAN STANLEY, GOLDMAN, JPMORGAN, CITIGROUP, BARCLAYS, UBS, CREDIT SUISSE, DEUTSCHE, WELLS FARGO, BNP, NOMURA, JEFFERIES, CANTOR]
+mutual_pension_keywords: [PENSION, RETIREMENT, EMPLOYEES, TEACHERS, STATE OF, PUBLIC, SYSTEM, ENDOWMENT, FOUNDATION, INSURANCE, ASSURANCE]
+asset_manager_keywords: [VANGUARD, FIDELITY, T. ROWE, CAPITAL RESEARCH, BLACKROCK, INVESCO, FRANKLIN, WELLINGTON, DODGE, ASSET MANAGEMENT, INVESTMENT MANAGEMENT, ADVISORS]
+asset_manager_min_positions: 100       # [DOC] an asset-manager keyword needs more positions than this to count as mutual/pension
+hedge_fund_max_positions: 100          # [DOC] remaining filers with this many positions or fewer
+top_turnover_quantile: 0.6666666666666666   # top tercile of turnover -> hedge fund
+types: [bank_dealer, mutual_pension, hedge_fund]

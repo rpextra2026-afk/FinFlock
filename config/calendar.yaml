@@ -1,0 +1,5 @@
+# Trading calendar. Warm-up starts before the earliest news so 252-day windows exist (spec 3.2).
+name: XNYS                  # [DOC] exchange calendar code of the NYSE
+start: 2012-01-01           # [DOC] price history starts here
+end: 2025-12-31             # [DOC] nothing after this date
+display_timezone: America/New_York

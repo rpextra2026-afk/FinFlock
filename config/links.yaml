@@ -1,0 +1,18 @@
+# Link snapshot builders (spec 3.5). Every row carries available_from; builders refuse earlier use.
+industry:
+  sic_digits: 3                        # [DOC] 3-digit SIC printed on the latest filing <= t-1
+  neighbours_per_node: 50              # [DEFAULT] nearest by log market cap inside the SIC group
+rival:
+  lag_days: 90                         # [DEFAULT] a similarity year is usable this long after its fiscal year end
+  carry_forward_flag: true             # links used after the last file year are flagged carried_forward
+corr:
+  window_sessions: 252                 # [DOC]
+  top_k: 10                            # [DOC]
+  min_coverage: 0.8                    # [DEFAULT] a stock needs this share of non-missing returns in the window
+owner:
+  top_k: 25                            # [DEFAULT] strongest co-owned neighbours per stock
+weights:
+  industry: 1.0
+  country: 1.0
+  commodity: 1.0
+  etf_member: 1.0

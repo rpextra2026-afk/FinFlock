@@ -1,0 +1,56 @@
+# Evaluation settings (spec 11.4-11.6, metrics-final.md). Thresholds that decide nothing are not here:
+# the report prints numbers and intervals, never verdicts.
+annualisation_days: 252
+bootstrap:
+  draws: 4999                          # [DOC] Ledoit-Wolf studentised circular block bootstrap
+  block_sensitivity: [5, 10, 20]       # [DOC] block lengths shown beside the default floor(T^(1/3))
+  ci_level: 0.95
+appendix_treatment: delist_0              # the delisting treatment the capacity and variant-comparison tables use
+stress_windows:                        # named stress windows (metrics-final.md B4); only the part inside the test window is reported
+  covid_crash_2020: ["2020-02-19", "2020-04-07"]
+  rate_shock_2022: ["2022-01-03", "2022-10-14"]
+  tariff_shock_2025: ["2025-04-02", "2025-04-30"]
+variant_pairs: [[both, road1], [both, road2], [merged, both], [merged, road1]]   # Sharpe differences (Ledoit-Wolf interval) between framework variants
+hac_lag: 5                             # [DOC] Newey-West lag for alpha and IC t-statistics
+cvar_level: 0.95                       # [DOC]
+dsr:
+  euler_gamma: 0.5772156649015329
+pbo:
+  partitions: 16                       # [DOC] CSCV partitions S
+cpcv:
+  groups: 10                           # [DOC]
+  test_groups: 2
+  embargo_sessions: 5
+ic_min_stocks: 20                      # [DOC] days with fewer scored stocks are pooled to the month
+ic_horizons: [1, 5]                    # [DOC]
+holm_families: [net_sharpe, rank_ic, spanning_alpha]
+power:
+  years: {full_test: 2.0}              # extra windows are added from each LLM's post_cutoff part
+  correlations: [0.9, 0.5]             # [DOC] D22
+report:
+  main_metrics:                          # the headline rows of the final table (papers: Lopez-Lira & Tang, FinRipple, Jensen et al., Novy-Marx & Velikov); every other metric goes to the appendix table
+    - cum_net_return
+    - mean_daily_return_gross        # FinRipple's yardstick (no costs)
+    - max_drawdown_gross             # FinRipple's yardstick
+    - hit_rate_gross                 # FinRipple's win rate / Lopez-Lira & Tang's hit rate
+    - cum_excess_vs_market           # MASS's cumulative excess return over an index
+    - total_net_pnl_usd
+    - annual_return_net
+    - annual_vol_net
+    - sharpe_net
+    - sharpe_gross
+    - max_drawdown_net_headline
+    - cvar_net
+    - hit_rate_net
+    - turnover_annual
+    - annual_cost
+    - break_even_round_trip_bp
+    - alpha_annual
+    - t_alpha
+  forbidden_words: [pass, passed, fail, failed, beats, beat, wins, won, significant, outperforms, underperforms, success, failure]
+  decimals: 4
+  palette: ["#0072B2", "#D55E00", "#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442", "#000000"]   # colour-blind safe
+  figure_dpi: 120
+  reference_framework: ours             # the row all rival differences are measured against
+  frameworks: [ours, basic, finripple, mass]
+  figure: {size: [7, 3.6], bar_group_width: 0.8, grid_alpha: 0.25, title_size: 10, legend_size: 8, line_width: 1.2, scatter_size: 10, tick_rotation: 30}

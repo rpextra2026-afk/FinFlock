@@ -1,0 +1,130 @@
+# Ablation plan (ablation-spec-for-claude-code.md). Every switch, count, seed label and notebook assignment lives here; nothing is hardcoded in code.
+# Locked with proof before any run: scripts/lock_ablation.py writes docs/ABLATION_LOCK.json (sha256 of this file, the spec and the tapes), commit and push it.
+# A switch changes ONE thing and keeps the rest of the framework as it is. Numbers only; the report never decides anything.
+full:
+  id: A0
+  variant: merged                      # the headline Full: Lead, Correct, Brake (spec 9.1). Owner to confirm before locking (spec 14, question 1)
+  reader_mode: salvaged_no_certainty   # the only mode the owner runs
+cutoff_hours: 11.5                     # every ablation notebook stops itself here, sharp, and writes its checkpoint bundle (owner 2026-11-05)
+treatment: delist_0                    # the delisting treatment every ablation backtest uses (eval.appendix_treatment)
+draws: {tier_a: 20, tier_b: 3}         # placebo draws per placebo switch (spec 7)
+noise_floor: {runs: 5, seed_label: noise}   # Full refitted this many times with other fit seeds (spec 7)
+persona_count: {fractions: [0.25, 0.5, 0.75], seed_label: persona_count}   # P12; 100 percent is Full
+refit:                                 # how a switch that changes road 1's inputs refits road 1 on dev (one notebook session cannot hold the whole grid)
+  road1: fixed_config                  # fixed_config: the grid point Full chose on dev (grounding, penalty), steps by time-blocked CV at that point, then the final refit
+                                       # grid: the whole grid exactly as Full (about 19 h on Kaggle for db3: needs two sessions per run)
+  seed_label: refit
+rank_ic_horizons: [1, 5]               # days; the cumulative predicted increment over the first h days against the realised return over the same days
+event_min_assets: 3                    # a rank correlation across fewer assets than this is not computed
+beta_window_sessions: 252              # prior sessions for the beta of the abnormal return (score_basic.beta window)
+beta_min_fraction: 0.5
+linked_min_events: 30                  # fewer events than this in a cut: counted and not reported
+strata:
+  pin_count: {single_pin: [1, 1], multi_pin: [2, null]}
+  size_terciles: 3
+power:
+  tier_a_draw_summary: [0.05, 0.95]    # percentiles printed for placebo draws
+labels:
+  in_training: "in-training for the LLM, not a clean test"
+  not_computed: "not computed"
+  identical: "identical to Full by construction"
+  baseline_row: "baseline of the sheaf, not an ablation of the framework"
+
+# --- the switches -------------------------------------------------------------------------------------------------------------------------
+# how: remove | permute | config | baseline.  tier: A (forecast level only) | B (full backtest too).  refit: what the switch forces to be fitted again on dev.
+# mode: fixed (fitted scalars of Full kept, the input destroyed) | refit.  status: build | not_computed (with a reason).  expect: recorded before any run, not a gate.
+switches:
+  R1:  {name: text_blind,        family: reading,  how: permute, tier: B, mode: refit, refit: [road1, merge], readings: blind,
+        expect: "lower rank IC and linked-stock R2; part of any drop may be memory (in-training test years)"}
+  R2:  {name: text_shuffled,     family: reading,  how: permute, tier: B, mode: fixed, refit: [], readings: shuffle, placebo: true,
+        expect: "falls to the text-blind level; placebo"}
+  R3:  {name: tone_reading,      family: reading,  how: baseline, tier: A, status: not_computed,
+        reason: "needs the L0 (tone score) outputs of the reading gate; none are stored in this repository"}
+  G1:  {name: ripple_off,        family: road1,    how: remove,  tier: B, mode: fixed, refit: [merge], ripple: off,
+        expect: "tie on single-pin events, gain on multi-pin events"}
+  G2:  {name: context_off,       family: road1,    how: remove,  tier: B, mode: refit, refit: [road1, merge], links: sp500_only,
+        expect: "drop on geo and multi-pin events; tie on single-company finance events"}
+  G3:  {name: links_shuffled,    family: road1,    how: permute, tier: B, mode: refit, refit: [road1, merge], links: shuffle, placebo: true,
+        expect: "the gain from the ripple disappears; placebo"}
+  G4:  {name: dial_text_off,     family: road1,    how: config,  tier: B, mode: refit, refit: [road1, merge],
+        config: {reader.dials.features: [kind, own_state, market_state]},
+        expect: "tests whether the reading adds to price state alone for vol and volume"}
+  P1:  {name: road2_off,         family: road2,    how: config,  tier: B, mode: fixed, refit: [], variant: road1}
+  P2:  {name: road1_off,         family: road2,    how: config,  tier: B, mode: fixed, refit: [], variant: road2}
+  P3:  {name: no_signal,         family: road2,    how: config,  tier: B, mode: fixed, refit: [], variant: none,
+        expect: "the floor (risk and cost only)"}
+  P4:  {name: common_belief,     family: road2,    how: permute, tier: B, mode: fixed, refit: [merge], answers: common_belief,
+        expect: "lower on events where the types disagree"}
+  P5:  {name: delta_eq_s,        family: road2,    how: remove,  tier: B, mode: fixed, refit: [merge], answers: day0_move, consensus: day0_move, check: road2_zero,
+        expect: "road-2 increments are zero up to numerical error: an engineering check, not a result"}
+  P6:  {name: cards_shuffled,    family: road2,    how: permute, tier: B, mode: fixed, refit: [merge], answers: shuffle_cards, placebo: true,
+        expect: "the gain from road 2 disappears; placebo"}
+  P7:  {name: holdings_equal,    family: road2,    how: remove,  tier: B, mode: refit, refit: [merge], game: equal_books,
+        expect: "isolates what the ownership data adds to the push"}
+  P8a: {name: type_drop_retail,         family: road2, how: remove, tier: A, mode: refit, refit: [merge], drop_type: retail}
+  P8b: {name: type_drop_mutual_pension, family: road2, how: remove, tier: A, mode: refit, refit: [merge], drop_type: mutual_pension}
+  P8c: {name: type_drop_hedge_fund,     family: road2, how: remove, tier: A, mode: refit, refit: [merge], drop_type: hedge_fund}
+  P8d: {name: type_drop_bank_dealer,    family: road2, how: remove, tier: A, mode: refit, refit: [merge], drop_type: bank_dealer}
+  P9:  {name: emotion_state_off, family: road2,    how: config,  tier: B, mode: fixed, refit: [], config: {game.kappa: {fear: 0.0, arousal: 0.0, state: 0.0}},
+        expect: "near tie (equals Full when the configured kappa is already zero)"}
+  P10: {name: timing_static,     family: road2,    how: config,  tier: A, status: not_computed,
+        reason: "no static_D12 / D12_decay / D14b switch exists in finfm/ or config/; building it takes more than a day (spec 5.3)"}
+  P11: {name: sleeve_off,        family: road2,    how: config,  tier: B, mode: refit, refit: [merge], config: {game.sleeve: false}}
+  M1:  {name: merge_plain_sum,   family: merge,    how: config,  tier: B, mode: fixed, refit: [], merge_rule: plain_sum}
+  M2:  {name: brake_off,         family: merge,    how: config,  tier: B, mode: fixed, refit: [], brake: none}
+  M3:  {name: confidence_off,    family: merge,    how: config,  tier: B, status: not_computed,
+        reason: "reader mode salvaged_no_certainty has no certainty field: the confidence multiplier is already 1 for every event"}
+  O1:  {name: band_off,          family: optimiser, how: config, tier: B, mode: fixed, refit: [], config: {portfolio.default.band: 0.0},
+        expect: "higher turnover and cost, similar gross"}
+  O2:  {name: cost_blind,        family: optimiser, how: config, tier: B, mode: fixed, refit: [], config: {portfolio.default.cost_scale: 0.0},
+        expect: "higher turnover; net Sharpe falls more than gross"}
+  O3:  {name: cov_shift_off,     family: optimiser, how: config, tier: B, mode: fixed, refit: [], config: {framework.covariance.shrink_to_rolling: 1.0}}
+  O4:  {name: dials_baseline,    family: optimiser, how: baseline, tier: A, status: not_computed,
+        reason: "needs the dial-gate baselines C1 to C5 (EWMA/HAR, 20-day volume) as forecasts of the framework cell; only their gate scores exist (scripts/check_dial_features.py)"}
+
+# Groups run as one switch: the effects of the members are applied together (spec 5.5). X2 is P1 + P2 + P3, already three runs above.
+groups:
+  X1: {name: text_all_off,   members: [R1, G4, P5]}
+  X3: {name: graph_all_off,  members: [G1, G2]}
+  X4: {name: cost_stack_off, members: [O1, O2]}
+
+# Ladder (Table 2 of the 7-page layout), cumulative from the bottom. Rung 1 (tone score) needs the L0 outputs: not computed. Rung 5 is P1, rung 10 is Full.
+# L3 and L4 are the sheaf's own baselines (a different road-1 arm, variant road1); every rung says what it is built from.
+ladder:
+  L2: {name: ladder_reader_only,  rung: 2, variant: road1, ripple: off, mode: fixed, refit: [merge], label: "single reading, no spread (road 1 without the ripple)"}
+  L3: {name: ladder_wgraph,       rung: 3, variant: road1, arm: wgraph, label: "typed graph, scalar weight (baseline of the sheaf)"}
+  L4: {name: ladder_wmatrix,      rung: 4, variant: road1, arm: wmatrix, matrix_rung: 3, label: "3x3 matrix per link type, rung 3 (baseline of the sheaf)"}
+  L6: {name: ladder_personas_equal, rung: 6, variant: both, game: equal_books, mode: refit, refit: [merge], label: "plus personas, equal weights (road 2)"}
+  L7: {name: ladder_both,         rung: 7, variant: both, mode: fixed, refit: [], label: "plus holdings weights, de-lean, push (both roads, legacy weights)"}
+ladder_table:                          # rung -> run key; rung 8 equals rung 7 while game.kappa is zero (P9), rung 9 is P10 (not computed)
+  - {rung: 1, key: R3}
+  - {rung: 2, key: L2}
+  - {rung: 3, key: L3}
+  - {rung: 4, key: L4}
+  - {rung: 5, key: P1}
+  - {rung: 6, key: L6}
+  - {rung: 7, key: L7}
+  - {rung: 8, key: P9}
+  - {rung: 9, key: P10}
+  - {rung: 10, key: A0}
+
+# --- notebooks: which runs each of the 4 notebooks holds (planning split, not measured; see claude-handover/ABLATION_RUNBOOK.md) ---------------
+# A run is "<switch>" or "<switch>@fixed:<k>" (one placebo draw, input destroyed, model kept) or "noise:<k>" or "persona:<fraction>" or "L3"/"L4".
+# Regrouped from 9 to 4 notebooks (2026-11-12, owner choice: one per Kaggle account, run in parallel). The split is a first guess, NO ablation seconds have been measured:
+# rebalance after the first finished notebook (write the seconds to claude-handover/ABLATION_TIMINGS.md, not here). Every notebook resumes from its checkpoint bundle.
+# The key keeps the "db1-" prefix; make_ablation_notebooks.py swaps it for the bucket (db3-ablation-1 ...). Same 47 runs as before, none added or dropped.
+notebooks:
+  db1-ablation-1: {title: "reuse dev fit and game refit (29 runs, no road-1 refit)", runs: [A0, P1, P2, P3, P4, P5, G1, M1, M2,
+                                                                                         O1, O2, O3, P9, P6:1, P6:2, P6:3, R2:1, R2:2, R2:3, X4,
+                                                                                         P7, P11, P8a, P8b, P8c, P8d, persona:0.25, persona:0.5, persona:0.75]}
+  db1-ablation-2: {title: "road-1 refits (heavy)",  runs: [R1, G4, X1, G2, X3, G3:1, G3:2, G3:3]}
+  db1-ablation-3: {title: "tier A draws, then the ladder (L3 and L4 search the road-1 grid: heavy)", tier_a_draws: true, runs: [L2, L3, L4, L6, L7]}
+  db1-ablation-4: {title: "noise floor, five Full refits (heavy)", runs: [noise:1, noise:2, noise:3, noise:4, noise:5]}
+tier_a_draws:                          # forecast-level only, fixed model (spec 7): K draws of each placebo switch, one run of the others; first in the notebook marked tier_a_draws
+  switches: [R2, G3, P6, R1, G1, P4, P5]
+outputs:
+  folder: "ablation-{bucket}-{llm}-{mode}"
+  runs_subfolder: runs
+  tables: [ablation_levels, ablation_deltas, ladder, noise_floor, placebo_distributions, strata, power, persona_count_curve, run_manifest]
+lock_file: "docs/ABLATION_LOCK-{bucket}-{llm}.json"
+spec_file: docs/ablation-spec.md   # a copy of ../ablation-spec-for-claude-code.md inside the repository, so the pack carries what was locked

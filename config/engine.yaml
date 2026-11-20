@@ -1,0 +1,32 @@
+# LLM engine settings (spec 2.2). Every value is a VERIFY or MEASURE item on Day 0; a wrong guess is a config edit.
+engine: vllm                           # vllm | mock
+dtype: float16                         # [DOC] T4 (Turing) has no bf16
+max_model_len: 5120                    # [MEASURE] raised from the spec's 4096: some persona prompts were 4,097 tokens; the answer budget is subtracted
+gpu_memory_utilization: 0.90           # [DOC]
+enable_prefix_caching: true            # [DOC]
+enforce_eager: false                   # set true only if CUDA-graph capture fails [MEASURE]
+max_num_seqs: 64                       # [MEASURE]
+attention_backend_env: null            # [VERIFY] environment variable name and value for the Turing attention backend
+local_weights_root: /kaggle/input      # weights are staged as private datasets (sessions may have no internet)
+weights_root_env: FINFM_WEIGHTS_ROOT   # if set, this folder (links made by the session script) is used instead of local_weights_root
+system_role_supported: null            # null = try, then merge the system prompt into the user turn if the template refuses
+models:
+  llm1:                                # Gemma: production path is the quantised checkpoint, one replica per GPU
+    path: google/gemma-4-12B-it-qat-w4a16-ct
+    weights_match: [gemma, w4a16]      # words that must all appear in the attached weights folder path (lower case)
+    tensor_parallel: 1
+    replicas: 2
+    fallback: {path: google/gemma-4-12B-it, tensor_parallel: 2, replicas: 1}   # used if the equivalence gate fails
+  llm2:
+    path: allenai/Olmo-3-7B-Instruct
+    weights_match: [olmo, 7b]
+    tensor_parallel: 2
+    replicas: 1
+  llm3:
+    path: meta-llama/Llama-3.1-8B-Instruct
+    weights_match: [llama, 8b]
+    tensor_parallel: 2
+    replicas: 1
+broken_companions: [torchaudio, torchvision]   # uninstalled when they fail to import (CUDA mismatch after installing vllm); vLLM's text path does not need them
+max_restarts: 2                        # engine crashes (EngineDeadError) restarted per batch before the batch is given up
+restart_error_names: [EngineDeadError, EngineCoreDeadError, EngineGenerateError]   # exception class names that mean the vLLM engine process died

@@ -1,0 +1,37 @@
+# Ownership game (spec Part 7, math_for_paper.md D12-D19, revision R-8).
+# Per-type parameters: [DEFAULT] fixed per type, fitted scalars are tuned on dev and frozen (7.9).
+types:
+  mutual_pension: {gamma_bar: 1.0, rho: 0.05, theta: 0.5, vartheta: 0.0, trade_rate: 0.10, mandate: 0.4}
+  bank_dealer:    {gamma_bar: 1.0, rho: 0.10, theta: 0.5, vartheta: 0.5, trade_rate: 0.25, mandate: 0.6}
+  hedge_fund:     {gamma_bar: 1.0, rho: 0.20, theta: 0.5, vartheta: 1.0, trade_rate: 0.50, mandate: 0.9}
+discount_annual_rate: 0.10          # beta = 1 / (1 + rate / trading_days_per_year)
+trading_days_per_year: 252
+trade_rate_turnover_base: 0.75      # trade rate scaled by base + slope * turnover percentile within the type
+trade_rate_turnover_slope: 0.5
+trade_rate_min: 0.02
+trade_rate_max: 0.90
+horizon_days: 10                    # H: days of the predicted path
+sleeve: true                        # R-8 headline; false = renormalised ablation
+sleeve_proxy: VXF                   # return proxy of the sleeve asset [VERIFY history and terms]
+min_return_obs: 200                 # a game asset needs this many returns in the window
+min_assets: 50                        # fewer usable S&P assets in a month: the month has no game (its events are skipped and counted)
+covariance_window_days: 252
+support_min_weight: 1.0e-5
+sp_cover_min: 0.2                   # managers below this S&P 500 share are excluded
+covariance_ridge: 1.0e-8
+anchor:
+  ridge: 1.0e-8
+  weak_id_ratio: 1.0e-3
+  tau_clip: 0.10
+amihud:
+  window_days: 60
+  winsor_low: 0.01
+  winsor_high: 0.99
+liquidity_scale: 1.0                # s_ell, fitted on dev
+omega_scale: 1.0                    # s_omega, fitted on dev
+retail_rho: 0.5                     # rho_ret: share of uncovered ownership acting as the retail belief
+kappa: {fear: 0.0, arousal: 0.0, state: 0.0}   # signs and sizes fitted on dev (E5); 0 = static panel
+varsigma: 0.0                       # resolution rate of the expected path (7.6e), fitted on dev
+exact_check_horizon: 200            # horizon of the stacked exact solve used in validation (7.8)
+volume_window_days: 6                # D17: days 0-5 enter the volume dial
+strength_target: 1.0                # median (fund sensitivity / outside liquidity) after normalisation; null = raw units

@@ -1,0 +1,189 @@
+output_dir: outputs/final-build/clean
+runs:
+  db1-llm2:
+    bucket: db1
+    tape: outputs/reader-v2-final/results/db1-llm2/tape_reader2_db1_llm2.parquet
+    units: dataset/finfm-market/prestaged/reader-db1/units.parquet
+    links: dataset/finfm-upload/links.parquet
+    prices: dataset/finfm-market/px_daily.parquet
+    fit_start: 2017-01-01
+    fit_end: 2021-12-31
+    holdout_start: 2022-01-10
+    holdout_end: 2023-12-31
+  tessera-llm1:
+    bucket: tessera
+    tape: outputs/reader-v2-final/results/tessera-llm1/tape_reader2_tessera_llm1.parquet
+    units: dataset/finfm-upload-tessera/prestaged/reader-tessera/units.parquet
+    links: dataset/finfm-tessera-upload/links.parquet
+    prices: dataset/finfm-market/px_daily.parquet
+    fit_start: 2015-01-01
+    fit_end: 2021-12-31
+    holdout_start: 2022-01-03
+    holdout_end: 2023-12-31
+  tessera-llm2:
+    bucket: tessera
+    tape: outputs/reader-v2-final/results/tessera-llm2/tape_reader2_tessera_llm2.parquet
+    units: dataset/finfm-upload-tessera/prestaged/reader-tessera/units.parquet
+    links: dataset/finfm-tessera-upload/links.parquet
+    prices: dataset/finfm-market/px_daily.parquet
+    fit_start: 2015-01-01
+    fit_end: 2021-12-31
+    holdout_start: 2022-01-03
+    holdout_end: 2023-12-31
+  tessera-llm3:
+    bucket: tessera
+    tape: outputs/reader-v2-final/results/tessera-llm3/tape_reader2_tessera_llm3.parquet
+    units: dataset/finfm-upload-tessera/prestaged/reader-tessera/units.parquet
+    links: dataset/finfm-tessera-upload/links.parquet
+    prices: dataset/finfm-market/px_daily.parquet
+    fit_start: 2015-01-01
+    fit_end: 2021-12-31
+    holdout_start: 2022-01-03
+    holdout_end: 2023-12-31
+  db3-llm2:
+    bucket: db3
+    tape: outputs/reader-v2-final/results/db3-llm2/tape_reader2_db3_llm2.parquet
+    units: dataset/finfm-market/prestaged/reader-db3/units.parquet
+    links: dataset/finfm-upload/links.parquet
+    prices: dataset/finfm-market/px_daily.parquet
+    fit_start: 2013-04-01
+    fit_end: 2018-12-31
+    holdout_start: 2019-01-09
+    holdout_end: 2020-12-31
+  db1-llm1:
+    bucket: db1
+    tape: outputs/reader-v2-final/results/db1-llm1/tape_reader2_db1_llm1.parquet
+    units: dataset/finfm-market/prestaged/reader-db1/units.parquet
+    links: dataset/finfm-upload/links.parquet
+    prices: dataset/finfm-market/px_daily.parquet
+    fit_start: 2017-01-01
+    fit_end: 2021-12-31
+    holdout_start: 2022-01-10
+    holdout_end: 2023-12-31
+  db1-llm3:
+    bucket: db1
+    tape: outputs/reader-v2-final/results/db1-llm3/tape_reader2_db1_llm3.parquet
+    units: dataset/finfm-market/prestaged/reader-db1/units.parquet
+    links: dataset/finfm-upload/links.parquet
+    prices: dataset/finfm-market/px_daily.parquet
+    fit_start: 2017-01-01
+    fit_end: 2021-12-31
+    holdout_start: 2022-01-10
+    holdout_end: 2023-12-31
+  db3-llm1:
+    bucket: db3
+    tape: outputs/reader-v2-final/results/db3-llm1/tape_reader2_db3_llm1.parquet
+    units: dataset/finfm-market/prestaged/reader-db3/units.parquet
+    links: dataset/finfm-upload/links.parquet
+    prices: dataset/finfm-market/px_daily.parquet
+    fit_start: 2013-04-01
+    fit_end: 2018-12-31
+    holdout_start: 2019-01-09
+    holdout_end: 2020-12-31
+  db3-llm3:
+    bucket: db3
+    tape: outputs/reader-v2-final/results/db3-llm3/tape_reader2_db3_llm3.parquet
+    units: dataset/finfm-market/prestaged/reader-db3/units.parquet
+    links: dataset/finfm-upload/links.parquet
+    prices: dataset/finfm-market/px_daily.parquet
+    fit_start: 2013-04-01
+    fit_end: 2018-12-31
+    holdout_start: 2019-01-09
+    holdout_end: 2020-12-31
+load:
+  max_unmatched_share: 0.001
+gate:
+  drop_analyst: true
+  drop_not_market_news: true
+  drop_skipped: true
+  analyst_value: analyst_opinion
+  not_market_value: not_market_news
+  skipped_value: skipped
+  ok_value: ok
+entity:
+  link_types:
+  - industry
+  - corr
+  - owner
+timing:
+  date_only_hour_utc: 0
+dedupe:
+  key_chars: 120
+  window_sessions: 3
+  min_key_chars: 20
+repeat_weight:
+  base: 1.0
+trust:
+  clip_low: 0.2
+  clip_high: 2.0
+  min_pins: 30
+  default: 1.0
+direction:
+  up: 1
+  down: -1
+  none: 0
+  mixed: 0
+causes:
+  other_value: other
+  no_cause_group: no_cause
+touch:
+  themes_on_company_events: false
+  market_themes:
+  - rates_fed
+  - banking_credit
+  - health_covid
+  - trade_policy
+  - russia_ukraine
+  themes:
+    oil_energy: opec|crude|brent|\bwti\b|oil price|natural gas|\blng\b|pipeline|refiner
+    metals_mining: \bgold\b|copper|steel|alumin|iron ore|lithium|nickel|mining
+    agri_food: wheat|\bcorn\b|soybean|grain|fertili[sz]er|food price|\bcrop|drought
+    china_asia: \bchina\b|chinese|beijing|hong kong|taiwan|\bjapan\b|\bkorea
+    russia_ukraine: russia|ukrain|putin|kremlin|moscow
+    middle_east: \biran\b|israel|gaza|saudi|middle east|yemen|red sea|houthi
+    europe: \beurope|\becb\b|\beu\b|brexit|britain|germany
+    trade_policy: \btariffs?\b|trade war|export ban|export control|sanction|embargo|import
+      dut
+    rates_fed: \bfed\b|federal reserve|rate hike|rate cut|interest rate|inflation|\bcpi\b|powell|treasury
+      yield|jobs report|payroll
+    health_covid: covid|coronavirus|pandemic|lockdown|vaccine|omicron
+    supply_chain: supply chain|shortage|port congestion|chip shortage|\bstrike
+    banking_credit: bank run|banking crisis|\bsvb\b|silicon valley bank|credit suisse|\bdefault|bankruptc|debt
+      ceiling
+    disaster_weather: hurricane|earthquake|wildfire|flood|typhoon
+sector:
+  enabled: true
+  clusters: 12
+  svd_components: 8
+  seed: 0
+  kmeans_n_init: 10
+  confidence_cut: 0.35
+  min_class_pins: 25
+  tfidf:
+    ngram_min: 1
+    ngram_max: 2
+    min_df: 3
+    max_features: 100000
+  logistic:
+    c: 3.0
+    max_iter: 300
+  min_returns_days: 100
+returns:
+  scale: 100.0
+placeholders:
+  use_direction_finbert: false
+  use_world_themes_embed: false
+  use_cause_repair_embed: false
+  cache_dir: outputs/nlp-checks
+  finbert_file: finbert_scores.parquet
+  embeddings_file: embeddings_units.npy
+  embedding_ids_file: embeddings_unit_ids.parquet
+  finbert_neutral_band: 0.05
+  neighbours_k: 10
+  chunk_rows: 2000
+  neighbour_confidence_cut: 0.5
+  theme_clusters: 16
+  theme_seed: 0
+report:
+  examples: 10
+  decimals: 4

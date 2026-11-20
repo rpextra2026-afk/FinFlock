@@ -1,0 +1,59 @@
+# Public databucket sources (db1, db3). Column names are VERIFY items: a wrong guess is a config edit.
+# Windows are clipped per bucket (config/windows.yaml). Licences: internal research use, text not republished.
+sources:
+  yahoo_finance_felixdrinkall:         # db1 finance: subset of the gated multi-source corpus on Hugging Face
+    bucket: db1
+    kind: finance
+    family: ext_company_news
+    tier: X2
+    trust_tier: medium
+    timezone: UTC
+    columns: {id: id, time: date, title: title, text: body, tickers: stocks}
+    hf_corpus: true                    # raw frame is the 3-column HF corpus (date, text, extra_fields); see from_hf_corpus
+  guardian:                            # db1 world: Guardian Open Platform content API
+    bucket: db1
+    kind: geo
+    family: ext_world_news
+    tier: X1
+    trust_tier: high
+    timezone: UTC
+    columns: {id: id, time: webPublicationDate, title: webTitle, text: bodyText, tickers: null}
+  reddit_finance_sp500:                # db1 social
+    bucket: db1
+    kind: social
+    family: ext_social
+    tier: X2
+    trust_tier: low
+    timezone: UTC
+    columns: {id: id, time: date, title: title, text: body, tickers: stocks}
+    hf_corpus: true
+  benzinga_6000stocks:                 # db3 finance
+    bucket: db3
+    kind: finance
+    family: ext_company_news
+    tier: X2
+    trust_tier: medium
+    timezone: UTC
+    columns: {id: id, time: date, title: title, text: body, tickers: stocks}
+    hf_corpus: true
+  nyt_headlines:                       # db3 world, headline only
+    bucket: db3
+    kind: geo
+    family: ext_world_news
+    tier: X1
+    trust_tier: high
+    timezone: UTC
+    columns: {id: id, time: date, title: title, text: body, tickers: null}
+    hf_corpus: true
+  stocktwits:                          # db3 social; created_at is a DATE (no time of day), so these are date-only items
+    bucket: db3
+    kind: social
+    family: ext_social
+    tier: X2
+    trust_tier: low
+    timezone: UTC
+    columns: {id: id, time: created_at, title: body, text: body, tickers: symbols}
+dedupe_keep_lowest_set: true           # cross-set duplicates (normalised title hash) are kept in the lowest set number
+set_order: [db1, tessera, db3]
+min_title_chars: 5
+language: en

@@ -1,0 +1,15 @@
+db1:
+  label: Hugging Face finance + Guardian + Reddit
+  spec_set: Set 2
+  spec_id: B2
+  role: replication
+tessera:
+  label: Tessera
+  spec_set: Set 1
+  spec_id: B1
+  role: headline
+db3:
+  label: Benzinga + NYT + StockTwits
+  spec_set: Set 3
+  spec_id: B3
+  role: replication

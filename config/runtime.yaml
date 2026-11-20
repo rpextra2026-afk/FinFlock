@@ -1,0 +1,16 @@
+# Runtime guards. These protect GPU time and concern the PROCESS only, never the quality of a result.
+base_seed: 20261029          # [DOC] spec 11.5; every RNG derives from this and a named unit identity
+batch_units: 64              # [MEASURE] units per processor call
+canary_units: 200            # [DEFAULT] units processed before the first health check
+progress_units: 500           # [DEFAULT] a PROGRESS line with the running parse rate is printed every this many units
+stop_on_parse_rate: false    # [OWNER 2026-10-31] a low parse rate is logged, never a reason to end the session early: the run goes on until its units are done or the cutoff
+min_parse_rate: 0.90         # [DEFAULT] the parse rate below which a warning is logged (and the shard stops if stop_on_parse_rate is true)
+max_error_rate: 0.95         # [OWNER 2026-10-31] only an engine that is failing on nearly every unit stops the shard (continuing would burn GPU for nothing); isolated errors are retried next session
+error_window_units: 200      # [DEFAULT] rolling window length for the circuit breaker
+max_attempts: 3              # [DOC] spec 2.8, a unit failing this often is marked failed
+oom_reduction_fraction: 0.25 # [DOC] spec 2.8
+diag_sample_fraction: 0.01   # [DEFAULT] share of heavy diagnostic arrays stored in full
+parquet_compression: zstd
+bundle_compression_level: 6  # [DEFAULT] deflate level for json and log members
+provenance_packages: [numpy, pandas, pyarrow, pyyaml, torch, vllm, transformers]
+git_timeout_seconds: 10

@@ -1,0 +1,23 @@
+# The runs that get a Kaggle notebook (experiment configuration). Names of buckets and LLMs come from buckets.yaml / llms.yaml.
+gpu_jobs:
+  reader:   {llms: all, buckets: all}
+  personas: {llms: all, buckets: all}
+  basic:     {llms: rival, buckets: all}
+  finripple: {llms: rival, buckets: all}
+  mass:      {llms: rival, buckets: all}
+setup_jobs:
+  bios: {llms: primary, buckets: [shared]}   # one run; bucket label "shared" (bios are keyed by persona and quarter only)
+smoke_llms: all                            # Day-0 smoke test, one notebook per LLM
+notebook_dir: notebooks
+data_dataset_hint: finfm-data              # name shown to the owner: <hint>-<run id>
+est_seconds_per_unit:                      # [MEASURE] provisional until the Day-0 smoke test writes config/measured.yaml
+  reader: 0.5
+  bios: 1.0                                # one short biography per persona and quarter
+  personas: 0.15                           # one short answer per (event, persona); prefix cache shared across the panel
+  finripple: 0.6                           # long prompt (graph text) and a JSON answer
+  mass: 0.5                                # one decision call (prefix shared across a type's agents)
+  basic: 0.2                               # one short call per headline
+candidate_items_per_source_year: 12000     # items kept per (source, year) before pinning; bounds CPU time, chosen by hashed order
+hf_revision: main                          # [VERIFY] pin to a commit hash of the HF corpus before the freeze
+pip_requirements:                          # import name -> pip name; installed at the top of every notebook when missing (Kaggle lacks them)
+  exchange_calendars: exchange_calendars

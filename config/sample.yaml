@@ -1,0 +1,23 @@
+# Sample sizes. Tier S is the owner's choice (tier M is over budget); M and L are not defined here
+# until the owner asks, because the spec does not split the db1/db3 framework sample into dev/test
+# for them.
+active_tier: S
+tiers:
+  S:
+    tessera:
+      reader_events: 30000         # [OWNER 2026-11-04] matched to db1 and db3 to save GPU and keep the three buckets comparable (was 60000 / 6000 / 15000)
+      framework_dev: 2000
+      framework_test_cap: 3000
+    db1:
+      reader_events: 30000
+      framework_dev: 2000          # spec R-8: 2,000 dev + up to 3,000 test
+      framework_test_cap: 3000
+    db3:
+      reader_events: 30000
+      framework_dev: 2000
+      framework_test_cap: 3000
+  full:                            # [OWNER 2026-11-04] tessera at the size first planned (kept as a second set of tables, not the active tier)
+    tessera:
+      reader_events: 60000
+      framework_dev: 6000
+      framework_test_cap: 15000

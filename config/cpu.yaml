@@ -1,0 +1,257 @@
+# CPU stage on real tapes (experiments D, E, F). Constants only; the bucket and the LLM come from the command line.
+# The CPU stage (tapes -> fits -> game -> optimiser -> backtest -> tables). Paths are relative to finfm-exp/.
+tape_dirs: [tapes, outputs, rival_notebooks/outputs]            # folders scanned (recursively) for finished .bundle files; the same unit in several bundles is merged
+progress_seconds: 600                # a long loop prints one progress line at most this often
+results_dir: results                   # gitignored; one folder per run id
+synthetic_flag_file: lineage.json      # every results folder says what it was built from
+folders:
+  market: dataset/finfm-market        # px_daily, corp_action (scripts/fetch_market.py)
+  upload: dataset/finfm-market        # links, sp500_snapshot, prestaged unit tables; these match the shard plans (dataset/finfm-upload has an older db3 table)
+  factors: store/raw/french/ff_factors_daily.parquet   # Ken French daily factors + rf, one table (scripts/fetch_factors.py)
+  results: results
+factors:
+  base_url: ""
+  files: [F-F_Research_Data_5_Factors_2x3_daily_CSV.zip, F-F_Momentum_Factor_daily_CSV.zip]
+  raw_folder: store/raw/french
+  timeout_seconds: 120
+  percent_to_unit: 100.0              # the files are in percent
+  columns: [mkt_rf, smb, hml, rmw, cma, rf, mom]
+  date_format: "%Y%m%d"
+road1_eval:
+  matrix_rungs: [1, 2, 3]             # the wmatrix ladder; every rung is reported
+  size_layers: [small, mid, large]    # terciles of the dollar-volume size proxy among S&P members at day 0
+  outside_layer: borrowed             # pinned nodes that are not S&P members at day 0
+  dials: [ret, vol, volu]
+  report_level: 0.95
+  r_report:                            # spec 8.3: the distribution of r for the fitted weighted graph and the fitted sheaf (a measurement; the threshold only labels the median)
+    max_events: 600                    # hashed sample of event subgraphs per model (a deviation from "all events": an eigenvalue of up to a 1200 x 1200 matrix per subgraph); null = all
+    seed_label: r_report
+    percentile: 0.9
+    kill_threshold: 0.2                # spec 8.3 default threshold
+  oracle:                              # spec 8.2: the same fits with the REALISED day 0-1 dials of the pinned stocks as source values, no reader involved
+    enabled: true
+  smoke:                               # --smoke only: a hashed subsample for the smoke test; the grid, the steps and the batch of events per step are NOT reduced
+    events: 1500
+    seed_label: smoke
+    underpowered_below_events: 20      # a stratum of a 1,500-event sample cannot reach the 200-event floor, so the smoke test lowers it to exercise the code path (labelled in the output)
+  sheaf_test:                          # spec 8.4 (D10), fixed before any real result
+    primary_table: wmatrix_r3          # the pre-specified table: rung 3 (spec 8.4 item 2)
+    graph_table: wgraph                # the sheaf is also compared with the weighted graph (spec 8.4 item 4)
+    sensitivity_table: best_cv_rung    # the rung chosen by dev CV, reported beside the pre-specified one, never in its place
+    pooled_stratum: all
+    pin_strata:                        # by the number of pinned assets of the event, from the news side only
+      single_pin: {min_pins: 1, max_pins: 1}   # expected tie: a free placebo
+      multi_pin: {min_pins: 2, max_pins: null}
+    primary_family: [single_pin, multi_pin]    # Holm is applied over these strata x the three dials x {primary_table, graph_table}
+    node_class_strata: true            # exploratory: one stratum per node type of a single pin (company, country, commodity); own Holm family
+    min_clusters: 10                   # fewer distinct event dates than this in a stratum and dial: counted, not tested
+    underpowered_below_events: 200     # spec 11.8: fewer test events than this in a stratum -> counted and not tested
+    alpha: 0.05                        # the rule: beta2 > 0 and Holm-adjusted p below alpha (two-sided bootstrap p, as in d10_regression)
+score_basic:                           # scoring of the Basic rival (Lopez-Lira and Tang) from its real bundle; no result numbers here
+  job: basic                           # the bundle job this scorer reads
+  sets:                                # unit sets scored side by side; groups come from where the company is named
+    headline: [name_in_title]          # [OWNER] the headline excludes units whose title does not name the company
+    all: [name_in_title, name_in_body_only, ticker_in_title_only, neither]
+  headline_set: headline
+  separate_groups: [name_in_body_only, ticker_in_title_only]   # shown as their own signal rows
+  alias_types: {name: name, ticker: ticker}
+  aggregation: mean                    # firm-day score
+  windows: [dev, test_full, in_cutoff, post_cutoff]
+  exploratory_windows: [dev]
+  labels:
+    in_sample: "in-sample for the LLM, not a clean test"
+    exploratory: "exploratory (dev)"
+    cost_setting: "round-trip (config; owner has not confirmed)"
+    not_computed: "not computed"
+    market_approximation: "approximation: stock return is open to close, market return is close to close"
+    alpha_approximation: "approximation: PnL is dated by fill session, factors are close-to-close; returns not risk-free adjusted"
+    holding: "holding period of the common executor (fill open to next open), not the paper's open to close"
+  variants:                            # the five variants run; none is tuned
+    headline_daily_full: {rebalance_key: headline_rebalance, screen: false, legs: both}
+    partial_25: {rebalance_key: partial_rebalance, screen: false, legs: both}
+    liquid_only: {rebalance_key: headline_rebalance, screen: true, legs: both}
+    long_only: {rebalance_key: headline_rebalance, screen: false, legs: long}
+    short_only: {rebalance_key: headline_rebalance, screen: false, legs: short}
+  headline_variant: headline_daily_full
+  close_fill_variants: [headline_daily_full]     # sensitivity: fill at the close of the next session
+  no_delist_suffix: _no_delist_return            # the headline variant is also run without the delisting return
+  beta: {window_sessions: 252, min_fraction: 0.5}   # [DOC] prior 252 sessions; at least this share of them observed
+  min_clusters: 10                     # fewer decision dates than this: no clustered regression
+  min_ic_dates: 20                     # fewer IC observations than this: no ICIR
+  cost_multiples_of_headline: [0.5, 2.0, 4.0]    # 1x is the headline itself (portfolio.scoring.cost_multipliers)
+  stress:                              # spec 11.6; a window with no overlap with the scored sample prints "not computed"
+    S1: {start: "2020-02-19", end: "2020-04-30"}
+    S2: {start: "2022-01-03", end: "2022-10-14"}
+    S3: {start: "2025-04-02", end: "2025-05-12"}
+    S4: {start: "2024-07-10", end: "2024-08-30", status: "proposed, owner to confirm"}
+  repro_gross_costs: [rt5bp, rt10bp, rt20bp]
+  output:
+    folder: "{bucket}_{llm}"
+    signals: signals_llt.parquet
+    units: units_llt.parquet
+    pnl: "pnl_llt_{variant}_{cost}.parquet"
+    metrics: metrics_llt.json
+    hash_file: config_hash.txt
+    summary_md: summary_llt.md
+    summary_csv: summary_llt.csv
+  fills: {headline: open, sensitivity: close}    # open of the next session (headline), close of the next session (sensitivity)
+  factor_models:                       # columns of the factor table used for the alpha regressions
+    market: [mkt_rf]
+    ff5: [mkt_rf, smb, hml, rmw, cma]
+    ff5_momentum: [mkt_rf, smb, hml, rmw, cma, mom]
+  hash_chars: 16                       # length of the config hash shown in rows (the notebooks show 16)
+
+score_mass:                            # scoring of the MASS rival from its real bundle (scripts/s9_score_mass.py); shared settings (windows, labels, fills, costs, stress, factor models, hash length) come from score_basic
+  job: mass                            # the bundle job this scorer reads
+  llm: llm2                            # rivals run on this LLM only (experiment configuration); a bundle of another LLM is refused
+  unit_separator: "|"                  # unit id = date|investor_type|agent (finfm/rivals/mass/run.py)
+  schedule:                            # reconciliation of the staged weekly dates with the daily schedule of spec 10.4 (documented in docs/MASS_SCORER.md)
+    weekly_min_median_gap_sessions: 3  # a bundle whose decision dates are this far apart (median) is read as weekly
+  min_types_per_date: 2                # a date needs agents of at least this many investor types for a disagreement signal (a std needs two)
+  initial_type_weight: 1.0             # starting weight of every investor type before the first optimisation (the repository value is not on disk; steps of std 0.25 are then a quarter of a weight)
+  label_horizon: 5                     # sessions: the weekly holding period, a label of the annealing window and the IC horizon; must be one of eval.ic_horizons
+  tuning:                              # the post-hoc tunables of rivals.mass.tuning (the others, shown_stocks and temperature, are generation settings and cannot be changed after the run)
+    keys: [alpha, top_fraction]
+    selection_window: dev              # parameters are chosen on this window only, by net Sharpe at the headline cost; no other window is read when choosing
+  variants:                            # run in full; the dev grid (rivals.mass.tuning alpha x top_fraction) is run in every window for the trial count of the deflated Sharpe
+    paper: {distribution: annealed, alpha_key: alpha, top_key: top_fraction}   # the published rule: alpha and top share from rivals.mass
+    tuned: {distribution: annealed, alpha_key: null, top_key: null}            # alpha and top share chosen on dev
+    uniform_types: {distribution: uniform, alpha_key: alpha, top_key: top_fraction}   # no annealing: every investor type weighs the same
+  headline_variant: paper
+  benchmark_top_fraction: 1.0          # equal-weight holding of the whole pool, rebalanced on the same dates (the index analogue)
+  scaling_agents_per_type: [4, 8]      # subsets of the agents of THIS bundle (agent index below the number); the pre-registered 4/8/16 check needs separate runs
+  progress_every_dates: 25             # the module logs once per this many decision dates while annealing
+  progress_seconds: 600                # the CLI prints a progress line at least this often
+  output:
+    signals: signals_mass.parquet
+    type_weights: type_weights_mass.parquet
+    coverage: coverage_mass.parquet
+    weights: "weights_mass_{variant}.parquet"
+    pnl: "pnl_mass_{variant}_{cost}.parquet"
+    metrics: metrics_mass.json
+    hash_file: config_hash_mass.txt
+    summary_md: summary_mass.md
+    summary_csv: summary_mass.csv
+  labels:
+    schedule_weekly: "weekly decision dates as staged (spec 10.4 asks for daily on the test window; see docs/MASS_SCORER.md): the published rule rebalances weekly, so the portfolio is the same; IC is per decision date with a 5-session label"
+    annealing: "the type distribution is re-optimised online on past dates whose labels are realised by the decision date; test returns of past dates enter this online fit, never the choice of alpha or top share"
+    modalities: "modalities the free data cannot supply are absent from the investor types (valuation, quality, growth, macro text)"
+
+reader_salvage:                        # CPU-only repair of reader answers cut off by a whitespace flood (scripts/salvage_reader.py); nothing here calls a model
+  scheduled_fill: unknown              # used ONLY by apply_fill, for rows whose answer ended before "scheduled"; the salvaged tape itself never stores a filled value
+  certainty_fill: median_parsed        # "median_parsed" = median certainty of the naturally parsed rows of the same tape, or a number between certainty_min and certainty_max
+  output_folder: "reader-salvage-{bucket}-{llm}"   # under cpu.results_dir; the script refuses to write into a folder that already holds files
+  truncate_pins: true                  # second repair tier: an unclosed pins list (loop / cut inside it) is cut back to its last complete pin object; flagged flag_pins_truncated, salvage_tier = pins_truncated
+  tape_file: tape_salvaged.parquet
+  report_file: report.md
+  validation_file: validation.json
+  tables_folder: tables
+  bundle_extensions: [.zip, .bundle]   # Kaggle downloads are .zip; they are copied (never renamed or touched) to a temporary .bundle before reading
+  top_causes: 8                        # rows of the cause-mix comparison table
+  kind_counts:                         # expected reader units per news type (claude-handover/DATABUCKETS.md); used only to name tape units that are absent from the local unit table
+    db1: {finance: 11107, geo: 10841, social: 8052}
+    db3: {finance: 10774, geo: 4813, social: 14413}
+  unmatched_kind: social               # the one type that may be inferred by exclusion, and only when the counts above match exactly
+  float_decimals: 3                    # decimals in the report tables
+  modes:                               # named, pre-specified ways a CPU run may read the reader tape (run_cpu.py / run_road1.py --reader-mode); every run records its mode
+    original:                          # the original design: only answers the run parsed on its own; certainty and scheduled are used as specified
+      include_salvaged: false
+      fill: false
+      drop_dial_features: []
+      framework_confidence: reader_certainty
+    salvaged_no_certainty:             # all salvaged rows are read; nothing is estimated: certainty and scheduled leave the vol/volume dial maps and the framework's confidence multiplier is 1 for EVERY event
+      include_salvaged: true
+      fill: false
+      drop_dial_features: [certainty, scheduled]
+      framework_confidence: none
+    salvaged_filled_sensitivity:       # SENSITIVITY ONLY: salvaged rows read with the labelled fill of apply_fill (median certainty, scheduled unknown); never the headline
+      include_salvaged: true
+      fill: true
+      drop_dial_features: []
+      framework_confidence: reader_certainty
+    original_no_defaulted:             # SENSITIVITY: as `original`, but readings whose all-zero cause was defaulted to `other` are not used (the event gets no reading)
+      include_salvaged: false
+      fill: false
+      drop_dial_features: []
+      framework_confidence: reader_certainty
+      exclude_defaulted_cause: true
+    salvaged_no_certainty_no_defaulted:  # SENSITIVITY: as `salvaged_no_certainty`, without the defaulted-cause readings
+      include_salvaged: true
+      fill: false
+      drop_dial_features: [certainty, scheduled]
+      framework_confidence: none
+      exclude_defaulted_cause: true
+    reader2_clean:                     # the final build: the framework reads outputs/final-build/clean/clean_<run>.parquet (no raw reader tape). No certainty, no scheduled flag: the confidence multiplier is 1 for EVERY event
+      include_salvaged: false
+      fill: false
+      drop_dial_features: [certainty, scheduled]
+      framework_confidence: none
+      clean_tape: true                 # read the cleaned tape through finfm/framework/clean_adapter.py
+      road1_arm: pooled_sheaf          # the pooled sheaf of finfm/build (one rule per link type); the old cause-split arms stay behind framework.road1_arm
+resources:                             # memory and CPU planning of the heavy stage (finfm/common/resources.py); changes how work is scheduled, never what is fitted
+  blas_threads: 1                      # BLAS / OpenMP threads per process; the parallelism comes from the fitting processes
+  max_workers: 8                       # hard cap on fitting processes, whatever the machine reports
+  memory_fraction: 0.6                 # share of the free memory the fitting processes may plan to use
+  worker_base_gb: 1.5                  # a fitting process before any batch: interpreter, torch, its copy of the graphs [MEASURE on Kaggle]
+  peak_factor: 12                      # peak memory of a fit step as a multiple of one micro-batch's dense Laplacian blocks; measured 5-11 on small graphs by scripts/profile_road1_memory.py, rounded up
+  max_batch_bytes: 150000000           # dense Laplacian blocks (events x nodes x nodes x dials x dials x 8 bytes) of one micro-batch; the events per optimiser step stay as configured
+dial_feature_check:                    # scripts/check_dial_features.py (CPU only)
+  bootstrap_draws: 2000                # date-clustered bootstrap draws
+  confidence_level: 0.95
+  min_rows_for_signal_test: 200        # fewer model-written rows than this: the association is not computed
+  output_folder: "dial-features-{bucket}-{llm}"
+
+gpu_extra:                             # the minimum extra GPU work for experiments D and F (scripts/prepare_gpu_inputs.py)
+  folder: dataset/finfm-extra          # output dataset folder (prestaged/<job>-<bucket>/units.parquet inside)
+  measured_seconds_per_unit: {reader: 6.5, personas: 1.26}   # measured on the first Kaggle sessions; replaces the 0.5 / 0.15 plan values
+  reader_job: reader
+  persona_job: personas
+  session_cutoff_minutes: {reader: 210, personas: 435}   # notebook-only override of kaggle.session_cutoff_minutes: reader -> 3 shards of about 2.5 h, personas -> shards of about 6.5 h
+  notebook_folder: output/extra_notebooks
+
+finripple_build:                       # how the FinRipple-lite unit tables are drawn (scripts/rebuild_finripple_units.py); unhashed: a unit table is identified by its unit ids in the shard plan
+  domain_buckets: [tessera]                # [DEVIATION 2026-11-12] buckets whose events are drawn from the reader sample's finance events that pin a company in the S&P 500 on the event day (FinRipple answers for S&P 500 companies; in tessera only 14% of the framework's finance events do). Other buckets: every finance event of the framework sample
+  domain_kind: finance                 # event kind of the units
+
+score_finripple:                       # scoring of the FinRipple-lite rival from its real bundle; shared settings (labels, windows, fills, costs, stress, beta) come from score_basic
+  job: finripple
+  sets:                                # signal sets scored side by side; a signal is "named" when the company is pinned in the event, else "ripple" (a neighbour the model added)
+    all: [named, ripple]
+    named_only: [named]
+    ripple_only: [ripple]
+  headline_set: all
+  full_grid_sets: [all]                # the other sets run the headline variant only
+  mapping:                             # model answer (company name) -> security
+    parentheses: '\(([^()]*)\)'            # text inside parentheses; split into ticker candidates with split_tickers
+    split_tickers: '[/,;:\s]+'              # "GOOGL/GOOG", "NASDAQ: AAPL"
+    bare_ticker_max_len: 5
+    extra_tickers: {FB: META}            # names/tickers the SEC list (today's names only) lacks; only renames that matter in the sample window
+    extra_names: {FACEBOOK: META}
+  salvage_cut_answers: true            # an answer cut at the token limit keeps its complete company entries (reported apart from strictly parsed ones)
+  salvage_quote_style: true            # [DEVIATION 2026-11-12] an answer that is not valid JSON or a Python literal (the paper's prompt example is single-quoted, and the model leaves apostrophes inside its strings unescaped) keeps the complete name / impact_type / impact_score entries it states, whatever the quote style; reported apart (answers_recovered_quote_style). false = strict parse and cut-off recovery only
+  variants:                            # run, none tuned; the paper's rule is top/bottom fraction of the day's predicted impacts
+    top10_mean: {rule: top_bottom, fraction: 0.10, aggregation: mean, legs: both}   # published rule (headline)
+    top05_mean: {rule: top_bottom, fraction: 0.05, aggregation: mean, legs: both}
+    top20_mean: {rule: top_bottom, fraction: 0.20, aggregation: mean, legs: both}
+    top10_sum: {rule: top_bottom, fraction: 0.10, aggregation: sum, legs: both}
+    top05_sum: {rule: top_bottom, fraction: 0.05, aggregation: sum, legs: both}
+    top20_sum: {rule: top_bottom, fraction: 0.20, aggregation: sum, legs: both}
+    signed_mean: {rule: sign, min_firms: 1, aggregation: mean, legs: both}           # every positive name long, every negative name short
+    long_only_top10: {rule: top_bottom, fraction: 0.10, aggregation: mean, legs: long}
+    short_only_top10: {rule: top_bottom, fraction: 0.10, aggregation: mean, legs: short}
+  headline_variant: top10_mean
+  close_fill_variants: [top10_mean]
+  repro:
+    r2_small_below: 0.15               # [DOC] the paper calls R2 above 0.15 economically meaningful; zero-shot-with-graph published 0.012-0.082
+    published_r2_range: [0.012, 0.082]
+  masked_fraction: 0.20                # hashed share of the events re-run with names replaced by COMPANY_A... (spec 10.1)
+  anova_min_group: 2                   # score groups with fewer observations are left out of the ANOVA
+  output:
+    signals: signals_finripple.parquet
+    units: units_finripple.parquet
+    answers: answers_finripple.parquet
+    pnl: "pnl_finripple_{variant}_{cost}.parquet"
+    metrics: metrics_finripple.json
+    hash_file: config_hash_finripple.txt
+    summary_md: summary_finripple.md
+    summary_csv: summary_finripple.csv

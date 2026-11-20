@@ -1,0 +1,64 @@
+# Event layer: kinds, clustering, sampling rules (dataset-build-spec Parts 5-7, spec 3.6-3.7).
+family_kind:                           # [DOC] fixed mapping; a trailing * matches a prefix
+  sec_8k: finance
+  foreign_6k: finance
+  foreign_annual: finance
+  ext_company_news: finance
+  press_release: finance
+  earnings_call: finance
+  ofac_sanctions: geo
+  fr_trade: geo
+  fr_presidential: geo
+  "gdelt_*": geo
+  central_bank: geo
+  regulator_action: geo
+  enforcement_or_court: geo
+  legislation: geo
+  ext_world_news: geo
+  # tessera package (finfm_v2): every SEC 8-K item-type family is a company filing = finance; Wikinews is world news = geo
+  management_change: finance
+  earnings: finance
+  governance_votes: finance
+  material_agreement: finance
+  reg_fd: finance
+  other_8k: finance
+  financing_debt: finance
+  listing_rules: finance
+  acquisition_disposition: finance
+  auditor_nonreliance: finance
+  bankruptcy_restructuring: finance
+  change_of_control: finance
+  wikinews_news: geo
+  geo_supplement: geo
+  geo_supplement_records: geo           # the family name the tessera package builder writes (package.SUPPLEMENT); without this line its events got kind None
+  ext_social: social
+  official_post: social
+  tv_caption: social
+kinds: [finance, geo, social]
+cluster:
+  finance_minutes: 60                  # [DOC] same entity and kind
+  geo_minutes: 1440                    # [DOC] 24 hours
+  social: entity_day                   # [DOC] social posts form a reaction stream clustered by entity and day
+midnight_means_date_only: true         # a timestamp exactly at 00:00:00 is treated as date-only (time_known = false)
+sampling:
+  multi_pin_share_min: 0.30            # [DOC] at least this share of S_F is multi-pin
+  per_family_min: 50                   # [DOC] where available
+  sf_label: S_F
+  sr_label: S_R
+index_events:
+  pad_sessions: 5                      # [DOC] +/- sessions around an addition or deletion
+  window_before: -1
+  window_after: 10
+tier_rank: {B: 0, X1: 1, X2: 2}
+trust_rank: {high: 0, medium: 1, low: 2}
+pins:
+  workers: 8                            # processes for the rule pinning of items (they are independent; the result equals the serial one); 1 = serial
+  min_items_per_worker: 500             # fewer items than this per worker: serial
+  role_priority: {issuer: 10, target: 8, beneficiary: 6, respondent: 6, designated: 6, other: 3}
+  confidence_bonus: {high: 3, medium: 2, low: 0}
+  node_prefix: {country: "c:", commodity: "m:", etf: "e:", company: "cik:"}
+  rule_confidence: {structured: high, text_alias: medium, text_pattern: low}
+eras:                                  # [DOC] dataset-build-spec Part 7, set by what data exists
+  - {name: E1, start: 2000-01-01, end: 2014-12-31}
+  - {name: E2, start: 2015-01-01, end: 2015-01-31}
+  - {name: E3, start: 2015-02-01, end: 2100-12-31}
