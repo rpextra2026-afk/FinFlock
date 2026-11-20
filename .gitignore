@@ -6,7 +6,8 @@ __pycache__/
 .env
 .env.*
 secrets/
-dataset/
+/dataset/*
+!/dataset/tessera/
 store/
 outputs/
 results/
@@ -24,3 +25,8 @@ tapes/
 .DS_Store
 /dist/
 /build/
+!/dataset/tessera/**/
+!/dataset/tessera/**/*.parquet
+!/dataset/tessera/MANIFEST.json
+!/dataset/tessera/README.md
+!/dataset/tessera/loader/*.py

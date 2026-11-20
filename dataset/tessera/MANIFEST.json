@@ -1,0 +1,943 @@
+{
+  "dataset": "Tessera",
+  "edition": "anonymized-research-release",
+  "redistribution_approval": "Updated redistribution approval confirmed by the uploader.",
+  "source_rights_fields": "Historical source rights fields are retained as provenance; no new blanket license is asserted.",
+  "anonymization": [
+    "Author identifiers and credentials redacted where present.",
+    "Personal filesystem paths removed.",
+    "Embedded Parquet schema metadata removed.",
+    "Public upstream source attribution retained."
+  ],
+  "tables": [
+    {
+      "path": "supplement_text/text.parquet",
+      "rows": 14240,
+      "parts": 1,
+      "columns": [
+        "record_id",
+        "text"
+      ]
+    },
+    {
+      "path": "common/entities.parquet",
+      "rows": 3886,
+      "parts": 1,
+      "columns": [
+        "cik",
+        "name",
+        "tickers_current",
+        "exchanges_current",
+        "sic_current",
+        "sic_desc_current",
+        "state_inc",
+        "is_foreign_filer"
+      ]
+    },
+    {
+      "path": "common/gdelt_country_day.parquet",
+      "rows": 944230,
+      "parts": 19,
+      "columns": [
+        "date",
+        "country_fips",
+        "family",
+        "x_dedup",
+        "z_dedup",
+        "spike_dedup",
+        "onset_dedup",
+        "source_day_missing",
+        "valid_observation",
+        "low_volume_day_suspect",
+        "split_policy"
+      ]
+    },
+    {
+      "path": "financial/events.parquet",
+      "rows": 167967,
+      "parts": 4,
+      "columns": [
+        "event_id",
+        "category",
+        "family",
+        "subtype",
+        "title",
+        "n_items_delivered",
+        "first_available_utc",
+        "session_day0",
+        "split",
+        "partition",
+        "member_item_ids",
+        "entities"
+      ]
+    },
+    {
+      "path": "financial/items.parquet",
+      "rows": 168316,
+      "parts": 4,
+      "columns": [
+        "item_id",
+        "source_id",
+        "category",
+        "event_id",
+        "family",
+        "subtype",
+        "community",
+        "title",
+        "published_utc",
+        "available_utc",
+        "policy_session",
+        "split",
+        "partition",
+        "time_precision",
+        "time_basis",
+        "timing_status",
+        "text_kind",
+        "text_chars",
+        "text_truncated",
+        "text_sha256",
+        "source_url",
+        "source_pointer",
+        "license_name",
+        "rights_status",
+        "public_release_cleared",
+        "rights_basis",
+        "attribution",
+        "entity_ciks",
+        "entity_countries",
+        "entity_commodities",
+        "flags",
+        "version_uncertain",
+        "claimed_published_utc"
+      ]
+    },
+    {
+      "path": "financial/pins.parquet",
+      "rows": 168316,
+      "parts": 4,
+      "columns": [
+        "item_id",
+        "pin_type",
+        "pin_id",
+        "role",
+        "source_field",
+        "method",
+        "confidence",
+        "sp500_member_on_date",
+        "alt_provenance"
+      ]
+    },
+    {
+      "path": "financial/text.parquet",
+      "rows": 168316,
+      "parts": 33,
+      "columns": [
+        "item_id",
+        "text"
+      ]
+    },
+    {
+      "path": "geo_supplement_records/pins.parquet",
+      "rows": 23365,
+      "parts": 1,
+      "columns": [
+        "record_id",
+        "pin_type",
+        "pin_id",
+        "source_field",
+        "confidence"
+      ]
+    },
+    {
+      "path": "geo_supplement_records/public_text.parquet",
+      "rows": 23,
+      "parts": 1,
+      "columns": [
+        "record_id",
+        "headline",
+        "text",
+        "attribution",
+        "license_name"
+      ]
+    },
+    {
+      "path": "geo_supplement_records/records.parquet",
+      "rows": 14263,
+      "parts": 1,
+      "columns": [
+        "record_id",
+        "source_id",
+        "source_name",
+        "canonical_url",
+        "url_sha256",
+        "headline",
+        "headline_sha256",
+        "published_date",
+        "available_utc",
+        "policy_session",
+        "split",
+        "partition",
+        "time_precision",
+        "time_basis",
+        "claimed_clock_time_present",
+        "time_uncertainty",
+        "version_status",
+        "topic_labels",
+        "priority",
+        "exposure_company",
+        "exposure_country",
+        "exposure_commodity",
+        "exposure_sector_term",
+        "exposure_ciks",
+        "exposure_countries",
+        "exposure_commodities",
+        "event_id",
+        "has_internal_text",
+        "has_public_text",
+        "text_chars",
+        "text_sha256",
+        "perm1_training_internal",
+        "perm2_public_metadata",
+        "perm3_public_text",
+        "public_release_status",
+        "rights_documents",
+        "rights_note",
+        "license_name",
+        "time_adjustment"
+      ]
+    },
+    {
+      "path": "geopolitical/events.parquet",
+      "rows": 17971,
+      "parts": 1,
+      "columns": [
+        "event_id",
+        "category",
+        "family",
+        "subtype",
+        "title",
+        "n_items_delivered",
+        "first_available_utc",
+        "session_day0",
+        "split",
+        "partition",
+        "member_item_ids",
+        "entities"
+      ]
+    },
+    {
+      "path": "geopolitical/items.parquet",
+      "rows": 18127,
+      "parts": 1,
+      "columns": [
+        "item_id",
+        "source_id",
+        "category",
+        "event_id",
+        "family",
+        "subtype",
+        "community",
+        "title",
+        "published_utc",
+        "available_utc",
+        "policy_session",
+        "split",
+        "partition",
+        "time_precision",
+        "time_basis",
+        "timing_status",
+        "text_kind",
+        "text_chars",
+        "text_truncated",
+        "text_sha256",
+        "source_url",
+        "source_pointer",
+        "license_name",
+        "rights_status",
+        "public_release_cleared",
+        "rights_basis",
+        "attribution",
+        "entity_ciks",
+        "entity_countries",
+        "entity_commodities",
+        "flags",
+        "version_uncertain",
+        "claimed_published_utc",
+        "template_group_size",
+        "template_group_id",
+        "template_group_partitions",
+        "template_crosses_split",
+        "template_group_basis"
+      ]
+    },
+    {
+      "path": "geopolitical/pins.parquet",
+      "rows": 72491,
+      "parts": 2,
+      "columns": [
+        "item_id",
+        "pin_type",
+        "pin_id",
+        "role",
+        "source_field",
+        "method",
+        "confidence",
+        "sp500_member_on_date",
+        "alt_provenance"
+      ]
+    },
+    {
+      "path": "geopolitical/text.parquet",
+      "rows": 18127,
+      "parts": 1,
+      "columns": [
+        "item_id",
+        "text"
+      ]
+    },
+    {
+      "path": "social_reddit/events.parquet",
+      "rows": 231111,
+      "parts": 5,
+      "columns": [
+        "event_id",
+        "category",
+        "family",
+        "subtype",
+        "title",
+        "n_items_delivered",
+        "first_available_utc",
+        "session_day0",
+        "split",
+        "partition",
+        "member_item_ids",
+        "entities"
+      ]
+    },
+    {
+      "path": "social_reddit/items.parquet",
+      "rows": 231111,
+      "parts": 5,
+      "columns": [
+        "item_id",
+        "source_id",
+        "category",
+        "event_id",
+        "family",
+        "subtype",
+        "community",
+        "title",
+        "published_utc",
+        "available_utc",
+        "policy_session",
+        "split",
+        "partition",
+        "time_precision",
+        "time_basis",
+        "timing_status",
+        "text_kind",
+        "text_chars",
+        "text_truncated",
+        "text_sha256",
+        "source_url",
+        "source_pointer",
+        "license_name",
+        "rights_status",
+        "public_release_cleared",
+        "rights_basis",
+        "attribution",
+        "entity_ciks",
+        "entity_countries",
+        "entity_commodities",
+        "flags",
+        "version_uncertain",
+        "claimed_published_utc"
+      ]
+    },
+    {
+      "path": "social_reddit/pins.parquet",
+      "rows": 107706,
+      "parts": 3,
+      "columns": [
+        "item_id",
+        "pin_type",
+        "pin_id",
+        "role",
+        "source_field",
+        "method",
+        "confidence",
+        "sp500_member_on_date",
+        "alt_provenance"
+      ]
+    },
+    {
+      "path": "social_reddit/text.parquet",
+      "rows": 231111,
+      "parts": 6,
+      "columns": [
+        "item_id",
+        "text"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "supplement_text/text.parquet/part-00000.parquet",
+      "rows": 14240,
+      "bytes": 5474968,
+      "sha256": "2a822dc003939557666fde506ad3a0db0941c3f14e402ed8e4e5c9bd778e004f"
+    },
+    {
+      "path": "common/entities.parquet/part-00000.parquet",
+      "rows": 3886,
+      "bytes": 94488,
+      "sha256": "9a254684b6bdcdbe61232934699965c7891d5378995bc8eed0f504fc50019473"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00000.parquet",
+      "rows": 50000,
+      "bytes": 587148,
+      "sha256": "72d5f97e0493d0e21beb1d2cdc61fe1b9d750decb265ad6ac77ee010555e9d09"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00001.parquet",
+      "rows": 50000,
+      "bytes": 412979,
+      "sha256": "7eaac832ac9e3d77d6230d8ae1e7342054e81cc4034e4f75fa2910bb3b459747"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00002.parquet",
+      "rows": 50000,
+      "bytes": 606887,
+      "sha256": "2f3b308be584c411eaef057e894710234c4ce8acdc3b0a997a2b9fcf21d5cca3"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00003.parquet",
+      "rows": 50000,
+      "bytes": 517294,
+      "sha256": "412871e6e1d58aa2db6be31efb34c742ca5bef31ad79be6bb8060e5f7ba05284"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00004.parquet",
+      "rows": 50000,
+      "bytes": 478981,
+      "sha256": "c208f9cd7018d05972d2cdde4828ccddaf6086c3a6bd254938e3106e57913741"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00005.parquet",
+      "rows": 50000,
+      "bytes": 614678,
+      "sha256": "9160ddc721b6f6e949463eb16e852fcd542bc046583c8b1c3eb70932095b8e0e"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00006.parquet",
+      "rows": 50000,
+      "bytes": 612791,
+      "sha256": "349c1e7b82cf62e4bf142e1813acb163fe390a36c7b73e0160c9f68caadb3f0a"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00007.parquet",
+      "rows": 50000,
+      "bytes": 618531,
+      "sha256": "1e863d5753cf9446abc1dac059bde18af8e9d589f5cebe1830c170f61ccf4b05"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00008.parquet",
+      "rows": 50000,
+      "bytes": 608041,
+      "sha256": "0ce402f95ff8546afa6b8b01ed52eff7df77681fcd111f234e49d8e1beb9ae74"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00009.parquet",
+      "rows": 50000,
+      "bytes": 552119,
+      "sha256": "845e28bce5ebd047d8fda16949d1cd51be5a76f88fde1fa5b8465660288d9b42"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00010.parquet",
+      "rows": 50000,
+      "bytes": 487045,
+      "sha256": "e9347149509e12db59a6ea6f89b62eba185f0514833948f2cd4fb2447ef09648"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00011.parquet",
+      "rows": 50000,
+      "bytes": 600203,
+      "sha256": "19043aefc91949b0ca164d7b2f5c02c98df0f0924a3e05e23c5bc47bc3124a65"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00012.parquet",
+      "rows": 50000,
+      "bytes": 487228,
+      "sha256": "f5ae2a7f23e88c498eed2c878db87e88cb6c69c778ee0363c1222b4b4f76f77a"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00013.parquet",
+      "rows": 50000,
+      "bytes": 592703,
+      "sha256": "dabc410cb7c58a455e15af092a190d61fe653362d152c84badc1ba6de5572f4e"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00014.parquet",
+      "rows": 50000,
+      "bytes": 609666,
+      "sha256": "cc564233d6b8c10cdee219ceac63ca02b91fd136228b4972bf43a234498cb2c1"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00015.parquet",
+      "rows": 50000,
+      "bytes": 608340,
+      "sha256": "f281b9eb31ecb99c12e16bb4eca259a490ab44dae3d4203e0e52af3bf44b508f"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00016.parquet",
+      "rows": 50000,
+      "bytes": 610712,
+      "sha256": "a788146d4753acdb6161b6c7dd85735da3571611293314539d30331fe28d2004"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00017.parquet",
+      "rows": 50000,
+      "bytes": 633707,
+      "sha256": "98466a3ea9987d45497755f0aacb657e69c03e2ced32b9071b3aa6459ef33452"
+    },
+    {
+      "path": "common/gdelt_country_day.parquet/part-00018.parquet",
+      "rows": 44230,
+      "bytes": 532085,
+      "sha256": "a8b5d6cc4a67fe040fd4bc2cca3174d4f598be78bfa6bc02d21f98964fb2845e"
+    },
+    {
+      "path": "financial/events.parquet/part-00000.parquet",
+      "rows": 50000,
+      "bytes": 2281234,
+      "sha256": "6908a64f472fdd9b31ab43b41d828aa5cfedd167a45e71f373a16f608d8d4b87"
+    },
+    {
+      "path": "financial/events.parquet/part-00001.parquet",
+      "rows": 50000,
+      "bytes": 2280228,
+      "sha256": "78f5035c9d041301d2bdd682c422240ab823061ac3f5876c079e81b97ef6a71c"
+    },
+    {
+      "path": "financial/events.parquet/part-00002.parquet",
+      "rows": 50000,
+      "bytes": 2281011,
+      "sha256": "7ad7764a8f7d65984d2cd743923b477d4ac92ff3b4e35f2ee748b19d39282059"
+    },
+    {
+      "path": "financial/events.parquet/part-00003.parquet",
+      "rows": 17967,
+      "bytes": 827893,
+      "sha256": "86970bea5c37e4bdfc05ee70ebb81a1035c27385a7e1128fe2b8d0aa195f61a4"
+    },
+    {
+      "path": "financial/items.parquet/part-00000.parquet",
+      "rows": 50000,
+      "bytes": 5109764,
+      "sha256": "9bc3a018171ea7ab13bae479b7587e402ffd532928c41601d8cf73e1d9e9c2eb"
+    },
+    {
+      "path": "financial/items.parquet/part-00001.parquet",
+      "rows": 50000,
+      "bytes": 5117910,
+      "sha256": "b3fa1f4386accf55376fac1a1bc6ace21b6a031d24f56060939149d5c122d48b"
+    },
+    {
+      "path": "financial/items.parquet/part-00002.parquet",
+      "rows": 50000,
+      "bytes": 5095752,
+      "sha256": "f1e66dc298c173c92558d4dc803d7d06857a5ff72d4ebb8120be9f71b71fa336"
+    },
+    {
+      "path": "financial/items.parquet/part-00003.parquet",
+      "rows": 18316,
+      "bytes": 1858520,
+      "sha256": "6f49190d15932aaef6667af3d549f659367e8d5ab12084117e8f10d6d17383bd"
+    },
+    {
+      "path": "financial/pins.parquet/part-00000.parquet",
+      "rows": 50000,
+      "bytes": 288056,
+      "sha256": "840131052fc733c2108c4428c2cc636b67b783124dd7cc6ef91fc6cab8d3482d"
+    },
+    {
+      "path": "financial/pins.parquet/part-00001.parquet",
+      "rows": 50000,
+      "bytes": 346131,
+      "sha256": "585478a66435588782e85ebc80f5889fdd57da4671f8cf15967cc4e075bf780c"
+    },
+    {
+      "path": "financial/pins.parquet/part-00002.parquet",
+      "rows": 50000,
+      "bytes": 279944,
+      "sha256": "6244a97e5fe718e115ac850c4f98144c9dcef8bcddf1c3b063297c3ab8382865"
+    },
+    {
+      "path": "financial/pins.parquet/part-00003.parquet",
+      "rows": 18316,
+      "bytes": 114232,
+      "sha256": "72722daf0df86291b3106f691fa8d8d38941984469721b412ae04b1404f47d14"
+    },
+    {
+      "path": "financial/text.parquet/part-00000.parquet",
+      "rows": 5235,
+      "bytes": 4597408,
+      "sha256": "247aa2abd7ffcdc4d2d5e71196253ac60b55c2ca1e7a6f6eaeddb15d0ab360e3"
+    },
+    {
+      "path": "financial/text.parquet/part-00001.parquet",
+      "rows": 5235,
+      "bytes": 4083513,
+      "sha256": "c781081a2a3af5321708feaf30abc5aa704d098b545a9327163926900eff12af"
+    },
+    {
+      "path": "financial/text.parquet/part-00002.parquet",
+      "rows": 5235,
+      "bytes": 5225699,
+      "sha256": "293a79c4a6485789a4378db43b10208f19ee3839bcfa0dec646a9ae43c221b41"
+    },
+    {
+      "path": "financial/text.parquet/part-00003.parquet",
+      "rows": 5235,
+      "bytes": 4304576,
+      "sha256": "ba0bcd200af812de91300be21aa05ddeac2cfe0b9b4c8ab31a55b5e6d6ca3e56"
+    },
+    {
+      "path": "financial/text.parquet/part-00004.parquet",
+      "rows": 5235,
+      "bytes": 4191338,
+      "sha256": "49add2dbd55e2e4c309c69c1cc439c67ccc71d426b293aa901c255cda7164d12"
+    },
+    {
+      "path": "financial/text.parquet/part-00005.parquet",
+      "rows": 5235,
+      "bytes": 5182353,
+      "sha256": "9e74d08949286becf883ebcdeb29756dd3458c4c1759836627b726340ef240dd"
+    },
+    {
+      "path": "financial/text.parquet/part-00006.parquet",
+      "rows": 5235,
+      "bytes": 4357465,
+      "sha256": "bdb734811f78adc15bfd866ac442443f9c11f62920a964c702c873e9b86ac476"
+    },
+    {
+      "path": "financial/text.parquet/part-00007.parquet",
+      "rows": 5235,
+      "bytes": 4364731,
+      "sha256": "79e95eb6a134014253e28581acb36f2eb9bf339bac06e40db186d79b30d49cf9"
+    },
+    {
+      "path": "financial/text.parquet/part-00008.parquet",
+      "rows": 5235,
+      "bytes": 5185923,
+      "sha256": "dc759948084a73e9eb5f986d5920bb4fb9fbf3e874c82d17adff9b27861a295c"
+    },
+    {
+      "path": "financial/text.parquet/part-00009.parquet",
+      "rows": 5235,
+      "bytes": 4065450,
+      "sha256": "a3e171e5a4d217d831ac50157e877bdeafa8a77ae39dc70e4181bbd3e1bfc71c"
+    },
+    {
+      "path": "financial/text.parquet/part-00010.parquet",
+      "rows": 5235,
+      "bytes": 4539807,
+      "sha256": "f5add92b84502e40513035142350834b00b2827fd866da93cab15e1c5eed3c9a"
+    },
+    {
+      "path": "financial/text.parquet/part-00011.parquet",
+      "rows": 5235,
+      "bytes": 5462762,
+      "sha256": "21de2a0252a815cb5d4dce854293a976f36cf3ec4342626f8538e60590f0adcd"
+    },
+    {
+      "path": "financial/text.parquet/part-00012.parquet",
+      "rows": 5235,
+      "bytes": 3819230,
+      "sha256": "a67cfd5dc0607a32e35cd7a452871bef3d468e9370de6006efde224404065962"
+    },
+    {
+      "path": "financial/text.parquet/part-00013.parquet",
+      "rows": 5235,
+      "bytes": 4603550,
+      "sha256": "9533821a8981360eeab18faee510579529b8fe3c8ffefd4a47e81590388184f6"
+    },
+    {
+      "path": "financial/text.parquet/part-00014.parquet",
+      "rows": 5235,
+      "bytes": 5665692,
+      "sha256": "7761265340f3b27f96a09a51ddcc5f61312400d9066b00321ce36ec0c45153dc"
+    },
+    {
+      "path": "financial/text.parquet/part-00015.parquet",
+      "rows": 5235,
+      "bytes": 3580787,
+      "sha256": "ad23f86ff725a6094fc39232f635be5023f7ef42a22a760ced65226531b2d281"
+    },
+    {
+      "path": "financial/text.parquet/part-00016.parquet",
+      "rows": 5235,
+      "bytes": 4802365,
+      "sha256": "f1f59e58edd3d958dde90c6b22d4af2d6d79255724c4ec6c777b3981abba8707"
+    },
+    {
+      "path": "financial/text.parquet/part-00017.parquet",
+      "rows": 5235,
+      "bytes": 5952949,
+      "sha256": "f4de6e9d5bbd3ea2888713b08d1160bb9df15071d7940b5a6e2c42d69dfcc84d"
+    },
+    {
+      "path": "financial/text.parquet/part-00018.parquet",
+      "rows": 5235,
+      "bytes": 3384757,
+      "sha256": "25235908533ce5776dc8b3205512f052eedd8cacd4dde3fdcd72f22fb6640627"
+    },
+    {
+      "path": "financial/text.parquet/part-00019.parquet",
+      "rows": 5235,
+      "bytes": 4891373,
+      "sha256": "061802bc4467ae5938d6dc04ee667cab087d0861a913e7d08da03af5679376cc"
+    },
+    {
+      "path": "financial/text.parquet/part-00020.parquet",
+      "rows": 5235,
+      "bytes": 6048653,
+      "sha256": "0e054a6379b993cc380821371ae192d77009a460aea87c2dd9e5929c978511df"
+    },
+    {
+      "path": "financial/text.parquet/part-00021.parquet",
+      "rows": 5235,
+      "bytes": 3037259,
+      "sha256": "7ea0a4a20cf49766b407ed469f3cb291b70d477fe85b2ec77d8692acace8a3db"
+    },
+    {
+      "path": "financial/text.parquet/part-00022.parquet",
+      "rows": 5235,
+      "bytes": 4757956,
+      "sha256": "fa7ad60b3b957f8351454da5c0c5aa21eb2e9a753694659c59205f04b0e97ab9"
+    },
+    {
+      "path": "financial/text.parquet/part-00023.parquet",
+      "rows": 5235,
+      "bytes": 5802070,
+      "sha256": "394c3b6aac78529408d5f445d7407bdc3b899f417b8f590530cbec5148ec1ea6"
+    },
+    {
+      "path": "financial/text.parquet/part-00024.parquet",
+      "rows": 5235,
+      "bytes": 3204138,
+      "sha256": "10ca433c0a74971f31e05fa1fad72d43e70ff963ed784a13eb855ebd84c6bec4"
+    },
+    {
+      "path": "financial/text.parquet/part-00025.parquet",
+      "rows": 5235,
+      "bytes": 4848352,
+      "sha256": "f7c0ce5f97aa7d2d318b2c003bf559fd0e409a2299374f1fb7f5a1821b7e1e06"
+    },
+    {
+      "path": "financial/text.parquet/part-00026.parquet",
+      "rows": 5235,
+      "bytes": 5346730,
+      "sha256": "881349d06ca360b27828706c089324726a7e9cd04488f892a6065e7518e3392c"
+    },
+    {
+      "path": "financial/text.parquet/part-00027.parquet",
+      "rows": 5235,
+      "bytes": 3397194,
+      "sha256": "ede8b34da4995da25c2f2ea548a6df95d94fef4380cb70edee32a389f941032e"
+    },
+    {
+      "path": "financial/text.parquet/part-00028.parquet",
+      "rows": 5235,
+      "bytes": 4846390,
+      "sha256": "b85c6d1ed4d083cb206d77381c4f8b3eb4e016996b403c6f785696ed4b8d6d61"
+    },
+    {
+      "path": "financial/text.parquet/part-00029.parquet",
+      "rows": 5235,
+      "bytes": 4982187,
+      "sha256": "25585b3de69b591939c842e50b6433790d66ea56375fbed2c676f5b092c2bcbc"
+    },
+    {
+      "path": "financial/text.parquet/part-00030.parquet",
+      "rows": 5235,
+      "bytes": 3746168,
+      "sha256": "fd7c04667a16c46430d3adc6d4e72c891efef9a937c723f4e4e29b16e084ef53"
+    },
+    {
+      "path": "financial/text.parquet/part-00031.parquet",
+      "rows": 5235,
+      "bytes": 4936718,
+      "sha256": "be4a2222b1a5ba61583ca1355a4a2dcee980c433200c97014331b8c5f83c6782"
+    },
+    {
+      "path": "financial/text.parquet/part-00032.parquet",
+      "rows": 796,
+      "bytes": 847379,
+      "sha256": "d110c18782bab8570bc17536b86575228cf46889c5fb4117c4f9c81f9647faeb"
+    },
+    {
+      "path": "geo_supplement_records/pins.parquet/part-00000.parquet",
+      "rows": 23365,
+      "bytes": 235831,
+      "sha256": "5ea7c7f54963cadaf3e4eec61dd7c852de2ce9ef284cc747751ba41b4ebafc7d"
+    },
+    {
+      "path": "geo_supplement_records/public_text.parquet/part-00000.parquet",
+      "rows": 23,
+      "bytes": 30210,
+      "sha256": "283c8e786d460362f5a04097de423775e623962777ebc33559cd4fc727760c4c"
+    },
+    {
+      "path": "geo_supplement_records/records.parquet/part-00000.parquet",
+      "rows": 14263,
+      "bytes": 2500704,
+      "sha256": "6617a1f67dd9e339cf27ccf3c96119097e21e9eaeb8de618383b709e2d5fd278"
+    },
+    {
+      "path": "geopolitical/events.parquet/part-00000.parquet",
+      "rows": 17971,
+      "bytes": 846499,
+      "sha256": "6f4388a57d7a8aa4897e0d52ee2754d1588a0523ef0127f952e86175cc56028b"
+    },
+    {
+      "path": "geopolitical/items.parquet/part-00000.parquet",
+      "rows": 18127,
+      "bytes": 1745993,
+      "sha256": "9dd7472afe0700478b35b132e28e2c712b74b656d6076f40ed5c413a3e2f1fc7"
+    },
+    {
+      "path": "geopolitical/pins.parquet/part-00000.parquet",
+      "rows": 50000,
+      "bytes": 281172,
+      "sha256": "2cc7960b08a183de7ae1ab954ab7b4c1cc0d437732ce9bc44b22edb373507b59"
+    },
+    {
+      "path": "geopolitical/pins.parquet/part-00001.parquet",
+      "rows": 22491,
+      "bytes": 334648,
+      "sha256": "10c4f160d0933527c3b9b03fd1eff31b982b39b4b4e286b4793f2001f52b2780"
+    },
+    {
+      "path": "geopolitical/text.parquet/part-00000.parquet",
+      "rows": 18127,
+      "bytes": 1331680,
+      "sha256": "cc368c617c358ba2a68880f79a0189e426a581258ff7caeaac420913276dd0de"
+    },
+    {
+      "path": "social_reddit/events.parquet/part-00000.parquet",
+      "rows": 50000,
+      "bytes": 2681077,
+      "sha256": "cdb64b690f4bb1e9b3b08d5a3847a0afb449a2b576176b76bb3f1c1b5de1768a"
+    },
+    {
+      "path": "social_reddit/events.parquet/part-00001.parquet",
+      "rows": 50000,
+      "bytes": 2675688,
+      "sha256": "d116eaf489926bfb0a9cde05784fd800da58b1bf8cff776b1bcb6ed3c22203ff"
+    },
+    {
+      "path": "social_reddit/events.parquet/part-00002.parquet",
+      "rows": 50000,
+      "bytes": 2678717,
+      "sha256": "efa4e2dad7a7db3aebfe9b634f6c917c3825468c01ecbefd3a6c3bc8adb7aa32"
+    },
+    {
+      "path": "social_reddit/events.parquet/part-00003.parquet",
+      "rows": 50000,
+      "bytes": 2680850,
+      "sha256": "62d996a4434e62b97767437f03e165c927d86f45258d991c31d1ef05792c9983"
+    },
+    {
+      "path": "social_reddit/events.parquet/part-00004.parquet",
+      "rows": 31111,
+      "bytes": 1679925,
+      "sha256": "1de12a78a4e6346249887305b8f1fa2163d69e5d5838005ba0688157b9804ddf"
+    },
+    {
+      "path": "social_reddit/items.parquet/part-00000.parquet",
+      "rows": 50000,
+      "bytes": 6536296,
+      "sha256": "b4083bf15ec8595e14acfd41b4bfa970d4be3edcf47df2559e3fe0e0191a0dc0"
+    },
+    {
+      "path": "social_reddit/items.parquet/part-00001.parquet",
+      "rows": 50000,
+      "bytes": 6388006,
+      "sha256": "ae9343746fa03459bf5003b3d5eacaeecdcb9fa70603b300715c96c2bafd565b"
+    },
+    {
+      "path": "social_reddit/items.parquet/part-00002.parquet",
+      "rows": 50000,
+      "bytes": 6434151,
+      "sha256": "c5417c0afa42b66f8695619ed3d11711178e1ee05089097db5d8c261dc9d04c1"
+    },
+    {
+      "path": "social_reddit/items.parquet/part-00003.parquet",
+      "rows": 50000,
+      "bytes": 6500936,
+      "sha256": "a7d38e29336f72674f1eb59ee321f8d29a229fdc5f292f4bbb3d0b8717a1a28c"
+    },
+    {
+      "path": "social_reddit/items.parquet/part-00004.parquet",
+      "rows": 31111,
+      "bytes": 4152300,
+      "sha256": "b6caec1d50d0ba1542319d841cce3f408234419f77f99154ed5cf42bca6296ba"
+    },
+    {
+      "path": "social_reddit/pins.parquet/part-00000.parquet",
+      "rows": 50000,
+      "bytes": 332343,
+      "sha256": "751cf9628d725e23e94bb2a5c1d65d73a31310c7f1b69ede8f3650b33414d787"
+    },
+    {
+      "path": "social_reddit/pins.parquet/part-00001.parquet",
+      "rows": 50000,
+      "bytes": 334263,
+      "sha256": "1c8eb70054989ab03b236e341ee4afbfd75285337e564f56b762bb7961f59aac"
+    },
+    {
+      "path": "social_reddit/pins.parquet/part-00002.parquet",
+      "rows": 7706,
+      "bytes": 55457,
+      "sha256": "fa2de4561087953ba5fc61baa095ecfd388943f36f5e3b6fccf740af9abf7c2f"
+    },
+    {
+      "path": "social_reddit/text.parquet/part-00000.parquet",
+      "rows": 40400,
+      "bytes": 11050546,
+      "sha256": "1c61a629ef3009ac3655b67635a9027c92cb998c387df05edcfa836f1bdb36c3"
+    },
+    {
+      "path": "social_reddit/text.parquet/part-00001.parquet",
+      "rows": 40400,
+      "bytes": 11355103,
+      "sha256": "416b95a094581228a8ca3adc6bc2c8cbceb33dc3b2405d608eba5f0b1faee7ac"
+    },
+    {
+      "path": "social_reddit/text.parquet/part-00002.parquet",
+      "rows": 40400,
+      "bytes": 5634892,
+      "sha256": "4b769b93bdf19369873c4ccfa8bf3c1bcae0a33d8609dc688355307da6bf5e6a"
+    },
+    {
+      "path": "social_reddit/text.parquet/part-00003.parquet",
+      "rows": 40400,
+      "bytes": 6094698,
+      "sha256": "4ac5cb57fb9cbcf9f99bbed5a15cca5aa52e21ed388b1cce09b0b8b974032819"
+    },
+    {
+      "path": "social_reddit/text.parquet/part-00004.parquet",
+      "rows": 40400,
+      "bytes": 7278119,
+      "sha256": "4ee6fef95b3dfa2ba886e759264bb6f5143242c603297059cf5d4f3281c8c8f6"
+    },
+    {
+      "path": "social_reddit/text.parquet/part-00005.parquet",
+      "rows": 29111,
+      "bytes": 7429513,
+      "sha256": "41df1c947d87ae3c0b53cf1fa08a502c61f95f3e7bea8b5661d94453a3b4d2e4"
+    }
+  ]
+}

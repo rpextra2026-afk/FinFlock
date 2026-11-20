@@ -1,4 +1,4 @@
-"""The tessera package (finfm_v2 candidate) as the event frame the reader and persona stagers use.
+"""The Tessera package as the event frame the reader and persona stagers use.
 
 The package already holds clustered events, items, text and pins in four folders (``financial``,
 ``geopolitical``, ``social_reddit`` and the news supplement ``geo_supplement_records``). This module merges them
@@ -20,7 +20,7 @@ from finfm.common.config import Config
 
 CATEGORIES = ("financial", "geopolitical", "social_reddit")
 SUPPLEMENT = "geo_supplement_records"
-INTERNAL_TEXT = Path("INTERNAL_ONLY_text_layer") / "internal_text.parquet"
+SUPPLEMENT_TEXT = Path("supplement_text") / "text.parquet"
 PIN_COLUMNS = ["pin_type", "pin_id", "role", "confidence"]
 TITLE_CHARS = 200
 OTHER_ROLE = "other"
@@ -73,7 +73,10 @@ def _category_events(package: Path, category: str) -> pd.DataFrame:
 
 def _supplement_events(package: Path) -> pd.DataFrame:
     records = pd.read_parquet(package / SUPPLEMENT / "records.parquet")
-    text = pd.read_parquet(package / INTERNAL_TEXT).set_index("record_id")["text"]
+    text = pd.concat([
+        pd.read_parquet(package / SUPPLEMENT_TEXT)[["record_id", "text"]],
+        pd.read_parquet(package / SUPPLEMENT / "public_text.parquet")[["record_id", "text"]],
+    ], ignore_index=True).set_index("record_id")["text"]
     pins = pd.read_parquet(package / SUPPLEMENT / "pins.parquet")
     by_record = {k: g for k, g in pins.groupby("record_id")}
     rows = []

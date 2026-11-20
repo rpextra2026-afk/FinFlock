@@ -28,6 +28,7 @@ finfm/
 ├── reader2/        # news reader, validation, and shard scheduling
 ├── pilot/          # reader prompts and supporting inference code
 ├── config/         # experiment settings and small lookup tables
+├── dataset/tessera/ # anonymized Tessera input dataset and standalone loader
 ├── scripts/        # build, merge, freeze, and input conversion tools
 ├── tests/          # synthetic tests of numerical methods and pipeline behavior
 ├── assets/architecture.png
@@ -53,7 +54,7 @@ gemma uses the quantized checkpoint with its full-precision fallback configured 
 | `tessera` | `tessera` | point-in-time financial news package |
 | `databucket3` | `db3` | financial and general news with social posts |
 
-dataset files are supplied locally and their remote repository links are unset. the loaders and preprocessing code are in `finfm/data/` and `finfm/stage/`. experiment windows are in `config/windows.yaml` and `config/clean.yaml`.
+tessera's actual dataset files are included in [`dataset/tessera/`](dataset/tessera/), alongside a standalone loader and file checksums. the other datasets and model weights are supplied separately, and personal dataset-hosting links are omitted. the experiment loaders and preprocessing code are in `finfm/data/` and `finfm/stage/`. experiment windows are in `config/windows.yaml` and `config/clean.yaml`.
 
 the nine dataset/model combinations are supported entry points. the four additional final-build configurations use their dataset's existing time windows and paths; their presence does not assert that those experiments were completed. tessera's gemma and llama readers retain the configured hash-based subset selection in `reader2/settings.py`.
 
@@ -134,4 +135,4 @@ replace `tessera` and `olmo` in these commands with the desired directory names.
 python -m pytest
 ```
 
-the tests generate small synthetic fixtures in temporary folders. full dataset replication and GPU inference require the separately supplied inputs and suitable hardware. this source release includes the architecture image and configuration constants; saved notebook executions, experiment results, model weights, and checkpoint bundles are excluded.
+the tests generate small synthetic fixtures in temporary folders. full pipeline replication and GPU inference require the remaining local inputs and suitable hardware. this release includes Tessera, the architecture image, and configuration constants; saved notebook executions, experiment results, model weights, and checkpoint bundles are excluded.
