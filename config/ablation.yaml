@@ -68,7 +68,7 @@ switches:
   P9:  {name: emotion_state_off, family: road2,    how: config,  tier: B, mode: fixed, refit: [], config: {game.kappa: {fear: 0.0, arousal: 0.0, state: 0.0}},
         expect: "near tie (equals Full when the configured kappa is already zero)"}
   P10: {name: timing_static,     family: road2,    how: config,  tier: A, status: not_computed,
-        reason: "no static_D12 / D12_decay / D14b switch exists in oryxis/ or config/; building it takes more than a day (spec 5.3)"}
+        reason: "no static_D12 / D12_decay / D14b switch exists in finflock/ or config/; building it takes more than a day (spec 5.3)"}
   P11: {name: sleeve_off,        family: road2,    how: config,  tier: B, mode: refit, refit: [merge], config: {game.sleeve: false}}
   M1:  {name: merge_plain_sum,   family: merge,    how: config,  tier: B, mode: fixed, refit: [], merge_rule: plain_sum}
   M2:  {name: brake_off,         family: merge,    how: config,  tier: B, mode: fixed, refit: [], brake: none}

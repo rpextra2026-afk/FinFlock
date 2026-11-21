@@ -7,7 +7,7 @@ import json
 import pandas as pd
 import pytest
 
-from oryxis.common.schema import (
+from finflock.common.schema import (
     AVAILABLE_DATE,
     FAMILY,
     KIND,
@@ -21,12 +21,12 @@ from oryxis.common.schema import (
     Reason,
     Status,
 )
-from oryxis.compute.engine import GenParams, MockEngine
-from oryxis.reader.masking import MaskerCache, Masker, label_for
-from oryxis.reader.mock import reader_responder
-from oryxis.reader.output import parse_reading, reader_json_schema
-from oryxis.reader.prompt import WhitespaceTokenizer, build_reader_prompt
-from oryxis.reader.run import CAUSE_PREFIX, READING_PINS, ReaderProcessor
+from finflock.compute.engine import GenParams, MockEngine
+from finflock.reader.masking import MaskerCache, Masker, label_for
+from finflock.reader.mock import reader_responder
+from finflock.reader.output import parse_reading, reader_json_schema
+from finflock.reader.prompt import WhitespaceTokenizer, build_reader_prompt
+from finflock.reader.run import CAUSE_PREFIX, READING_PINS, ReaderProcessor
 
 ALIASES = pd.DataFrame(
     [
@@ -235,8 +235,8 @@ def test_the_prompt_tells_the_model_that_causes_add_up_to_one_and_other_is_the_f
 
 
 def test_reparse_recovers_stored_answers_without_a_model_call_and_leaves_loops_failed(cfg):
-    from oryxis.common.schema import PARSE_OK, RAW_OUTPUT, STATUS, UNIT_ID
-    from oryxis.reader.reparse import reparse_tape
+    from finflock.common.schema import PARSE_OK, RAW_OUTPUT, STATUS, UNIT_ID
+    from finflock.reader.reparse import reparse_tape
 
     zero = {c: 0.0 for c in cfg.get("causes.causes")}
     pins = json.dumps([{"node_id": "n1", "priority": 1.0}])
@@ -319,9 +319,9 @@ def test_processor_is_deterministic(cfg):
 
 
 def test_ref_map_used_for_reparsing_equals_the_one_shown_in_the_prompt(cfg):
-    from oryxis.reader.prompt import ref_to_node_of
-    from oryxis.reader.masking import MaskerCache
-    from oryxis.reader.prompt import WhitespaceTokenizer, build_reader_prompt
+    from finflock.reader.prompt import ref_to_node_of
+    from finflock.reader.masking import MaskerCache
+    from finflock.reader.prompt import WhitespaceTokenizer, build_reader_prompt
 
     pins = [{"node_id": f"n{i}", "node_type": "company", "layer": "non_sp", "priority": float(i)} for i in range(9)]
     masker = MaskerCache(pd.DataFrame({"node_id": ["n1"], "alias": ["N1"], "alias_type": ["ticker"], "valid_from": [None], "valid_to": [None]}),
@@ -345,7 +345,7 @@ def _panels(n=120, seed=3):
 
 
 def test_trailing_state_ignores_day_zero_and_everything_after(cfg):
-    from oryxis.data.market import trailing_state
+    from finflock.data.market import trailing_state
 
     ret, dv = _panels()
     day0 = ret.index[80]
@@ -360,7 +360,7 @@ def test_trailing_state_ignores_day_zero_and_everything_after(cfg):
 
 
 def test_market_state_terciles_use_only_earlier_history(cfg):
-    from oryxis.data.market import market_state_terciles
+    from finflock.data.market import market_state_terciles
 
     ret, dv = _panels(200)
     day0 = ret.index[150]
@@ -373,8 +373,8 @@ def test_market_state_terciles_use_only_earlier_history(cfg):
 
 
 def test_add_state_features_and_feature_matrix_have_the_configured_blocks_and_no_label_column(cfg):
-    from oryxis.reader.dials import feature_matrix
-    from oryxis.reader.state_features import STATE_COLUMNS, add_state_features
+    from finflock.reader.dials import feature_matrix
+    from finflock.reader.state_features import STATE_COLUMNS, add_state_features
 
     ret, dv = _panels(200)
     causes = {f"cause_{c}": 1.0 / len(cfg.get("causes.causes")) for c in cfg.get("causes.causes")}
@@ -395,9 +395,9 @@ def test_add_state_features_and_feature_matrix_have_the_configured_blocks_and_no
 def test_dial_map_handles_missing_state_and_the_tree_arm_wins_only_with_a_lower_cv_loss(cfg, monkeypatch):
     import numpy as np
 
-    from oryxis.common.timing import TradingCalendar
-    from oryxis.reader import dials
-    from oryxis.reader.dials import DialMap, TreeMap, fit_dial_map
+    from finflock.common.timing import TradingCalendar
+    from finflock.reader import dials
+    from finflock.reader.dials import DialMap, TreeMap, fit_dial_map
 
     rng = np.random.default_rng(0)
     n = 160

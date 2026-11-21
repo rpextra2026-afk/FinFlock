@@ -9,8 +9,8 @@
 """
 from __future__ import annotations
 
-from oryxis.data.pin_cleanup import is_rating_headline
-from oryxis.reader.output_v2 import ReadingV2, apply_gate
+from finflock.data.pin_cleanup import is_rating_headline
+from finflock.reader.output_v2 import ReadingV2, apply_gate
 
 from reader2 import settings as S
 

@@ -6,8 +6,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from oryxis.common.timing import TradingCalendar
-from oryxis.data.f13 import (
+from finflock.common.timing import TradingCalendar
+from finflock.data.f13 import (
     choose_unit_factor,
     holdings_weights,
     latest_filing_per_manager,
@@ -18,7 +18,7 @@ from oryxis.data.f13 import (
     similarity,
     uncovered_share,
 )
-from oryxis.data.managers import (
+from finflock.data.managers import (
     classify_managers,
     exclude_low_cover,
     passive_flags,

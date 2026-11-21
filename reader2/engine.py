@@ -14,11 +14,11 @@ import os
 from collections.abc import Callable, Sequence
 from typing import Any
 
-from oryxis.common.config import Config, load_config
-from oryxis.compute.engine import Engine, GenParams, GenRequest, GenResult
-from oryxis.compute.factory import resolve_model_path
-from oryxis.compute.parallel import DataParallelEngine
-from oryxis.compute.vllm_engine import STRUCTURED_CANDIDATES, VLLMEngine, patch_triton_attention
+from finflock.common.config import Config, load_config
+from finflock.compute.engine import Engine, GenParams, GenRequest, GenResult
+from finflock.compute.factory import resolve_model_path
+from finflock.compute.parallel import DataParallelEngine
+from finflock.compute.vllm_engine import STRUCTURED_CANDIDATES, VLLMEngine, patch_triton_attention
 
 from reader2 import settings as S
 

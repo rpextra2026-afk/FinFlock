@@ -23,8 +23,8 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from oryxis.common.config import load_config  # noqa: E402
-from oryxis.compute.bundle import make_job_id, read_consolidated, scan_bundles  # noqa: E402
+from finflock.common.config import load_config  # noqa: E402
+from finflock.compute.bundle import make_job_id, read_consolidated, scan_bundles  # noqa: E402
 
 EVENT_SEPARATOR = "|"
 UNIT_ID = "unit_id"

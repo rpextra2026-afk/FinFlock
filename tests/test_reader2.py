@@ -10,14 +10,14 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from oryxis.common.io import atomic_path  # noqa: F401  (imported so the fsync shim below patches the same module)
-from oryxis.common.schema import PARSE_OK, REASON, STATUS, UNIT_ID, Status
-from oryxis.compute.bundle import make_job_id, read_consolidated, scan_bundles
-from oryxis.compute.engine import Engine, GenResult
-from oryxis.compute.session import SessionError
-from oryxis.compute.shard import units_fingerprint
-from oryxis.reader.masking import MaskerCache
-from oryxis.reader.prompt import WhitespaceTokenizer
+from finflock.common.io import atomic_path  # noqa: F401  (imported so the fsync shim below patches the same module)
+from finflock.common.schema import PARSE_OK, REASON, STATUS, UNIT_ID, Status
+from finflock.compute.bundle import make_job_id, read_consolidated, scan_bundles
+from finflock.compute.engine import Engine, GenResult
+from finflock.compute.session import SessionError
+from finflock.compute.shard import units_fingerprint
+from finflock.reader.masking import MaskerCache
+from finflock.reader.prompt import WhitespaceTokenizer
 from pilot.reader_v3_prompts import examples
 from reader2 import plan as P
 from reader2 import settings as S
@@ -33,7 +33,7 @@ REF = re.compile(r"^(A\d+): ", re.M)
 @pytest.fixture(autouse=True)
 def no_fsync(monkeypatch):
     """Windows cannot fsync a read-only handle or a directory; the bundle logic does not depend on it."""
-    import oryxis.common.io as io
+    import finflock.common.io as io
 
     monkeypatch.setattr(io.os, "fsync", lambda fd: None)
     monkeypatch.setattr(io, "_fsync_dir", lambda directory: None)
@@ -138,7 +138,7 @@ def test_helpers_equal_the_pilot_helpers():
 
 
 def test_gate_and_rating_rule(cfg):
-    from oryxis.reader.output_v2 import parse_reading_v2
+    from finflock.reader.output_v2 import parse_reading_v2
     from reader2.rules import finalize
     refs = {"A1": "ACME"}
     text = json.dumps({**next(a for _, _, a in examples(True) if a["event_type"] == "asset_event"),
@@ -182,7 +182,7 @@ def test_shards_partition_the_units():
 
 
 def test_tessera_llm2_keeps_the_shared_half_in_its_own_shards():
-    from oryxis.data.buckets.events import hash_bucket
+    from finflock.data.buckets.events import hash_bucket
     units = pd.DataFrame({UNIT_ID: [f"ev:{i}" for i in range(600)]})
     parts = [{"hash_from": 0, "hash_below": 50, "n_shards": 2}, {"hash_from": 50, "hash_below": 100, "n_shards": 3}]
     got = [set(P.shard_units(units, parts, k)[UNIT_ID]) for k in range(5)]

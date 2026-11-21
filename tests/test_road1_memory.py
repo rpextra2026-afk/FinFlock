@@ -1,4 +1,4 @@
-"""Memory-bounded fitting: micro-batches give the same loss and gradients, and the worker count follows free memory (oryxis/common/resources.py)."""
+"""Memory-bounded fitting: micro-batches give the same loss and gradients, and the worker count follows free memory (finflock/common/resources.py)."""
 
 from __future__ import annotations
 
@@ -6,10 +6,10 @@ import numpy as np
 import pytest
 import torch
 
-from oryxis.common import resources
-from oryxis.road1.arms import SheafModel
-from oryxis.road1.fit import BYTES_PER_VALUE, accumulate_gradients, mean_loss, micro_batches
-from oryxis.road1.graph import EventGraph
+from finflock.common import resources
+from finflock.road1.arms import SheafModel
+from finflock.road1.fit import BYTES_PER_VALUE, accumulate_gradients, mean_loss, micro_batches
+from finflock.road1.graph import EventGraph
 
 D = 3
 TYPES = 9

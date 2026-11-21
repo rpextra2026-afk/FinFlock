@@ -1,12 +1,12 @@
 # CPU stage on real tapes (experiments D, E, F). Constants only; the bucket and the LLM come from the command line.
-# The CPU stage (tapes -> fits -> game -> optimiser -> backtest -> tables). Paths are relative to oryxis-exp/.
+# The CPU stage (tapes -> fits -> game -> optimiser -> backtest -> tables). Paths are relative to finflock-exp/.
 tape_dirs: [tapes, outputs, rival_notebooks/outputs]            # folders scanned (recursively) for finished .bundle files; the same unit in several bundles is merged
 progress_seconds: 600                # a long loop prints one progress line at most this often
 results_dir: results                   # gitignored; one folder per run id
 synthetic_flag_file: lineage.json      # every results folder says what it was built from
 folders:
-  market: dataset/oryxis-market        # px_daily, corp_action (scripts/fetch_market.py)
-  upload: dataset/oryxis-market        # links, sp500_snapshot, prestaged unit tables; these match the shard plans (dataset/oryxis-upload has an older db3 table)
+  market: dataset/finflock-market        # px_daily, corp_action (scripts/fetch_market.py)
+  upload: dataset/finflock-market        # links, sp500_snapshot, prestaged unit tables; these match the shard plans (dataset/finflock-upload has an older db3 table)
   factors: store/raw/french/ff_factors_daily.parquet   # Ken French daily factors + rf, one table (scripts/fetch_factors.py)
   results: results
 factors:
@@ -104,7 +104,7 @@ score_basic:                           # scoring of the Basic rival (Lopez-Lira 
 score_mass:                            # scoring of the MASS rival from its real bundle (scripts/s9_score_mass.py); shared settings (windows, labels, fills, costs, stress, factor models, hash length) come from score_basic
   job: mass                            # the bundle job this scorer reads
   llm: llm2                            # rivals run on this LLM only (experiment configuration); a bundle of another LLM is refused
-  unit_separator: "|"                  # unit id = date|investor_type|agent (oryxis/rivals/mass/run.py)
+  unit_separator: "|"                  # unit id = date|investor_type|agent (finflock/rivals/mass/run.py)
   schedule:                            # reconciliation of the staged weekly dates with the daily schedule of spec 10.4 (documented in docs/MASS_SCORER.md)
     weekly_min_median_gap_sessions: 3  # a bundle whose decision dates are this far apart (median) is read as weekly
   min_types_per_date: 2                # a date needs agents of at least this many investor types for a disagreement signal (a std needs two)
@@ -186,9 +186,9 @@ reader_salvage:                        # CPU-only repair of reader answers cut o
       fill: false
       drop_dial_features: [certainty, scheduled]
       framework_confidence: none
-      clean_tape: true                 # read the cleaned tape through oryxis/framework/clean_adapter.py
-      road1_arm: pooled_sheaf          # the pooled sheaf of oryxis/build (one rule per link type); the old cause-split arms stay behind framework.road1_arm
-resources:                             # memory and CPU planning of the heavy stage (oryxis/common/resources.py); changes how work is scheduled, never what is fitted
+      clean_tape: true                 # read the cleaned tape through finflock/framework/clean_adapter.py
+      road1_arm: pooled_sheaf          # the pooled sheaf of finflock/build (one rule per link type); the old cause-split arms stay behind framework.road1_arm
+resources:                             # memory and CPU planning of the heavy stage (finflock/common/resources.py); changes how work is scheduled, never what is fitted
   blas_threads: 1                      # BLAS / OpenMP threads per process; the parallelism comes from the fitting processes
   max_workers: 8                       # hard cap on fitting processes, whatever the machine reports
   memory_fraction: 0.6                 # share of the free memory the fitting processes may plan to use
@@ -202,7 +202,7 @@ dial_feature_check:                    # scripts/check_dial_features.py (CPU onl
   output_folder: "dial-features-{bucket}-{llm}"
 
 gpu_extra:                             # the minimum extra GPU work for experiments D and F (scripts/prepare_gpu_inputs.py)
-  folder: dataset/oryxis-extra          # output dataset folder (prestaged/<job>-<bucket>/units.parquet inside)
+  folder: dataset/finflock-extra          # output dataset folder (prestaged/<job>-<bucket>/units.parquet inside)
   measured_seconds_per_unit: {reader: 6.5, personas: 1.26}   # measured on the first Kaggle sessions; replaces the 0.5 / 0.15 plan values
   reader_job: reader
   persona_job: personas

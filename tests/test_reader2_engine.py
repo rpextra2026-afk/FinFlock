@@ -6,8 +6,8 @@ import types
 
 import pytest
 
-from oryxis.common.config import load_config
-from oryxis.compute.engine import GenParams, GenRequest
+from finflock.common.config import load_config
+from finflock.compute.engine import GenParams, GenRequest
 from reader2 import settings as S
 from reader2.engine import EngineSupervisor, ReaderV2VLLM, _ReplicaFactory
 from tests.conftest import CONFIG_DIR

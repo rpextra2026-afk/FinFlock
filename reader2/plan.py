@@ -7,9 +7,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from oryxis.common.schema import UNIT_ID
-from oryxis.compute.shard import event_hash_bucket
-from oryxis.reader.prompt import ref_to_node_of
+from finflock.common.schema import UNIT_ID
+from finflock.compute.shard import event_hash_bucket
+from finflock.reader.prompt import ref_to_node_of
 
 from reader2 import settings as S
 

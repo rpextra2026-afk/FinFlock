@@ -6,8 +6,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from oryxis.common.config import load_config
-from oryxis.framework import clean_adapter as CA
+from finflock.common.config import load_config
+from finflock.framework import clean_adapter as CA
 
 from tests.conftest import CONFIG_DIR
 

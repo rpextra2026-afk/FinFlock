@@ -6,9 +6,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from oryxis.build import evaluate as E
-from oryxis.build import metrics as M
-from oryxis.common.config import load_config
+from finflock.build import evaluate as E
+from finflock.build import metrics as M
+from finflock.common.config import load_config
 
 from tests.conftest import CONFIG_DIR
 

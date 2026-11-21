@@ -22,14 +22,14 @@ from typing import Any
 
 import pandas as pd
 
-from oryxis.common.schema import (
+from finflock.common.schema import (
     AVAILABLE_DATE, DETAIL, FAMILY, KIND, PARSE_OK, PINS_JSON, RAW_OUTPUT, REASON, STATUS, TEXT, TITLE, TOKENS_IN, TOKENS_OUT, UNIT_ID,
     Reason, Status,
 )
-from oryxis.compute.engine import GenParams, GenRequest
-from oryxis.compute.vllm_engine import PROMPT_TOO_LONG
-from oryxis.reader.output_v2 import FLAG_NAMES, LINK_TYPES, parse_reading_v2, reader_v2_json_schema
-from oryxis.reader.run import ReaderProcessor
+from finflock.compute.engine import GenParams, GenRequest
+from finflock.compute.vllm_engine import PROMPT_TOO_LONG
+from finflock.reader.output_v2 import FLAG_NAMES, LINK_TYPES, parse_reading_v2, reader_v2_json_schema
+from finflock.reader.run import ReaderProcessor
 
 from reader2 import settings as S
 from reader2.prompting import prompt_settings, v2_prompt

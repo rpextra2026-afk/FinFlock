@@ -6,8 +6,8 @@ import json
 import pandas as pd
 import pytest
 
-from oryxis.data.pin_cleanup import clean_pins, restore_distinctive_names, ticker_in_brackets
-from oryxis.reader.masking import MaskerCache
+from finflock.data.pin_cleanup import clean_pins, restore_distinctive_names, ticker_in_brackets
+from finflock.reader.masking import MaskerCache
 
 ALIASES = pd.DataFrame([
     ("TGT", "TGT", "ticker", None, None), ("TGT", "Target Corporation", "name", None, None), ("TGT", "Target", "name", None, None),

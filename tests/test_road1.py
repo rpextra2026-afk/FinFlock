@@ -10,9 +10,9 @@ import pytest
 import torch
 from scipy.optimize import minimize
 
-from oryxis.common.cv import time_blocked_folds
-from oryxis.common.timing import TradingCalendar
-from oryxis.road1.arms import (
+from finflock.common.cv import time_blocked_folds
+from finflock.common.timing import TradingCalendar
+from finflock.road1.arms import (
     DTYPE,
     GraphModel,
     SheafModel,
@@ -22,7 +22,7 @@ from oryxis.road1.arms import (
     matrix_design,
     ripple,
 )
-from oryxis.road1.fit import (
+from finflock.road1.fit import (
     dial_scale,
     fit_matrix,
     new_model,
@@ -32,14 +32,14 @@ from oryxis.road1.fit import (
     standardise,
     train_model,
 )
-from oryxis.road1.graph import (
+from finflock.road1.graph import (
     EventGraph,
     build_event_graph,
     group_probabilities,
 )
-from oryxis.road1.rkill import r_bound, r_value
-from oryxis.road1.sheaf_test import d10_regression
-from oryxis.road1.tension import tension, tension_matrix
+from finflock.road1.rkill import r_bound, r_value
+from finflock.road1.sheaf_test import d10_regression
+from finflock.road1.tension import tension, tension_matrix
 
 D = 2  # dials in the synthetic tests (the code is generic in d; production uses 3)
 
@@ -380,6 +380,6 @@ def test_unlabelled_free_nodes_are_masked_not_fatal(cfg):
         graphs.append(g.with_labels(y))
     batch = collate(graphs)
     assert int(batch.mask.sum()) == sum(g.n_free - 1 for g in graphs)
-    from oryxis.road1.fit import mean_loss
+    from finflock.road1.fit import mean_loss
     assert torch.isfinite(mean_loss(GraphModel(2, D), graphs, 0.05, 0.0))
     assert np.isfinite(fit_matrix(graphs, 2, 1.0, 2).theta).all()

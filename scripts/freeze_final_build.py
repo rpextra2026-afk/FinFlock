@@ -17,8 +17,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from oryxis.build.run import code_hash  # noqa: E402
-from oryxis.common.config import load_config  # noqa: E402
+from finflock.build.run import code_hash  # noqa: E402
+from finflock.common.config import load_config  # noqa: E402
 
 
 def main(argv=None) -> int:

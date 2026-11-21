@@ -9,7 +9,7 @@ setup_jobs:
   bios: {llms: primary, buckets: [shared]}   # one run; bucket label "shared" (bios are keyed by persona and quarter only)
 smoke_llms: all                            # Day-0 smoke test, one notebook per LLM
 notebook_dir: notebooks
-data_dataset_hint: oryxis-data              # name shown to the owner: <hint>-<run id>
+data_dataset_hint: finflock-data              # name shown to the owner: <hint>-<run id>
 est_seconds_per_unit:                      # [MEASURE] provisional until the Day-0 smoke test writes config/measured.yaml
   reader: 0.5
   bios: 1.0                                # one short biography per persona and quarter

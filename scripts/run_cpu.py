@@ -27,25 +27,25 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from oryxis.common.config import load_config  # noqa: E402
-from oryxis.real.framework_cell import run_framework_cell  # noqa: E402
-from oryxis.real.game_inputs import make_game_inputs  # noqa: E402
-from oryxis.real.results import write_json, write_lineage, write_tables  # noqa: E402
-from oryxis.real.world import load_world, units_sha256  # noqa: E402
-from oryxis.road1.fit import ShardPending  # noqa: E402
+from finflock.common.config import load_config  # noqa: E402
+from finflock.real.framework_cell import run_framework_cell  # noqa: E402
+from finflock.real.game_inputs import make_game_inputs  # noqa: E402
+from finflock.real.results import write_json, write_lineage, write_tables  # noqa: E402
+from finflock.real.world import load_world, units_sha256  # noqa: E402
+from finflock.road1.fit import ShardPending  # noqa: E402
 
 CELLS = ("framework",)
 DEFAULT_MODE = "original"
 
 
-from oryxis.real.devfit_io import DEV_FIT_IGNORED_SECTIONS, DEV_FILE, dev_fit_problems, read_dev_fit  # noqa: E402,F401
+from finflock.real.devfit_io import DEV_FIT_IGNORED_SECTIONS, DEV_FILE, dev_fit_problems, read_dev_fit  # noqa: E402,F401
 
 
 def run_framework(bucket: str, llm: str, cfg, mode_name: str = DEFAULT_MODE, stop_after_dev: bool = False, load_dev: Path | None = None, build_out: Path | None = None) -> Path:
-    from oryxis.reader.salvage import mode_settings  # noqa: PLC0415
+    from finflock.reader.salvage import mode_settings  # noqa: PLC0415
 
-    if mode_settings(cfg, mode_name).get("clean_tape"):  # reader2_clean: the framework final on the cleaned tape and the pooled sheaf (oryxis/framework/final_run.py)
-        from oryxis.framework.final_run import run_final  # noqa: PLC0415
+    if mode_settings(cfg, mode_name).get("clean_tape"):  # reader2_clean: the framework final on the cleaned tape and the pooled sheaf (finflock/framework/final_run.py)
+        from finflock.framework.final_run import run_final  # noqa: PLC0415
 
         if stop_after_dev:
             raise SystemExit("--stop-after-dev belongs to the old modes; in reader2_clean the dev fit is made from the build's fit cache (outputs/final-build/runs/<run>)")
@@ -113,7 +113,7 @@ def main(argv=None) -> int:
     cfg = load_config(ROOT / "config")
     try:
         folder = {"framework": run_framework}[args.cell](args.bucket, args.llm, cfg, args.reader_mode, args.stop_after_dev, args.load_dev, args.build_out)
-    except ShardPending as pending:  # shard mode (ORYXIS_FIT_SHARD): this shard's cross-validation fits are stored; the assemble run finishes the stage
+    except ShardPending as pending:  # shard mode (FINFLOCK_FIT_SHARD): this shard's cross-validation fits are stored; the assemble run finishes the stage
         print(f"SHARD RUN FINISHED: the fits of '{pending}' owned by this shard are stored in the checkpoint; no result was written", flush=True)
         return 0
     print(f"wrote {folder}")

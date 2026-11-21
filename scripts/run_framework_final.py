@@ -4,7 +4,7 @@
   python scripts/run_framework_final.py <run> --root <tree> --out <results folder> [--workers N] [--smoke N] [--stop-after-build]
 
 Stages in order: clean -> pooled sheaf (graphs, fit) -> scoring and ALL_METRICS -> ablations -> framework stage (road 2 personas, merge, optimiser, backtest, portfolio metrics).
-The first part is scripts/run_final_build.py's code (oryxis.build.run.run_all); the framework stage starts only when the sheaf fit is finished (a shard run stops after its own fits).
+The first part is scripts/run_final_build.py's code (finflock.build.run.run_all); the framework stage starts only when the sheaf fit is finished (a shard run stops after its own fits).
 The framework stage refuses to start unless FREEZE_FRAMEWORK.json matches. It never opens the sealed window.
 """
 
@@ -18,9 +18,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from oryxis.build.run import MANIFEST, run_all  # noqa: E402
-from oryxis.common.config import load_config  # noqa: E402
-from oryxis.framework.final_run import run_final  # noqa: E402
+from finflock.build.run import MANIFEST, run_all  # noqa: E402
+from finflock.common.config import load_config  # noqa: E402
+from finflock.framework.final_run import run_final  # noqa: E402
 
 STAGE_LIST = ("clean", "pooled sheaf (graphs, fit)", "scoring and ALL_METRICS", "ablations", "framework stage (road 2 personas, merge, optimiser, backtest, portfolio metrics)")
 
@@ -42,7 +42,7 @@ def main(argv=None) -> int:
     parser.add_argument("--stop-after-build", action="store_true", help="run only the build stages (clean ... ablations)")
     parser.add_argument("--stop-after", choices=["forecast", "calibrate"], default=None, help="framework stage only: stop after the forecasts (stored in the checkpoint), or run only the dev-only calibration of road 2's volume dial (writes outputs/final-build/calibration/volu_calibration_<run>.json)")
     parser.add_argument("--no-volu-calibration", action="store_true", help="the off switch: road 2's volume dial stays raw (the ablation reports raw against calibrated)")
-    parser.add_argument("--task-shard", default=None, help="k/N: run only every N-th backtest starting at k (separate processes, same ORYXIS_CKPT_DIR); no metrics are written by a shard")
+    parser.add_argument("--task-shard", default=None, help="k/N: run only every N-th backtest starting at k (separate processes, same FINFLOCK_CKPT_DIR); no metrics are written by a shard")
     parser.add_argument("--skip-build", action="store_true", help="the build stages are finished in --out; run only the framework stage")
     args = parser.parse_args(argv)
     args.out = args.out or str(Path(args.root) / "outputs" / "final-build" / "runs" / args.run)

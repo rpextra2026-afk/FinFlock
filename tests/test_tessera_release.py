@@ -46,7 +46,7 @@ def test_shipped_loader_separates_training_from_heldout_records():
 
 
 def test_reader_adapter_includes_both_supplement_text_sources(monkeypatch):
-    from oryxis.data.buckets.package import _supplement_events
+    from finflock.data.buckets.package import _supplement_events
 
     records = pd.DataFrame([
         {"record_id": key, "event_id": "event-" + key, "available_utc": pd.Timestamp("2020-01-02", tz="UTC"),

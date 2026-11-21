@@ -5,9 +5,9 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from oryxis.common.config import load_config
-from oryxis.common.timing import TradingCalendar
-from oryxis.stage.persona_build import (
+from finflock.common.config import load_config
+from finflock.common.timing import TradingCalendar
+from finflock.stage.persona_build import (
     event_payloads,
     full_panels,
     institutional_panel,
@@ -86,17 +86,17 @@ def test_payloads_and_states_cover_every_event_and_persona_of_the_panel_in_force
 
 
 def test_persona_shards_need_the_bios_bundle_and_then_carry_only_what_their_units_use(tmp_path):
-    from oryxis.common.schema import UNIT_ID
-    from oryxis.compute import payloads as pl
-    from oryxis.compute.bundle import make_job_id
-    from oryxis.compute.engine import MockEngine
-    from oryxis.compute.runner import run_shard_from_folder
-    from oryxis.compute.session import SessionError
-    from oryxis.compute.shard import Shard
-    from oryxis.compute.staging import stage_shard
-    from oryxis.reader.prompt import WhitespaceTokenizer
-    from oryxis.stage.persona_build import persona_states
-    from oryxis.stage.persona_stage import bio_units, save_persona_inputs, stage_persona_job
+    from finflock.common.schema import UNIT_ID
+    from finflock.compute import payloads as pl
+    from finflock.compute.bundle import make_job_id
+    from finflock.compute.engine import MockEngine
+    from finflock.compute.runner import run_shard_from_folder
+    from finflock.compute.session import SessionError
+    from finflock.compute.shard import Shard
+    from finflock.compute.staging import stage_shard
+    from finflock.reader.prompt import WhitespaceTokenizer
+    from finflock.stage.persona_build import persona_states
+    from finflock.stage.persona_stage import bio_units, save_persona_inputs, stage_persona_job
     import pytest
 
     _, panels = build()

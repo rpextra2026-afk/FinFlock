@@ -3,7 +3,7 @@
 
   python scripts/run_framework_sealed.py <run> --root <tree> --out <folder holding fitted.pkl and manifest.json> --i-open-the-sealed-window-once
 
-It is the main framework stage with the sealed window as the test window (oryxis.framework.final_run.run_final(sealed=True), same code, same configuration). It starts only when
+It is the main framework stage with the sealed window as the test window (finflock.framework.final_run.run_final(sealed=True), same code, same configuration). It starts only when
 FREEZE_FRAMEWORK.json matches, takes an O_EXCL lock (SEALED_OPENED.json) in its own folder <out>/framework-sealed/ and refuses to start when that lock is there. The flag is required so that
 the stage cannot be started by accident.
 """
@@ -18,8 +18,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from oryxis.common.config import load_config  # noqa: E402
-from oryxis.framework.final_run import run_final  # noqa: E402
+from finflock.common.config import load_config  # noqa: E402
+from finflock.framework.final_run import run_final  # noqa: E402
 
 
 def log(message: str) -> None:

@@ -24,7 +24,7 @@ def main(stage=None, bucket=None, model=None, argv=None):
         stage, bucket, model = args.stage, args.bucket, args.model
     bucket_id, llm = BUCKETS[bucket], MODELS[model]
     run = f"{bucket_id}-{llm}"
-    from oryxis.common.config import load_config
+    from finflock.common.config import load_config
     cfg = load_config(args.config)
     if stage in ("sheaf", "final_framework"):
         run_cfg = cfg.get(f"clean.runs.{run}")
@@ -63,8 +63,8 @@ def main(stage=None, bucket=None, model=None, argv=None):
                     config_dir=args.config, input_root=opts.input_root, out_dir=out,
                     shard=opts.shard_id, limit_units=opts.limit_units)
     else:
-        from oryxis.compute.session import RunSpec, run_session
-        from oryxis.stage.run_stage import make_stager
+        from finflock.compute.session import RunSpec, run_session
+        from finflock.stage.run_stage import make_stager
         spec = RunSpec(f"personas-{run}", "personas", bucket_id, llm)
         run_session(spec, args.config, opts.input_root, out,
                     shard_id=opts.shard_id, limit_units=opts.limit_units,

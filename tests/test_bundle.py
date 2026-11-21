@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from oryxis.common.schema import ATTEMPTS, BUNDLE_SUFFIX, PARTS_DIR, STATUS, UNIT_ID, Status
-from oryxis.compute.bundle import (
+from finflock.common.schema import ATTEMPTS, BUNDLE_SUFFIX, PARTS_DIR, STATUS, UNIT_ID, Status
+from finflock.compute.bundle import (
     BundleWriter,
     consolidate_rows,
     make_job_id,

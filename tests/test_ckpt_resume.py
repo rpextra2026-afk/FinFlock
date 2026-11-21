@@ -5,10 +5,10 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from oryxis.common import ckpt
-from oryxis.common.resources import ResourceLog
-from oryxis.road1 import fit as fit_module
-from oryxis.stage.road1_run import fit_and_score
+from finflock.common import ckpt
+from finflock.common.resources import ResourceLog
+from finflock.road1 import fit as fit_module
+from finflock.stage.road1_run import fit_and_score
 from tests.test_road1_run import setup  # noqa: F401  (fixture)
 
 

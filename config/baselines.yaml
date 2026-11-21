@@ -1,5 +1,5 @@
 # No-LLM baselines (floors of the comparison ladder). Every score uses only information known at the decision time (after the close of the decision session).
-# Higher score = more bullish. They run through the SAME scorer, windows, fills, costs and metrics as the Basic rival (oryxis/eval/score_basic.py).
+# Higher score = more bullish. They run through the SAME scorer, windows, fills, costs and metrics as the Basic rival (finflock/eval/score_basic.py).
 mode_basic_set: headline               # the units scored: the Basic rival's headline set (company named in the title), text = the headline
 ids: [N1_lm_tone, N2_finbert_tone, N3_reversal, N4_momentum, N5_placebo]
 lexicon:                               # N1: Loughran-McDonald master dictionary, bundled with the pip package pysentiment2 (version recorded in lineage)

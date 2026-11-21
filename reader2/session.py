@@ -30,15 +30,15 @@ from typing import Any
 
 import pandas as pd
 
-from oryxis.common.config import Config, load_config
-from oryxis.common.schema import FAMILY, PARSE_OK, STATUS, TERMINAL_STATUSES, UNIT_ID, Status
-from oryxis.compute.bundle import make_job_id, read_consolidated, scan_bundles, unit_state
-from oryxis.compute.factory import HFTokenizer, resolve_model_path
-from oryxis.compute.session import SessionError, check_machine, download_weights, ensure_runtime, link_weights
-from oryxis.compute.shard import units_fingerprint
-from oryxis.compute.worker import StopFlag, run_shard
-from oryxis.reader.masking import MaskerCache
-from oryxis.reader.prompt import WhitespaceTokenizer
+from finflock.common.config import Config, load_config
+from finflock.common.schema import FAMILY, PARSE_OK, STATUS, TERMINAL_STATUSES, UNIT_ID, Status
+from finflock.compute.bundle import make_job_id, read_consolidated, scan_bundles, unit_state
+from finflock.compute.factory import HFTokenizer, resolve_model_path
+from finflock.compute.session import SessionError, check_machine, download_weights, ensure_runtime, link_weights
+from finflock.compute.shard import units_fingerprint
+from finflock.compute.worker import StopFlag, run_shard
+from finflock.reader.masking import MaskerCache
+from finflock.reader.prompt import WhitespaceTokenizer
 
 from reader2 import settings as S
 from reader2 import plan as P

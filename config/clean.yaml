@@ -3,9 +3,9 @@ runs:
   db1-llm2:
     bucket: db1
     tape: outputs/reader-v2-final/results/db1-llm2/tape_reader2_db1_llm2.parquet
-    units: dataset/oryxis-market/prestaged/reader-db1/units.parquet
-    links: dataset/oryxis-upload/links.parquet
-    prices: dataset/oryxis-market/px_daily.parquet
+    units: dataset/finflock-market/prestaged/reader-db1/units.parquet
+    links: dataset/finflock-upload/links.parquet
+    prices: dataset/finflock-market/px_daily.parquet
     fit_start: 2017-01-01
     fit_end: 2021-12-31
     holdout_start: 2022-01-10
@@ -13,9 +13,9 @@ runs:
   tessera-llm1:
     bucket: tessera
     tape: outputs/reader-v2-final/results/tessera-llm1/tape_reader2_tessera_llm1.parquet
-    units: dataset/oryxis-upload-tessera/prestaged/reader-tessera/units.parquet
-    links: dataset/oryxis-tessera-upload/links.parquet
-    prices: dataset/oryxis-market/px_daily.parquet
+    units: dataset/finflock-upload-tessera/prestaged/reader-tessera/units.parquet
+    links: dataset/finflock-tessera-upload/links.parquet
+    prices: dataset/finflock-market/px_daily.parquet
     fit_start: 2015-01-01
     fit_end: 2021-12-31
     holdout_start: 2022-01-03
@@ -23,9 +23,9 @@ runs:
   tessera-llm2:
     bucket: tessera
     tape: outputs/reader-v2-final/results/tessera-llm2/tape_reader2_tessera_llm2.parquet
-    units: dataset/oryxis-upload-tessera/prestaged/reader-tessera/units.parquet
-    links: dataset/oryxis-tessera-upload/links.parquet
-    prices: dataset/oryxis-market/px_daily.parquet
+    units: dataset/finflock-upload-tessera/prestaged/reader-tessera/units.parquet
+    links: dataset/finflock-tessera-upload/links.parquet
+    prices: dataset/finflock-market/px_daily.parquet
     fit_start: 2015-01-01
     fit_end: 2021-12-31
     holdout_start: 2022-01-03
@@ -33,9 +33,9 @@ runs:
   tessera-llm3:
     bucket: tessera
     tape: outputs/reader-v2-final/results/tessera-llm3/tape_reader2_tessera_llm3.parquet
-    units: dataset/oryxis-upload-tessera/prestaged/reader-tessera/units.parquet
-    links: dataset/oryxis-tessera-upload/links.parquet
-    prices: dataset/oryxis-market/px_daily.parquet
+    units: dataset/finflock-upload-tessera/prestaged/reader-tessera/units.parquet
+    links: dataset/finflock-tessera-upload/links.parquet
+    prices: dataset/finflock-market/px_daily.parquet
     fit_start: 2015-01-01
     fit_end: 2021-12-31
     holdout_start: 2022-01-03
@@ -43,9 +43,9 @@ runs:
   db3-llm2:
     bucket: db3
     tape: outputs/reader-v2-final/results/db3-llm2/tape_reader2_db3_llm2.parquet
-    units: dataset/oryxis-market/prestaged/reader-db3/units.parquet
-    links: dataset/oryxis-upload/links.parquet
-    prices: dataset/oryxis-market/px_daily.parquet
+    units: dataset/finflock-market/prestaged/reader-db3/units.parquet
+    links: dataset/finflock-upload/links.parquet
+    prices: dataset/finflock-market/px_daily.parquet
     fit_start: 2013-04-01
     fit_end: 2018-12-31
     holdout_start: 2019-01-09
@@ -53,9 +53,9 @@ runs:
   db1-llm1:
     bucket: db1
     tape: outputs/reader-v2-final/results/db1-llm1/tape_reader2_db1_llm1.parquet
-    units: dataset/oryxis-market/prestaged/reader-db1/units.parquet
-    links: dataset/oryxis-upload/links.parquet
-    prices: dataset/oryxis-market/px_daily.parquet
+    units: dataset/finflock-market/prestaged/reader-db1/units.parquet
+    links: dataset/finflock-upload/links.parquet
+    prices: dataset/finflock-market/px_daily.parquet
     fit_start: 2017-01-01
     fit_end: 2021-12-31
     holdout_start: 2022-01-10
@@ -63,9 +63,9 @@ runs:
   db1-llm3:
     bucket: db1
     tape: outputs/reader-v2-final/results/db1-llm3/tape_reader2_db1_llm3.parquet
-    units: dataset/oryxis-market/prestaged/reader-db1/units.parquet
-    links: dataset/oryxis-upload/links.parquet
-    prices: dataset/oryxis-market/px_daily.parquet
+    units: dataset/finflock-market/prestaged/reader-db1/units.parquet
+    links: dataset/finflock-upload/links.parquet
+    prices: dataset/finflock-market/px_daily.parquet
     fit_start: 2017-01-01
     fit_end: 2021-12-31
     holdout_start: 2022-01-10
@@ -73,9 +73,9 @@ runs:
   db3-llm1:
     bucket: db3
     tape: outputs/reader-v2-final/results/db3-llm1/tape_reader2_db3_llm1.parquet
-    units: dataset/oryxis-market/prestaged/reader-db3/units.parquet
-    links: dataset/oryxis-upload/links.parquet
-    prices: dataset/oryxis-market/px_daily.parquet
+    units: dataset/finflock-market/prestaged/reader-db3/units.parquet
+    links: dataset/finflock-upload/links.parquet
+    prices: dataset/finflock-market/px_daily.parquet
     fit_start: 2013-04-01
     fit_end: 2018-12-31
     holdout_start: 2019-01-09
@@ -83,9 +83,9 @@ runs:
   db3-llm3:
     bucket: db3
     tape: outputs/reader-v2-final/results/db3-llm3/tape_reader2_db3_llm3.parquet
-    units: dataset/oryxis-market/prestaged/reader-db3/units.parquet
-    links: dataset/oryxis-upload/links.parquet
-    prices: dataset/oryxis-market/px_daily.parquet
+    units: dataset/finflock-market/prestaged/reader-db3/units.parquet
+    links: dataset/finflock-upload/links.parquet
+    prices: dataset/finflock-market/px_daily.parquet
     fit_start: 2013-04-01
     fit_end: 2018-12-31
     holdout_start: 2019-01-09

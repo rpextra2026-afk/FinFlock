@@ -3,9 +3,9 @@ import json
 
 import pandas as pd
 
-from oryxis.common.config import load_config
-from oryxis.reader.salvage import config_for_mode, prepare_reader_tape
-from oryxis.real.tapes import is_reader_v2
+from finflock.common.config import load_config
+from finflock.reader.salvage import config_for_mode, prepare_reader_tape
+from finflock.real.tapes import is_reader_v2
 
 
 def test_reader2_tape_is_used_as_stored_and_not_reparsed():

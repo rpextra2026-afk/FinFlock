@@ -6,8 +6,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from oryxis.common.timing import TradingCalendar
-from oryxis.data.market import (
+from finflock.common.timing import TradingCalendar
+from finflock.data.market import (
     action_panel,
     dollar_volume,
     future_split_factor,
@@ -19,8 +19,8 @@ from oryxis.data.market import (
     volume_as_traded,
     wide,
 )
-from oryxis.data.schema import PX_DAILY, SchemaError, validate
-from oryxis.data.sp500 import (
+from finflock.data.schema import PX_DAILY, SchemaError, validate
+from finflock.data.sp500 import (
     DataQualityError,
     enforce_mismatch_limit,
     members_on,
@@ -28,8 +28,8 @@ from oryxis.data.sp500 import (
     mismatch_report,
     universe_asof,
 )
-from oryxis.data.store import Store
-from oryxis.data.universe import (
+from finflock.data.store import Store
+from finflock.data.universe import (
     assign_layers,
     build_universe_table,
     eligible_etfs,

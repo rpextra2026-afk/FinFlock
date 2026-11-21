@@ -8,24 +8,24 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from oryxis.common.schema import PARSE_OK, REASON, STATUS, UNIT_ID, Reason, Status
-from oryxis.compute.engine import MockEngine
-from oryxis.personas.bios import (
+from finflock.common.schema import PARSE_OK, REASON, STATUS, UNIT_ID, Reason, Status
+from finflock.compute.engine import MockEngine
+from finflock.personas.bios import (
     BioProcessor,
     bio_cache_key,
     bio_prompt,
     skeleton_facts,
     template_bio,
 )
-from oryxis.personas.careers import load_career_grid, retail_career_sequence
-from oryxis.personas.clusters import (
+from finflock.personas.careers import load_career_grid, retail_career_sequence
+from finflock.personas.clusters import (
     aggregate_clusters,
     align_labels,
     cluster_managers,
     features,
     fit_feature_space,
 )
-from oryxis.personas.feed import (
+from finflock.personas.feed import (
     NewsItem,
     PersonaProfile,
     access_granted,
@@ -34,8 +34,8 @@ from oryxis.personas.feed import (
     reliability_tag,
     understanding,
 )
-from oryxis.personas.mock import persona_responder
-from oryxis.personas.postprocess import (
+from finflock.personas.mock import persona_responder
+from finflock.personas.postprocess import (
     aggregate_draws,
     emotion_variables,
     persona_dispersion,
@@ -43,27 +43,27 @@ from oryxis.personas.postprocess import (
     running_lean,
     type_belief,
 )
-from oryxis.personas.prompt import (
+from finflock.personas.prompt import (
     ShownAsset,
     asset_line,
     build_persona_prompt,
     parse_answer,
     select_assets,
 )
-from oryxis.personas.run import (
+from finflock.personas.run import (
     DRAWS_JSON,
     EventPayload,
     PersonaProcessor,
     PersonaState,
     unit_id,
 )
-from oryxis.personas.skeletons import (
+from finflock.personas.skeletons import (
     default_panel,
     institutional_skeletons,
     retail_basket,
     retail_skeletons,
 )
-from oryxis.personas.state import (
+from finflock.personas.state import (
     institution_history,
     portfolio_state,
     retail_history,
@@ -72,7 +72,7 @@ from oryxis.personas.state import (
     window_return,
     within_type_percentile,
 )
-from oryxis.reader.prompt import WhitespaceTokenizer
+from finflock.reader.prompt import WhitespaceTokenizer
 from tests.conftest import CONFIG_DIR
 
 SEED = 20261029

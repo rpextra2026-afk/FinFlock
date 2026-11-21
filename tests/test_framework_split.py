@@ -8,9 +8,9 @@ import numpy as np
 import pandas as pd
 import torch
 
-from oryxis.framework.road1_stage import Road1Predictor
-from oryxis.real.framework_fit import DevFit
-from oryxis.road1.arms import SheafModel
+from finflock.framework.road1_stage import Road1Predictor
+from finflock.real.framework_fit import DevFit
+from finflock.road1.arms import SheafModel
 
 
 def test_dev_fit_round_trips_through_a_pickle(cfg):

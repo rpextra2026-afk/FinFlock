@@ -7,10 +7,10 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from oryxis.common.config import ConfigError, load_config
-from oryxis.common.hashing import canonical_json, sha256_file, sha256_hex, stable_hash
-from oryxis.common.io import atomic_write_bytes, atomic_write_parquet, parquet_bytes_to_frame
-from oryxis.common.rng import SeedFactory, derive_seed, make_rng
+from finflock.common.config import ConfigError, load_config
+from finflock.common.hashing import canonical_json, sha256_file, sha256_hex, stable_hash
+from finflock.common.io import atomic_write_bytes, atomic_write_parquet, parquet_bytes_to_frame
+from finflock.common.rng import SeedFactory, derive_seed, make_rng
 
 import pandas as pd
 
@@ -85,7 +85,7 @@ def test_atomic_write_leaves_no_temp_file_on_failure(tmp_path):
     class Boom(Exception):
         pass
 
-    from oryxis.common.io import atomic_path
+    from finflock.common.io import atomic_path
 
     with pytest.raises(Boom):
         with atomic_path(target) as tmp:
