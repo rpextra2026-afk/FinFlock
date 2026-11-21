@@ -6,6 +6,28 @@ FinFlock combines financial news, a typed economic sheaf, investor personas, and
 
 ![FinFlock architecture](assets/architecture.png)
 
+## Tessera: a dataset contribution
+
+Tessera is a central contribution of FinFlock: a point-in-time news-event dataset that brings company disclosures, official geopolitical events, archived news, and investor discussion into one event-linked representation. its design records how an availability timestamp was obtained, applies conservative timing when the source cannot establish an exact instant, and preserves unsupported or unlinked records without inventing company labels.
+
+| Part | Sources | Items | Events | Train / test items | Avg. text | Availability-time basis | Asset links / exposure | Historical release assessment (3 Nov 2026) |
+| --- | --- | ---: | ---: | ---: | --- | --- | --- | --- |
+| **Company filings** | SEC 8-K; foreign 6-K/20-F (14 event families) | 168,316 | 167,967 | 137,657 / 30,366 | 4.5 KB; 6,000-character excerpt cap | **100% exact** SEC acceptance timestamps, to the second | 100% supported company links | IDs and times cleared; text unresolved at assessment |
+| **Official geopolitical** | Federal Register, OFAC, GDELT 1.0, Wikinews (9 families) | 18,127 | 17,971 | 12,675 / 5,404 | 0.4 KB | **74.8% exact**; remaining items use conservative date-only timing | 53% country; 20% commodity; no company labels | Full metadata and text cleared |
+| **Geopolitical news supplement** | 11 news archives, including NYT and Yahoo Finance | 14,263 | 14,263 | 9,856 / 4,402 | 1.28 KB; 46.4% below 200 characters | Date-only policy; edit history unavailable | 33.3% company exposure, unaudited; 48.1% strictly country-only exposure | Most publisher text restricted; 23 Wikinews copies cleared |
+| **Social** | Reddit: r/investing, r/stocks, r/StockMarket, r/wallstreetbets | 231,111 | 231,111 | 182,332 / 47,567 | 0.6 KB | Date-only policy; source clock claims are not promoted to exact | 18.5% supported company links; 68.4% have no recorded pin | Permission unresolved at assessment |
+| **Total** | **21 feeds; 25 event families** | **431,817** | **431,312** | **342,520 / 87,739** | **923.6 MB total UTF-8 text** | **42.1% exact** | **3,886 company CIKs** | **18,150 full-text records (4.2%); 186,466 metadata records (43.2%) cleared at assessment** |
+
+**Table 1. Tessera news-event dataset, 2015-01-01 to 2025-12-31 (UTC).** train contains items assigned to availability sessions on or before 2023-12-31; the held-out test covers 2024-01-09 to 2025-12-31 after a five-session embargo. the 1,558 embargo items are included in the item totals and omitted from the train/test column. “exact” identifies an official SEC acceptance timestamp or Federal Register public-inspection timestamp, rather than an unverified clock claim. date-only items become available at the start of the next UTC day; GDELT uses a three-day delay. the 431,312 events comprise 417,049 core events and 14,263 distinct supplemental event IDs. text sizes describe the frozen source text before anonymization, in decimal bytes: 905.3 MB for the three core parts plus 18.3 MB for the supplement. the country-day panel adds 944,230 structured rows across 47 countries and five GDELT event families.
+
+the frozen package reports no events, URLs, or source pointers crossing the training/held-out boundary and no SEC near-duplicates crossing that boundary under its specified matching rule. recurring official-document templates are flagged instead of being silently treated as unrelated text. these checks describe dataset construction, not model performance.
+
+FinFlock uses a separate experiment split inside Tessera: 2015–2021 for fitting, 2022–2023 for the framework holdout, and a sealed 2024–2025 evaluation window. Tessera's package test partition begins on 9 January 2024 after its embargo; the framework's sealed interval is subject to that package boundary.
+
+**Release-status context.** the last column preserves the historical source assessment, not a claim that every included source shares one license. full-package redistribution approval was subsequently confirmed by the uploader, and the current repository includes all four components. historical rights fields remain as provenance, and source attribution is retained. the full-text and metadata figures overlap; they are not additive.
+
+the [Tessera dataset README](dataset/tessera/README.md) documents source counts, record definitions, timestamps, split guards, asset-link coverage, validation checks, coverage limitations, and loading commands. the dataset files and [checksum manifest](dataset/tessera/MANIFEST.json) are included in this repository.
+
 ## repository structure
 
 the experiment entry points are grouped by dataset, model, and stage. each stage calls the shared implementation, so the scientific code stays consistent across runs.
